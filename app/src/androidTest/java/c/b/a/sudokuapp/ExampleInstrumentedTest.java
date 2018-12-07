@@ -1,4 +1,4 @@
-package c.b.a.sudoku;
+package c.b.a.sudokuapp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

@@ -1,3 +1,34 @@
 <resources>
     <string name="app_name">Sudoku</string>
+    <string name="EnterPassword">Enter password</string>
+    <string name="enterEmail">Enter email</string>
+    <string name="register">Register</string>
+    <string name="loginFromReg">Already have an account?\nLog in here!</string>
+    <string name="invalidEmail">invalid email</string>
+    <string name="invalidPassword">Password has to be at least 6 characters"</string>
+    <string name="emailTaken">This email is taken!</string>
+    <string name="progressRegister">Registering User...</string>
+    <string name="required">Required!</string>
+    <string name="welcome_user">Welcome,\u0020</string>
+    <string name="user_login_header">User login</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="login_btn">Log in</string>
+    <string name="sign_up_here">Don\'t have an account?\nSign up here!</string>
+    <string name="user_registration">User registration</string>
+    <string name="log_out">Log out</string>
+    <string name="main_menu_header">Main menu</string>
+    <string name="resume_btn">Resume</string>
+    <string name="new_game_btn">New game</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="hard">Hard</string>
+
+    <string name="facebook_app_id">313601652830022</string>
+    <string name="fb_login_protocol_scheme">8a9157c2ee903be5543e146977c87571</string>
+
+    <!-- 313601652830022  8a9157c2ee903be5543e146977c87571 fb313601652830022 -->
+
+
 </resources>
