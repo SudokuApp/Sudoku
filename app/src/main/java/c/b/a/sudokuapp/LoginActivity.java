@@ -36,23 +36,24 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private ProgressDialog progressDialog;
+    private FirebaseAuth firebaseAuth;
+
     // Views
     private EditText login_email;
     private EditText login_password;
 
-    private ProgressDialog progressDialog;
-    private FirebaseAuth firebaseAuth;
-    private CallbackManager callbackManager;
-    private LoginButton loginButton;
-
     // Variables for Google sign-in
     private GoogleSignInOptions gso;
     private GoogleSignInClient mGoogleSignInClient;
-    private GoogleSignInAccount account;
+    // Used in MenuFragment and DifficultyFragment to know if user is logged in with Google
+    public static GoogleSignInAccount account;
     private SignInButton signInButton;
 
+    // Variables for Facebook sign-in
     private boolean isLoggedIn;
-    public static boolean isSignedIn;
+    private CallbackManager callbackManager;
+    private LoginButton loginButton;
 
 
     @Override
@@ -62,50 +63,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         setVariables();
 
-
-
-        signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
-
         signInButton.setOnClickListener(this);
 
-        //The structure for this code was gotten from facebook developer-site.
-        //https://firebase.google.com/docs/auth/android/facebook-login >> Authenticate with Firebase >> developer's documentation
-        callbackManager = CallbackManager.Factory.create();
-        loginButton = findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email", "public_profile", "user_friends");
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                handleFacebookAccessToken(loginResult.getAccessToken());
-                goToMainMenu();
-            }
+        loginWithFacebook();
 
-            @Override
-            public void onCancel() {
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-            }
-        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-
-        //check if user is logged in via facebook
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        isLoggedIn = accessToken != null && !accessToken.isExpired();
-
-
-
         // If user is logged in, he/she is taken to the Main Menu
-        if (firebaseAuth.getCurrentUser() != null || isLoggedIn || isSignedIn) {
+        if (firebaseAuth.getCurrentUser() != null || isLoggedIn || account != null) {
             startActivity(new Intent(getApplicationContext(), MenuActivity.class));
             finish();
         }
@@ -124,10 +94,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                            // updateUI(null);
                         }
                     }
                 });
+        loginButton.setReadPermissions("email", "public_profile");
+    }
+
+    private void loginWithFacebook() {
+        // Callback registration
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                handleFacebookAccessToken(loginResult.getAccessToken());
+                goToMainMenu();
+            }
+
+            @Override
+            public void onCancel() {}
+
+            @Override
+            public void onError(FacebookException exception) {}
+        });
     }
 
     //The structure for this code was gotten from the facebook developer-site.
@@ -151,11 +138,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void setVariables() {
         login_email = findViewById(R.id.login_email);
         login_password = findViewById(R.id.login_password);
+
         progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
 
+        callbackManager = CallbackManager.Factory.create();
+        loginButton = findViewById(R.id.login_button);
+
+        //check if user is logged in via facebook
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        isLoggedIn = accessToken != null && !accessToken.isExpired();
+
         account = GoogleSignIn.getLastSignedInAccount(this);
-        isSignedIn = account != null && !account.isExpired();
+        signInButton = findViewById(R.id.sign_in_button);
+
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.

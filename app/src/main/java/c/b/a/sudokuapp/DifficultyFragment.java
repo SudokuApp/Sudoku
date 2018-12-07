@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,11 +16,12 @@ import android.widget.TextView;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import static c.b.a.sudokuapp.LoginActivity.account;
 
 
 /**
@@ -48,9 +48,7 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
     private AccessToken accessToken;
 
     // Variables for Google sign-in / sign-out
-    private boolean isSignedIn;
     private GoogleSignInOptions gso;
-    private GoogleSignInAccount account;
     private GoogleSignInClient mGoogleSignInClient;
 
 
@@ -81,21 +79,29 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         // Set variables
         setVariables();
 
-        // If user is not logged in, he/she is taken to the login screen
-        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn) {
-            a.startActivity(new Intent(a, LoginActivity.class));
-            a.finish();
-        }
-
         // Set click listeners
         setClickListeners();
+    }
 
-        // Say welcome to the user
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // If user is not logged in, he/she is taken to the login screen
+        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn && account == null) {
+            a.finish();
+            a.startActivity(new Intent(a, LoginActivity.class));
+        }
+
+        // Say welcome to the user, using their email // TODO breyta ef við höfum eð annað en email
         if(isLoggedIn) {
             userTxt.setText(getString(R.string.welcome_user)); // TODO þarf að finna hvernig email eða nafn frá facebook
         }
+        else if(account != null) {
+            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
+        }
         else {
-           // userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
+            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
         }
     }
 
@@ -123,11 +129,9 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         hard = a.findViewById(R.id.hard);
 
         accessToken = AccessToken.getCurrentAccessToken();
+        // Check if user is logged in via facebook
         isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-        account = GoogleSignIn.getLastSignedInAccount(a);
-        // Check if user is logged in via Google
-        isSignedIn = account != null && !account.isExpired();
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -162,9 +166,9 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         if(isLoggedIn) {
             LoginManager.getInstance().logOut();
             firebaseAuth.signOut();
-        } else if(isSignedIn) {
+        } else if(account != null) {
             firebaseAuth.signOut();
-            //mGoogleSignInClient.signOut();
+            mGoogleSignInClient.signOut();
         } else if(firebaseAuth.getCurrentUser() != null) {
             firebaseAuth.signOut();
         }
