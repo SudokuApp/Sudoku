@@ -16,6 +16,10 @@ import android.widget.TextView;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -25,18 +29,29 @@ import com.google.firebase.auth.FirebaseUser;
  */
 public class DifficultyFragment extends Fragment implements View.OnClickListener {
 
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-    private Activity a;
-    private boolean isLoggedIn;
-    AccessToken accessToken;
-
     // Views
     private TextView userTxt;
     private TextView logout;
     private Button easy;
     private Button medium;
     private Button hard;
+
+    // Authentication variables
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+
+    // Current activity
+    private Activity a;
+
+    // Variables for Facebook sign-in / sign-out
+    private boolean isLoggedIn;
+    private AccessToken accessToken;
+
+    // Variables for Google sign-in / sign-out
+    private boolean isSignedIn;
+    private GoogleSignInOptions gso;
+    private GoogleSignInAccount account;
+    private GoogleSignInClient mGoogleSignInClient;
 
 
     public DifficultyFragment() {
@@ -80,7 +95,7 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
             userTxt.setText(getString(R.string.welcome_user)); // TODO þarf að finna hvernig email eða nafn frá facebook
         }
         else {
-            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
+           // userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
         }
     }
 
@@ -106,8 +121,21 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         easy = a.findViewById(R.id.easy);
         medium = a.findViewById(R.id.medium);
         hard = a.findViewById(R.id.hard);
+
         accessToken = AccessToken.getCurrentAccessToken();
         isLoggedIn = accessToken != null && !accessToken.isExpired();
+
+        account = GoogleSignIn.getLastSignedInAccount(a);
+        // Check if user is logged in via Google
+        isSignedIn = account != null && !account.isExpired();
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(a, gso);
     }
 
 
@@ -131,10 +159,14 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
      * Takes user back to the login screen
      */
     private void logout() {
-        if(firebaseAuth.getCurrentUser() != null) {
-            firebaseAuth.signOut();
-        } else if(isLoggedIn) {
+        if(isLoggedIn) {
             LoginManager.getInstance().logOut();
+            firebaseAuth.signOut();
+        } else if(isSignedIn) {
+            firebaseAuth.signOut();
+            //mGoogleSignInClient.signOut();
+        } else if(firebaseAuth.getCurrentUser() != null) {
+            firebaseAuth.signOut();
         }
         a.finish();
         a.startActivity(new Intent(a, LoginActivity.class));

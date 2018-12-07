@@ -17,8 +17,15 @@ import android.widget.TextView;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+
+import static c.b.a.sudokuapp.LoginActivity.isSignedIn;
 
 
 /**
@@ -26,19 +33,31 @@ import com.google.firebase.auth.FirebaseUser;
  */
 public class MenuFragment extends Fragment implements View.OnClickListener {
 
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-    private Activity a;
-    private FragmentManager fragmentManager;
-    private FragmentTransaction fragmentTransaction;
-    private boolean isLoggedIn;
-    AccessToken accessToken;
-
     // Views
     private TextView userTxt;
     private TextView logout;
     private Button newGame;
     private Button resume;
+
+    // Authentication variables
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+
+    // Current activity
+    private Activity a;
+
+    private FragmentManager fragmentManager;
+
+    // Variables for Facebook sign-in / sign-out
+    private FragmentTransaction fragmentTransaction; // TODO eyða??
+    private boolean isLoggedIn;
+    private AccessToken accessToken;
+
+    // Variables for Google sign-in / sign-out
+    //private boolean isSignedIn;
+    private GoogleSignInOptions gso;
+    private GoogleSignInAccount account;
+    private GoogleSignInClient mGoogleSignInClient;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -67,18 +86,34 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         // Set variables
         setVariables();
 
-        // If user is not logged in, he/she is taken to the login screen
-        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn) {
-            a.finish();
-            a.startActivity(new Intent(a, LoginActivity.class));
-        }
-
         // Set click listeners
         setClickListeners();
 
         // Say welcome to the user
         if(isLoggedIn) {
             userTxt.setText(getString(R.string.welcome_user)); // TODO þarf að finna hvernig email eða nafn frá facebook
+        }
+        else {
+            //userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // If user is not logged in, he/she is taken to the login screen
+        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn && !isSignedIn) {
+            a.finish();
+            a.startActivity(new Intent(a, LoginActivity.class));
+        }
+
+        // Say welcome to the user, using their email // TODO breyta ef við höfum eð annað en email
+        if(isLoggedIn) {
+            userTxt.setText(getString(R.string.welcome_user)); // TODO þarf að finna hvernig email eða nafn frá facebook
+        }
+        else if(isSignedIn) {
+            userTxt.setText(getString(R.string.welcome_user));
         }
         else {
             userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
@@ -107,7 +142,21 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         resume = a.findViewById(R.id.resume_btn);
 
         accessToken = AccessToken.getCurrentAccessToken();
+        // Check if user is logged in via facebook
         isLoggedIn = accessToken != null && !accessToken.isExpired();
+
+        // account = GoogleSignIn.getLastSignedInAccount(a);
+        // Check if user is logged in via Google
+        isSignedIn = (account != null && !account.isExpired());
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(a, gso);
+
     }
 
     /**
@@ -127,10 +176,17 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * Takes user back to the login screen
      */
     private void logout() {
-        if(firebaseAuth.getCurrentUser() != null) {
-            firebaseAuth.signOut();
+
+        String b = FirebaseAuth.getInstance().getCurrentUser().getProviderId();
+
+        if(isSignedIn) {
+            mGoogleSignInClient.signOut();
+            //firebaseAuth.signOut();
         } else if(isLoggedIn) {
             LoginManager.getInstance().logOut();
+           // firebaseAuth.signOut();
+        } else if(firebaseAuth.getCurrentUser() != null) {
+            firebaseAuth.signOut();
         }
         a.finish();
         a.startActivity(new Intent(a, LoginActivity.class));
