@@ -1,4 +1,5 @@
 package c.b.a.sudokuapp;
+
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -21,9 +22,6 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
-import java.util.Timer;
-
-import c.b.a.sudokuapp.fragments.APIhandler;
 import c.b.a.sudokuapp.fragments.ButtonGroup;
 
 public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFragmentInteractionListener{
@@ -41,87 +39,61 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
     private ProgressDialog progress;
-    private Thread t;
-    private boolean isPaused;
-    private APIhandler api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        //get the desired difficulty from DifficultyFragment
-        Intent i = getIntent();
-        diff = i.getStringExtra("DIFF");
-
         progress = new ProgressDialog(GameActivity.this);
         progress.setMessage(getString(R.string.loading));
         progress.show();
 
-        isPaused = false;
         linkButtons();
 
         currentBoard = createEmptyBoard();
-        solution = createEmptyBoard();
+
+        //get the desired difficulty from DifficultyFragment
+        Intent i = getIntent();
+        diff = i.getStringExtra("DIFF");
 
         //if diff is null, then we resume the current game.
         if(diff == null){
             //TODO, resume previous game
         }
         else{
-            initializeNewGame();
+            generateNewGame(diff);
         }
 
         white_Draw = getDrawable(R.drawable.grid_b).getConstantState();
         white_BMP = buildBitmap(getDrawable(R.drawable.grid_b));
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopThread();
+    public int getTimeTotal(){
+        return 0; //Implement how to return total time if returning
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isPaused = true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isPaused = false;
-    }
-
-    private void startTimeThread(final int start){
-        t = new Thread() {
-            @SuppressLint("SetTextI18n")
+    private void startTimeThread(){
+        new Thread(){
             @Override
-            public void run() {
-                while (!isInterrupted()) {
-                    if(isPaused){
-                        try {
-                            sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    else{
-                        timeTotal = (int) SystemClock.currentThreadTimeMillis() / 1000 + start;
-                        timeTaken.setText(DateUtils.formatElapsedTime(timeTotal));
+            public void run(){
+                while(!isInterrupted()){
+                    try{
+                        Thread.sleep(1000);
+                        timeTaken.setText(String.valueOf(timeTotal));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                timeTaken.setText(DateUtils.formatElapsedTime(timeTotal++));
+                            }
+                        });
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
                     }
                 }
             }
-        };
-        t.start();
-    }
-
-    private void stopThread(){
-        while(!t.isInterrupted()){
-            t.interrupt();
-        }
-        t = null;
+        }.start();
     }
 
     @Override
@@ -154,7 +126,6 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
         }
         status = findViewById(R.id.opField);
         timeTaken = findViewById(R.id.timeField);
-        api = new APIhandler(diff);
     }
 
     private void checkBoard(){
@@ -162,26 +133,21 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
             winPopup();
         }
         else{
-            winPopup();
-            //Toast.makeText(GameActivity.this, "Incorrect", Toast.LENGTH_SHORT).show();
+            Toast.makeText(GameActivity.this, "Incorrect", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void winPopup() {
-        if(t.isAlive() || t.isDaemon()){
-            stopThread();
-        }
-
+    private void winPopup(){
         AlertDialog.Builder msg = new AlertDialog.Builder(this);
         msg.setTitle("Congratulations!");
-        msg.setMessage("Your time was " + Integer.toString(timeTotal));
+        msg.setMessage("Your time was <time>" );
         msg.setCancelable(true);
         msg.setNeutralButton("New puzzle",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         resetBoard();
-                        initializeNewGame();
+                        generateNewGame(diff);
                     }
                 });
         msg.setNegativeButton("Main menu",
@@ -267,9 +233,6 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
                     cell.setTypeface(null, Typeface.BOLD);
                     cell.setBackground(getDrawable(R.drawable.grid_x));
                 }
-                else{
-                    cell.setBackground(getDrawable(R.drawable.grid_b));
-                }
             }
         }
     }
@@ -300,16 +263,59 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
     }
 
 
-    //sets up a new game from the received JsonObjcet from the API
-    private void initializeNewGame(){
-        currentBoard = parseJsonArrayToInt(api.generateNewGame(this), currentBoard);
+    //Should take in a difficulty parameter (easy, medium or hard) and fetch a json sudoku puzzle from an API
+    private void generateNewGame(String difficulty){
+        String url = "https://sugoku2.herokuapp.com/board?difficulty=" + difficulty;
+        Ion.with(this)
+                .load(url)
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        if(e == null){
 
-        solution = parseJsonArrayToInt(api.getSolution(currentBoard, this), solution);
+                            JsonArray arr = result.getAsJsonArray("board");
+                            currentBoard = parseJsonArrayToInt(arr);
+                            getSolution(currentBoard);
+                            countEmptyCells(currentBoard);
+                            showCurrentGame(currentBoard);
 
-        countEmptyCells(currentBoard);
-        showCurrentGame(currentBoard);
-        startTimeThread(0);
-        progress.cancel();
+                            SystemClock.sleep(1000);
+
+                            timeTotal = getTimeTotal();
+                            startTimeThread();
+                            progress.cancel();
+                        }
+                        else{
+                            //kannski breyta þessu
+                            Toast.makeText(GameActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
+    //Gets the solution to the game and saves it in the 'solution' private variable.
+    // Should be called by generateNewGame()
+    private void getSolution(int[][] game){
+        String stringBoard = convertBoardToString(game);
+        String url = "https://sugoku2.herokuapp.com/solve";
+        Ion.with(this)
+                .load(url)
+                .setMultipartParameter("board", stringBoard)
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        if(e == null){
+                            JsonArray arr = result.getAsJsonArray("solution");
+                            solution = parseJsonArrayToInt(arr);
+                        }
+                        else{
+                            //kannski breyta þessu
+                            Toast.makeText(GameActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 
     //compares the current board to the solution. True = solved, false = unsolved
@@ -317,7 +323,40 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
         return currentBoard == solution;
     }
 
+    //should parse the JsonArrays containing the boards to a two dimensional int array
+    private int[][] parseJsonArrayToInt(JsonArray arr){
+        int[][] board = createEmptyBoard();
+        int inner = 0;
+        int outer = 0;
+        for(JsonElement i : arr){
+            JsonArray innerArr = i.getAsJsonArray();
+            for(JsonElement j : innerArr){
+                board[outer][inner] = j.getAsInt();
+                ++inner;
+            }
+            ++outer;
+            inner = 0;
+        }
+        return board;
+    }
 
+    //converts the 2 dimensional array into a string. Used by getSolution()
+    private String convertBoardToString(int[][] game){
+        StringBuilder result = new StringBuilder("[[");
+        for(int i = 0 ; i < 9 ; i++){
+            for(int j = 0 ; j < 9 ; j++){
+                result.append(Integer.toString(game[i][j]));
+                if(j != 8){
+                    result.append(",");
+                }
+            }
+            if(i != 8){
+                result.append("],[");
+            }
+        }
+        result.append("]]");
+        return result.toString();
+    }
 
     public void changeBackground(TextView field){
 
@@ -351,21 +390,5 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
         img.draw(canvas);
 
         return out;
-    }
-
-    //should parse the JsonArrays containing the boards to a two dimensional int array
-    private int[][] parseJsonArrayToInt(JsonArray arr, int[][] board){
-        int inner = 0;
-        int outer = 0;
-        for(JsonElement i : arr){
-            JsonArray innerArr = i.getAsJsonArray();
-            for(JsonElement j : innerArr){
-                board[outer][inner] = j.getAsInt();
-                ++inner;
-            }
-            ++outer;
-            inner = 0;
-        }
-        return board;
     }
 }
