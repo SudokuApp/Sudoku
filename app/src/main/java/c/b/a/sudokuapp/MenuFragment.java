@@ -186,7 +186,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             newGame();
         }
         else if(v == resume) {
-            //startActivity(new Intent(a, GameActivity.class));
+            startActivity(new Intent(a, GameActivity.class));
         }
 
     }
