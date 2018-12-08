@@ -32,7 +32,7 @@ public class Timer {
     public void startTimeThread(final int start, final TextView timeTaken){
         if(t != null){
             stopThread();
-        }
+        } 
         t = new Thread() {
             @SuppressLint("SetTextI18n")
             @Override

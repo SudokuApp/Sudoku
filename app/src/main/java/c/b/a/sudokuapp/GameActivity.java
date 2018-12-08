@@ -35,7 +35,7 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
     private int buttonGroupArr[];
     private int cells[];
     private int emptyCells;
-    private Timer timer;
+    private Timer timer; //Timer
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
     private ProgressDialog progress;
