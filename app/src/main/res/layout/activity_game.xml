@@ -1,14 +1,351 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameActivity"
     android:orientation="vertical"
-    android:padding="7dp">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    android:padding="7dp"
+    tools:context=".GameActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnGroup1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHeight_percent="0.5">
+
+        <TableLayout
+            android:id="@+id/grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="-1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <!--
+            Each column in a table row calls the fragment called "button_group"
+            this eases the burden of maintaining the outlook of the cells and their function
+            -->
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1111">
+                <fragment
+                    android:id="@+id/group0"
+                    android:name="c.b.a.sudokuapp.fragments.ButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="92dp"
+                    android:layout_weight="0.1111"
+                    android:tag="0" />
+            </TableRow>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1111">
+                <fragment
+                    android:id="@+id/group1"
+                    android:name="c.b.a.sudokuapp.fragments.ButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="92dp"
+                    android:layout_weight="0.11111"
+                    android:tag="1" />
+            </TableRow>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1111">
+                <fragment
+                    android:id="@+id/group2"
+                    android:name="c.b.a.sudokuapp.fragments.ButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="92dp"
+                    android:layout_weight="0.11111"
+                    android:tag="2" />
+            </TableRow>
+            <TableRow android:background="@drawable/row1"/>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1111">
+                <fragment
+                    android:id="@+id/group3"
+                    android:name="c.b.a.sudokuapp.fragments.ButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="92dp"
+                    android:layout_weight="0.11111"
+                    android:tag="3" />
+            </TableRow>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1111">
+                <fragment
+                    android:id="@+id/group4"
+                    android:name="c.b.a.sudokuapp.fragments.ButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="92dp"
+                    android:layout_weight="0.11111"
+                    android:tag="4" />
+            </TableRow>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1111">
+                <fragment
+                    android:id="@+id/group5"
+                    android:name="c.b.a.sudokuapp.fragments.ButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="92dp"
+                    android:layout_weight="0.11111"
+                    android:tag="5" />
+            </TableRow>
+            <TableRow android:background="@drawable/row1"/>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1111">
+                <fragment
+                    android:id="@+id/group6"
+                    android:name="c.b.a.sudokuapp.fragments.ButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="92dp"
+                    android:layout_weight="0.11111"
+                    android:tag="6" />
+            </TableRow>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1111">
+                <fragment
+                    android:id="@+id/group7"
+                    android:name="c.b.a.sudokuapp.fragments.ButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="92dp"
+                    android:layout_weight="0.11111"
+                    android:tag="7" />
+            </TableRow>
+            <TableRow
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1111">
+                <fragment
+                    android:id="@+id/group8"
+                    android:name="c.b.a.sudokuapp.fragments.ButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="92dp"
+                    android:layout_weight="0.11111"
+                    android:tag="8" />
+            </TableRow>
+        </TableLayout>
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/btnGroup1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="7dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/btnGroup2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+        <Button
+            android:id="@+id/btn1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="operation"
+            android:text="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn2"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="operation"
+            android:text="2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn3"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="operation"
+            android:text="3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn4"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="operation"
+            android:text="4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn5"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn3"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="operation"
+            android:text="5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn4"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/btnGroup2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="7dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnGroup1">
+
+        <Button
+            android:id="@+id/btn6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="operation"
+            android:text="6"
+            app:layout_constraintEnd_toStartOf="@+id/btn7"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="operation"
+            android:text="7"
+            app:layout_constraintEnd_toStartOf="@+id/btn8"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn6" />
+
+        <Button
+            android:id="@+id/btn8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="operation"
+            android:text="8"
+            app:layout_constraintEnd_toStartOf="@+id/btn9"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn7" />
+
+        <Button
+            android:id="@+id/btn9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="operation"
+            android:text="9"
+            app:layout_constraintEnd_toStartOf="@+id/btnMark"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn8" />
+
+        <Button
+            android:id="@+id/btnMark"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="operation"
+            android:text="\?"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn9" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnGroup2">
+
+        <Button
+            android:id="@+id/returnBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="goBack"
+            android:text="Go Back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/checkForWin_btn"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/opField" />
+
+        <Button
+            android:id="@+id/checkForWin_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Submit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/returnBtn"
+            app:layout_constraintTop_toBottomOf="@+id/opField" />
+
+        <TextView
+            android:id="@+id/opField"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textAlignment="center"
+            android:textSize="18dp"
+            app:layout_constraintLeft_toLeftOf="@id/constraintLayout2"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:id="@+id/timeField"
+            android:textAlignment="textEnd"
+            app:layout_constraintLeft_toRightOf="@id/opField"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
+    </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>
