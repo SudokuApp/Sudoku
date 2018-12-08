@@ -13,6 +13,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -25,6 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
         password = findViewById(R.id.passwordred);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //if you are logged in, you should go straight to the menu activity
         if(firebaseAuth.getCurrentUser() != null) {
@@ -62,6 +66,9 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             progressDialog.dismiss();
                             if(task.isSuccessful()) {
+                                writeNewUser(em);
+
+
                                 startActivity(new Intent(getApplicationContext(), MenuActivity.class));
                                 finish();
 
@@ -112,5 +119,15 @@ public class RegisterActivity extends AppCompatActivity {
     public void goToLogin(View v) {
         startActivity(new Intent(this, LoginActivity.class));
         finish();
+    }
+
+    private void writeNewUser(String email) {
+
+
+        User user = new User();
+
+        mDatabase.child("users").child(firebaseAuth.getUid()).setValue(user);
+
+                // public User(int[][] currentGame, int[][] solution, String currentTime, String[] easyHighScores, String[] mediumHighScores, String[] hardHighScores, int totalCompleted)
     }
 }

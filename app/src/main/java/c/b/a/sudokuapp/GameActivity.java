@@ -47,6 +47,32 @@ public class GameActivity extends AppCompatActivity {
         return board;
     }
 
+    private int[][] stringToInt(String string) {
+        int[][] board = new int[9][9];
+
+        for(int i = 0 ; i < string.length() ; i ++){
+            for(int j = 0 ; j < 9 ; j++) {
+                for(int k = 0 ; k < 9 ; k++) {
+                    board[j][k] = Character.getNumericValue(string.charAt(i));
+                }
+            }
+        }
+        return board;
+    }
+
+    private String intToString(int[][] array) {
+        String string = "";
+        for(int i = 0 ; i < 9 ; i++) {
+            for(int j = 0 ; j < 9 ; j++) {
+                string = string + (char) array[i][j];
+            }
+        }
+
+        return string;
+    }
+
+
+
 
     //Should take in a difficulty parameter (easy, medium or hard) and fetch a json sudoku puzzle from an API
     private void generateNewGame(String difficulty){

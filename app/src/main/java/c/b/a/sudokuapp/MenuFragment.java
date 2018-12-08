@@ -22,6 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import static c.b.a.sudokuapp.LoginActivity.acco;
 import static c.b.a.sudokuapp.LoginActivity.account;
 
 
@@ -89,7 +90,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         super.onStart();
 
         // If user is not logged in, he/she is taken to the login screen
-        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn && account == null) {
+        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn && acco == null) {
             a.finish();
             a.startActivity(new Intent(a, LoginActivity.class));
         }
@@ -98,7 +99,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         if(isLoggedIn) {
             userTxt.setText(getString(R.string.welcome_user)); // TODO þarf að finna hvernig email eða nafn frá facebook
         }
-        else if(account != null) {
+        else if(acco != null) {
             userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
         }
         else {
@@ -162,7 +163,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         if(isLoggedIn) {
             LoginManager.getInstance().logOut();
             firebaseAuth.signOut();
-        } else if(account != null) {
+        } else if(acco != null) {
             firebaseAuth.signOut();
             mGoogleSignInClient.signOut();
         } else if(firebaseAuth.getCurrentUser() != null) {
