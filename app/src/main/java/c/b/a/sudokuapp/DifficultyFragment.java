@@ -150,13 +150,13 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
      * @param diff
      */
 
-    /*
+
     private void startGame(String diff){
         a.finish();
         Intent intent = new Intent(a, GameActivity.class);
         intent.putExtra("DIFF", diff);
         startActivity(intent);
-    }*/
+    }
 
     /**
      * Called when the log out button is clicked.
@@ -186,7 +186,7 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         if(v == logout) {
             logout();
         }
-        /*
+
         if(v == easy) {
             startGame("easy");
         }
@@ -196,6 +196,6 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         if(v == hard) {
             startGame("hard");
         }
-        */
+
     }
 }
