@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -35,6 +34,7 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
     private int buttonGroupArr[];
     private int cells[];
     private int emptyCells;
+    private Logic logic;
     private Timer timer; //Timer
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
@@ -49,15 +49,12 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
         Intent i = getIntent();
         diff = i.getStringExtra("DIFF");
 
-        progress = new ProgressDialog(GameActivity.this);
-        progress.setMessage(getString(R.string.loading));
-        progress.show();
-
         linkButtons();
         timer = new Timer();
+        logic = new Logic();
 
-        currentBoard = createEmptyBoard();
-        solution = createEmptyBoard();
+        currentBoard = logic.createEmptyBoard();
+        solution = logic.createEmptyBoard();
 
         //if diff is null, then we resume the current game.
         if(diff == null){
@@ -66,9 +63,6 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
         else{
             initializeNewGame();
         }
-
-        white_Draw = Objects.requireNonNull(getDrawable(R.drawable.grid_b)).getConstantState();
-        white_BMP = buildBitmap(Objects.requireNonNull(getDrawable(R.drawable.grid_b)));
     }
 
     @Override
@@ -120,6 +114,8 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
         }
         status = findViewById(R.id.opField);
         timeTaken = findViewById(R.id.timeField);
+        white_Draw = Objects.requireNonNull(getDrawable(R.drawable.grid_b)).getConstantState();
+        white_BMP = buildBitmap(Objects.requireNonNull(getDrawable(R.drawable.grid_b)));
     }
 
     private void checkBoard(){
@@ -127,8 +123,7 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
             winPopup();
         }
         else{
-            winPopup();
-            //Toast.makeText(GameActivity.this, "Incorrect", Toast.LENGTH_SHORT).show();
+            Toast.makeText(GameActivity.this, "Incorrect", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -240,32 +235,21 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
         finish();
     }
 
-    private void countEmptyCells(int[][] board){
-        emptyCells = 0;
-        for(int i = 0 ; i < 9 ; i++){
-            for(int j = 0 ; j < 9 ; j++){
-                if(board[i][j] == 0){
-                    emptyCells++;
-                }
-            }
-        }
-    }
-
-    //creates an empty 9x9 integer array
-    private int[][] createEmptyBoard(){
-        int[][] board = new int[9][];
-
-        for(int i = 0 ; i < 9 ; i++){
-            board[i] = new int[9];
-        }
-        return board;
-    }
-
 
     //sets up a new game from the received JsonObjcet from the API
     private void initializeNewGame(){
+
+        progress = new ProgressDialog(this);
+        progress.setMessage(getString(R.string.loading));
+        progress.show();
+
         resetBoard();
         generateNewGame(diff);
+
+        if(progress.isShowing()){
+            progress.hide();
+        }
+
         timer.startTimeThread(0, timeTaken);
     }
 
@@ -310,22 +294,6 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
         return out;
     }
 
-    //should parse the JsonArrays containing the boards to a two dimensional int array
-    private int[][] parseJsonArrayToInt(JsonArray arr){
-        int[][] board = createEmptyBoard();
-        int inner = 0;
-        int outer = 0;
-        for(JsonElement i : arr){
-            JsonArray innerArr = i.getAsJsonArray();
-            for(JsonElement j : innerArr){
-                board[outer][inner] = j.getAsInt();
-                ++inner;
-            }
-            ++outer;
-            inner = 0;
-        }
-        return board;
-    }
 
 
     //Should take in a difficulty parameter (easy, medium or hard) and fetch a json sudoku puzzle from an API
@@ -340,11 +308,10 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
                         if(e == null){
 
                             JsonArray arr = result.getAsJsonArray("board");
-                            currentBoard = parseJsonArrayToInt(arr);
-                            getSolution(currentBoard);
-                            countEmptyCells(currentBoard);
+                            currentBoard = logic.parseJsonArrayToInt(arr);
+                            emptyCells = logic.countEmptyCells(currentBoard);
                             showCurrentGame(currentBoard);
-                            progress.cancel();
+                            getSolution(currentBoard);
                         }
                         else{
                             //kannski breyta þessu
@@ -357,7 +324,7 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
     //Gets the solution to the game and saves it in the 'solution' private variable.
     // Should be called by generateNewGame()
     private void getSolution(int[][] game){
-        String stringBoard = convertBoardToString(game);
+        String stringBoard = logic.convertBoardToString(game);
         String url = "https://sugoku2.herokuapp.com/solve";
         Ion.with(this)
                 .load(url)
@@ -368,7 +335,7 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
                     public void onCompleted(Exception e, JsonObject result) {
                         if(e == null){
                             JsonArray arr = result.getAsJsonArray("solution");
-                            solution = parseJsonArrayToInt(arr);
+                            solution = logic.parseJsonArrayToInt(arr);
                         }
                         else{
                             //kannski breyta þessu
@@ -378,21 +345,4 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
                 });
     }
 
-    //converts the 2 dimensional array into a string. Used by getSolution()
-    private String convertBoardToString(int[][] game){
-        StringBuilder result = new StringBuilder("[[");
-        for(int i = 0 ; i < 9 ; i++){
-            for(int j = 0 ; j < 9 ; j++){
-                result.append(Integer.toString(game[i][j]));
-                if(j != 8){
-                    result.append(",");
-                }
-            }
-            if(i != 8){
-                result.append("],[");
-            }
-        }
-        result.append("]]");
-        return result.toString();
-    }
 }
