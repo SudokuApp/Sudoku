@@ -28,6 +28,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * A simple login screen where an existing user can sign in to his/her account
@@ -46,8 +47,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private GoogleSignInOptions gso;
     private GoogleSignInClient mGoogleSignInClient;
     // Used in MenuFragment and DifficultyFragment to know if user is logged in with Google
+    private GoogleSignInAccount accountGoogle;
     public static GoogleSignInAccount account;
-    public static GoogleSignInAccount acco;
     private SignInButton signInButton;
 
     // Variables for Facebook sign-in
@@ -76,12 +77,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onStart();
 
         // If user is logged in, he/she is taken to the Main Menu
-        if (firebaseAuth.getCurrentUser() != null || isLoggedIn || account != null) {
+        if (firebaseAuth.getCurrentUser() != null || isLoggedIn || accountGoogle != null) {
             startActivity(new Intent(getApplicationContext(), MenuActivity.class));
             finish();
         }
     }
-
 
 
 
@@ -93,6 +93,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onSuccess(LoginResult loginResult) {
                 AuthCredential credential = FacebookAuthProvider.getCredential(loginResult.getAccessToken().getToken());
                 handleAccessToken(credential);
+
             }
 
             @Override
@@ -135,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-        account = GoogleSignIn.getLastSignedInAccount(this);
+        accountGoogle = GoogleSignIn.getLastSignedInAccount(this);
         signInButton = findViewById(R.id.sign_in_button);
 
 
@@ -234,8 +235,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
 
-            acco = completedTask.getResult(ApiException.class);
-            AuthCredential credential = GoogleAuthProvider.getCredential(acco.getIdToken(), null);
+            account = completedTask.getResult(ApiException.class);
+            AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
             handleAccessToken(credential);
             //goToMainMenu();
         } catch (ApiException e) {
@@ -250,6 +251,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+
                             goToMainMenu();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -271,5 +273,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             signIn();
         }
     }
+
+
 }
 

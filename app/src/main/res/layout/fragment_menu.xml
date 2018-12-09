@@ -111,6 +111,7 @@
             android:layout_marginBottom="20dp"
             android:width="150dp"
             android:text="Eigin scores??" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -10,10 +10,15 @@ public class User {
     private String mediumHighScores;
     private String hardHighScores;
     private int totalCompleted;
+    private String email;
 
     //total games? number of cancelled games?
 
     public User() {
+
+    }
+
+    public User(String email) {
         this.currentGame = "";
         this.solution = "";
         this.currentTime = "";
@@ -21,8 +26,14 @@ public class User {
         this.mediumHighScores = "";
         this.hardHighScores = "";
         this.totalCompleted = 0;
+        this.email = email;
 
     }
+
+    public String getEmail() {
+        return email;
+    }
+
 
     public void setCurrentGame(String currentGame) {
         this.currentGame = currentGame;

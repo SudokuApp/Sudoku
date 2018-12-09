@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,8 +22,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import static c.b.a.sudokuapp.LoginActivity.acco;
 import static c.b.a.sudokuapp.LoginActivity.account;
 
 
@@ -54,6 +59,14 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     private GoogleSignInOptions gso;
     private GoogleSignInClient mGoogleSignInClient;
 
+    public static User currUser;
+
+    private DatabaseReference ref;
+    private DatabaseReference userRef;
+    private FirebaseDatabase mDatabase;
+
+
+
     public MenuFragment() {
         // Required empty public constructor
     }
@@ -78,8 +91,27 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
         // Set variables
         setVariables();
+
+
+        userRef.addValueEventListener(new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                  currUser = dataSnapshot.getValue(User.class);
+
+                  if(currUser.getCurrentGame().equals("")) {
+                      resume.setEnabled(false);
+                  }
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError databaseError) {
+
+              }
+          });
 
         // Set click listeners
         setClickListeners();
@@ -90,7 +122,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         super.onStart();
 
         // If user is not logged in, he/she is taken to the login screen
-        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn && acco == null) {
+        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn && account == null) {
             a.finish();
             a.startActivity(new Intent(a, LoginActivity.class));
         }
@@ -98,9 +130,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         // Say welcome to the user, using their email // TODO breyta ef við höfum eð annað en email
         if(isLoggedIn) {
             userTxt.setText(getString(R.string.welcome_user)); // TODO þarf að finna hvernig email eða nafn frá facebook
-        }
-        else if(acco != null) {
-            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
         }
         else {
             userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
@@ -141,6 +170,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(a, gso);
 
+        mDatabase = FirebaseDatabase.getInstance();
+        ref = mDatabase.getReference("users");
+        userRef = ref.child(firebaseAuth.getUid());
+
     }
 
     /**
@@ -163,7 +196,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         if(isLoggedIn) {
             LoginManager.getInstance().logOut();
             firebaseAuth.signOut();
-        } else if(acco != null) {
+        } else if(account != null) {
             firebaseAuth.signOut();
             mGoogleSignInClient.signOut();
         } else if(firebaseAuth.getCurrentUser() != null) {

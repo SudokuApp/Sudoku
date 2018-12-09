@@ -7,12 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -27,7 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     private FirebaseAuth firebaseAuth;
-    private DatabaseReference mDatabase;
+    private DatabaseReference refMakeNewUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
         password = findViewById(R.id.passwordred);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        refMakeNewUser = FirebaseDatabase.getInstance().getReference();
 
         //if you are logged in, you should go straight to the menu activity
         if(firebaseAuth.getCurrentUser() != null) {
@@ -68,14 +69,14 @@ public class RegisterActivity extends AppCompatActivity {
                             if(task.isSuccessful()) {
                                 writeNewUser(em);
 
-
                                 startActivity(new Intent(getApplicationContext(), MenuActivity.class));
                                 finish();
 
-                            } else if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                //if the email is taken
-                                email.requestFocus();
-                                email.setError(getString(R.string.emailTaken));
+                            } else if(task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                    email.requestFocus();
+                                    email.setError("Email taken");
+                            } else {
+                                Toast.makeText(RegisterActivity.this, "Registration failed", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -123,11 +124,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void writeNewUser(String email) {
 
+        User user = new User(email);
 
-        User user = new User();
-
-        mDatabase.child("users").child(firebaseAuth.getUid()).setValue(user);
-
-                // public User(int[][] currentGame, int[][] solution, String currentTime, String[] easyHighScores, String[] mediumHighScores, String[] hardHighScores, int totalCompleted)
+        refMakeNewUser.child("users").child(firebaseAuth.getUid()).setValue(user);
     }
 }

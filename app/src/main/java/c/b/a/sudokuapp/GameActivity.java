@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,13 @@ import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -24,6 +32,8 @@ import com.koushikdutta.ion.Ion;
 
 import c.b.a.sudokuapp.fragments.ButtonGroup;
 
+import static c.b.a.sudokuapp.MenuFragment.currUser;
+
 public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFragmentInteractionListener{
 
     private String input = "";
@@ -31,7 +41,7 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
     private int[][] currentBoard; //the current state of the board
     private int[][] solution;   //the solution to the current game
 
-    private TextView status, timeTaken;
+    private TextView status, timeTaken, testext;
     private int buttonGroupArr[];
     private int cells[];
     private int emptyCells;
@@ -39,6 +49,11 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
     private ProgressDialog progress;
+    private FirebaseDatabase mDatabase;
+    private FirebaseAuth firebaseAuth;
+    private DatabaseReference ref;
+    private DatabaseReference userRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,24 +64,31 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
         progress.setMessage(getString(R.string.loading));
         progress.show();
 
+
+        mDatabase = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        ref = mDatabase.getReference("users");
+        userRef = ref.child(firebaseAuth.getUid());
+
         linkButtons();
 
-        currentBoard = createEmptyBoard();
-
-        //get the desired difficulty from DifficultyFragment
         Intent i = getIntent();
         diff = i.getStringExtra("DIFF");
 
         //if diff is null, then we resume the current game.
         if(diff == null){
-            //TODO, resume previous game
+            currentBoard = stringToInt(currUser.getCurrentGame());
+            solution = stringToInt(currUser.getSolution());
+            resumeGame(currentBoard, solution);
         }
         else{
+            currentBoard = createEmptyBoard();
             generateNewGame(diff);
         }
 
         white_Draw = getDrawable(R.drawable.grid_b).getConstantState();
         white_BMP = buildBitmap(getDrawable(R.drawable.grid_b));
+
     }
 
     public int getTimeTotal(){
@@ -131,6 +153,8 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
     private void checkBoard(){
         if(isSolved()){
             winPopup();
+            userRef.child("currentGame").setValue("");
+            userRef.child("solution").setValue("");
         }
         else{
             Toast.makeText(GameActivity.this, "Incorrect", Toast.LENGTH_SHORT).show();
@@ -186,6 +210,7 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
     }
 
     public void operation(View view){
+
         switch(view.getId()){
             case R.id.btn1:
                 input = "1";
@@ -238,7 +263,9 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
     }
 
     public void goBack(View view){
-        finish();
+        saveToDatabase();
+        goToMainMenu();
+
     }
 
     private void countEmptyCells(int[][] board){
@@ -264,28 +291,33 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
 
     private int[][] stringToInt(String string) {
         int[][] board = new int[9][9];
+        int temp = 0;
 
-        for(int i = 0 ; i < string.length() ; i ++){
             for(int j = 0 ; j < 9 ; j++) {
                 for(int k = 0 ; k < 9 ; k++) {
-                    board[j][k] = Character.getNumericValue(string.charAt(i));
+                    board[j][k] = Character.getNumericValue(string.charAt(temp));
+                    temp++;
                 }
             }
-        }
         return board;
     }
 
     private String intToString(int[][] array) {
         String string = "";
+        char temp;
         for(int i = 0 ; i < 9 ; i++) {
             for(int j = 0 ; j < 9 ; j++) {
-                string = string + (char) array[i][j];
+                temp = Character.forDigit(array[i][j], 10);
+                string = string + temp;
             }
         }
-
         return string;
     }
 
+    private void saveToDatabase() {
+        userRef.child("currentGame").setValue(intToString(currentBoard));
+        userRef.child("solution").setValue(intToString(solution));
+    }
 
 
 
@@ -318,6 +350,17 @@ public class GameActivity extends AppCompatActivity implements ButtonGroup.OnFra
                         }
                     }
                 });
+    }
+
+    private void resumeGame(int[][] currentBoard, int[][] solution) {
+        countEmptyCells(currentBoard);
+        showCurrentGame(currentBoard);
+
+        SystemClock.sleep(1000);
+
+        timeTotal = getTimeTotal();
+        startTimeThread();
+        progress.cancel();
     }
 
     //Gets the solution to the game and saves it in the 'solution' private variable.

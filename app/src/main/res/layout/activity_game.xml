@@ -345,6 +345,10 @@
             android:textAlignment="textEnd"
             app:layout_constraintLeft_toRightOf="@id/opField"
             app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/testtext"/>
 
 
     </android.support.constraint.ConstraintLayout>
