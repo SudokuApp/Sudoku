@@ -1,8 +1,10 @@
 package c.b.a.sudokuapp.fragments;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,6 +32,9 @@ public class ButtonGroup extends Fragment {
     private Activity a;
     private Button[] buttons;
     private String input = "";
+    private TextView status;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
 
 
     public ButtonGroup() { }
@@ -47,6 +52,8 @@ public class ButtonGroup extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         a = getActivity();
+        sharedPref = a.getPreferences(Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
         linkButtons();
     }
 
@@ -60,14 +67,18 @@ public class ButtonGroup extends Fragment {
                 @Override
                 public void onClick(View v) {
                     input = v.getTag().toString();
+                    setOperator(input);
                 }
             });
         }
+        status = a.findViewById(R.id.opField);
     }
 
-    public String getInput(){
-        return input;
-    }
 
+    @SuppressLint("SetTextI18n")
+    public void setOperator(String in){
+        status.setText("Operation: "+in);
+        editor.putString(getString(R.string.input), input).commit();
+    }
 
 }

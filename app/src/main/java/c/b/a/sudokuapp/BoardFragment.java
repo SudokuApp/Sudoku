@@ -4,8 +4,10 @@ package c.b.a.sudokuapp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
@@ -43,7 +45,7 @@ public class BoardFragment extends Fragment {
     private int[][] currentBoard; //the current state of the board
     private int[][] solution;   //the solution to the current game
     private Activity a;
-    private TextView status, timeTaken;
+    private TextView timeTaken;
     private int emptyCells;
     private Logic logic;
     private Timer timer; //Timer
@@ -53,6 +55,7 @@ public class BoardFragment extends Fragment {
     private ProgressDialog progress;
     private int[][] cellIDs;
     private TextView[][] cellViews;
+    private SharedPreferences sharedPref;
 
 
     public BoardFragment() {
@@ -134,6 +137,7 @@ public class BoardFragment extends Fragment {
         boardlinker = new BoardLinker(a);
         cellIDs = boardlinker.cellIDs;
         cellViews = boardlinker.cellViews;
+        sharedPref = a.getPreferences(Context.MODE_PRIVATE);
 
         for(int i = 0 ; i < 9 ; i++){
             for(int j = 0 ; j < 9 ; j++){
@@ -142,13 +146,13 @@ public class BoardFragment extends Fragment {
                 cellViews[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        input = sharedPref.getString(getString(R.string.input), "");
                         cellClicked(finalI, finalJ, v);
                     }
                 });
             }
         }
 
-        status = a.findViewById(R.id.opField);
         timeTaken = a.findViewById(R.id.timeField);
         white_Draw = Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)).getConstantState();
         white_BMP = buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
@@ -205,11 +209,6 @@ public class BoardFragment extends Fragment {
         Intent intent = new Intent(a, MenuActivity.class);
         startActivity(intent);
         a.finish();
-    }
-
-    @SuppressLint("SetTextI18n")
-    public void setOperator(String in){
-        status.setText("Operation: "+in);
     }
 
     @SuppressLint("SetTextI18n")

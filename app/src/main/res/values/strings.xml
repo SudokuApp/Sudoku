@@ -32,6 +32,7 @@
 
     <string name="time"><![CDATA[<Time>]]></string>
     <string name="loading">Loading...</string>
+    <string name="input">INPUT</string>
 
 
 </resources>
