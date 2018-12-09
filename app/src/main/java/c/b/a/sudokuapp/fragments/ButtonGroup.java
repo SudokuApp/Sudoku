@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,64 +26,48 @@ import static android.widget.Toast.makeText;
  */
 public class ButtonGroup extends Fragment {
 
-    private int gridID;
-    private OnFragmentInteractionListener listener;
+
+    private Activity a;
+    private Button[] buttons;
+    private String input = "";
+
 
     public ButtonGroup() { }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-    }
-
-
-    public int [] getGrid(){
-        return new int[]{R.id.t0, R.id.t1, R.id.t2, R.id.t3, R.id.t4, R.id.t5, R.id.t6, R.id.t7, R.id.t8};
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_button_group, container, false);
-        View view = inflater.inflate(R.layout.fragment_button_group, container, false);
-        int gridBoxes[] = getGrid();
-        for(int id : gridBoxes){
-            TextView textView = view.findViewById(id);
-            textView.setOnClickListener(new View.OnClickListener() {
+        return inflater.inflate(R.layout.fragment_button_group, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        a = getActivity();
+        linkButtons();
+    }
+
+    private void linkButtons(){
+        buttons = new Button[]{a.findViewById(R.id.btn1), a.findViewById(R.id.btn2),a.findViewById(R.id.btn3),
+                a.findViewById(R.id.btn4),a.findViewById(R.id.btn5),a.findViewById(R.id.btn6),a.findViewById(R.id.btn7),
+                a.findViewById(R.id.btn8),a.findViewById(R.id.btn9),a.findViewById(R.id.btnMark)};
+
+        for(Button b : buttons){
+            b.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    listener.onFragmentInteraction(gridID, Integer.parseInt(view.getTag().toString()), view);
+                public void onClick(View v) {
+                    input = v.getTag().toString();
                 }
             });
         }
-        return view;
     }
 
-    public void setGridID(int gridID){
-
-        this.gridID = gridID;
+    public String getInput(){
+        return input;
     }
 
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        if(context instanceof OnFragmentInteractionListener){
-            listener = (OnFragmentInteractionListener) context;
-        }
-        else{
-            throw new RuntimeException(context.toString());
-        }
-    }
-
-    @Override
-    public void onDetach(){
-        super.onDetach();
-        listener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(int row, int cell, View view);
-    }
 
 }
