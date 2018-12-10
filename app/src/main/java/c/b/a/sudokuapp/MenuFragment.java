@@ -121,15 +121,11 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
               public void onCancelled(@NonNull DatabaseError databaseError) {
 
               }
-
-
           });
 
         // Set click listeners
         setClickListeners();
     }
-
-
 
     @Override
     public void onStart() {
@@ -141,12 +137,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             a.startActivity(new Intent(a, LoginActivity.class));
         }
 
-        // Say welcome to the user, using their email // TODO breyta ef við höfum eð annað en email
-        if(isLoggedIn) {
-            userTxt.setText(getString(R.string.welcome_user)); // TODO þarf að finna hvernig email eða nafn frá facebook
-        }
-        else {
+        if(firebaseAuth.getCurrentUser() != null){
+            //If the user comes from firebase
             userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
+        } else {
+            //if the user comes from google or facebook
+            userTxt.setText(getString(R.string.welcome_user) + firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail());
         }
     }
 

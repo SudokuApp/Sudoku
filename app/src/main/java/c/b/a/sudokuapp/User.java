@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 
 public class User {
     private String currentGame;
+    private String userSolution;
     private String solution;
     private int currentTime;
     private int easyHighScores;
@@ -21,6 +22,7 @@ public class User {
     public User(String email) {
         this.currentGame = "";
         this.solution = "";
+        this.userSolution = "";
         this.currentTime = 0;
         this.easyHighScores = 0;
         this.mediumHighScores = 0;
@@ -30,13 +32,48 @@ public class User {
 
     }
 
+    public String getCurrentGame() {
+        return currentGame;
+    }
+
+    public String getUserSolution() {
+        return userSolution;
+    }
+
+    public String getSolution() {
+        return solution;
+    }
+
+    public int getCurrentTime() {
+        return currentTime;
+    }
+
+    public int getEasyHighScores() {
+        return easyHighScores;
+    }
+
+    public int getMediumHighScores() {
+        return mediumHighScores;
+    }
+
+    public int getHardHighScores() {
+        return hardHighScores;
+    }
+
+    public int getTotalCompleted() {
+        return totalCompleted;
+    }
+
     public String getEmail() {
         return email;
     }
 
-
     public void setCurrentGame(String currentGame) {
         this.currentGame = currentGame;
+    }
+
+    public void setUserSolution(String userSolution) {
+        this.userSolution = userSolution;
     }
 
     public void setSolution(String solution) {
@@ -63,32 +100,7 @@ public class User {
         this.totalCompleted = totalCompleted;
     }
 
-    public String getCurrentGame() {
-
-        return currentGame;
-    }
-
-    public String getSolution() {
-        return solution;
-    }
-
-    public int getCurrentTime() {
-        return currentTime;
-    }
-
-    public int getEasyHighScores() {
-        return easyHighScores;
-    }
-
-    public int getMediumHighScores() {
-        return mediumHighScores;
-    }
-
-    public int getHardHighScores() {
-        return hardHighScores;
-    }
-
-    public int getTotalCompleted() {
-        return totalCompleted;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -24,15 +24,10 @@
     <string name="easy">Easy</string>
     <string name="medium">Medium</string>
     <string name="hard">Hard</string>
-
     <string name="facebook_app_id">313601652830022</string>
     <string name="fb_login_protocol_scheme">8a9157c2ee903be5543e146977c87571</string>
-
-    <!-- 313601652830022  8a9157c2ee903be5543e146977c87571 fb313601652830022 -->
-
     <string name="time"><![CDATA[<Time>]]></string>
     <string name="loading">Loading...</string>
     <string name="high_scores">High scores</string>
-
-
+    <string name="input">INPUT</string>
 </resources>
