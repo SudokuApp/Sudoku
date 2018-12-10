@@ -126,12 +126,14 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        saveToDatabase();
         timer.stopThread();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        saveToDatabase();
         timer.pauseTimer();
     }
 
@@ -444,8 +446,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         showCurrentGame(stringToInt(initialBoard));
         showCurrentSolution();
 
-
-        SystemClock.sleep(1000);
 
         timer.startTimeThread(currUser.getCurrentTime(), timeTaken);
         progress.cancel();
