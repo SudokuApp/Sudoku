@@ -85,7 +85,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         a = getActivity();
         //get the desired difficulty from DifficultyFragment
@@ -186,7 +186,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         timeTaken = a.findViewById(R.id.timeField);
         white_Draw = Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)).getConstantState();
-        white_BMP = buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
+        white_BMP = logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
     }
 
 
@@ -294,32 +294,12 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         if(img == null){
             return;
         }
-        if(!Objects.equals(img.getConstantState(), white_Draw) || !buildBitmap(img).sameAs(white_BMP)){
+        if(!Objects.equals(img.getConstantState(), white_Draw) || !logic.buildBitmap(img).sameAs(white_BMP)){
             field.setBackgroundResource(R.drawable.grid_b);
         }
         else{
             field.setBackgroundResource(R.drawable.grid_m);
         }
-    }
-
-    public static Bitmap buildBitmap(Drawable img){
-        Bitmap out; //Assuming no incoming drawable is a bitmap
-
-        int width = img.getIntrinsicWidth();
-        int height = img.getIntrinsicHeight();
-
-        if(width <= 0){
-            width = 1;
-        }
-        if(height <= 0){
-            height = 1;
-        }
-        out = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(out);
-        img.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        img.draw(canvas);
-
-        return out;
     }
 
 
@@ -448,8 +428,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         timer.startTimeThread(currUser.getCurrentTime(), timeTaken);
         progress.cancel();
     }
-
-
 
     @Override
     public void onClick(View v) {
