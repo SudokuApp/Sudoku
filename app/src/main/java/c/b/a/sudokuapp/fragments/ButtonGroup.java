@@ -68,6 +68,7 @@ public class ButtonGroup extends Fragment {
                 public void onClick(View v) {
                     input = v.getTag().toString();
                     setOperator(input);
+
                 }
             });
         }
