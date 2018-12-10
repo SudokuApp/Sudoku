@@ -25,8 +25,12 @@ public class Timer {
         return t.isAlive();
     }
 
-    public String getTime(){
+    public String getTimeReadable(){
         return DateUtils.formatElapsedTime((timeTotal));
+    }
+
+    public int getTime(){
+        return timeTotal;
     }
 
     public void startTimeThread(final int start, final TextView timeTaken){
