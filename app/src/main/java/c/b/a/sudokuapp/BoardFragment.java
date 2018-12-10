@@ -414,7 +414,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
         userRef.child("userSolution").setValue(current.toString());
         userRef.child("currentTime").setValue(timer.getTime());
-
     }
 
     private void showCurrentSolution() {
@@ -442,6 +441,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void resumeGame() {
         showResumedBoard();
+        String curr = intToString(currentBoard);
         logic.countEmptyCells(currentBoard);
         showCurrentGame(stringToInt(initialBoard));
         showCurrentSolution();
