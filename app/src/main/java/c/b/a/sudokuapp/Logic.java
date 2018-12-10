@@ -1,5 +1,9 @@
 package c.b.a.sudokuapp;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
@@ -66,5 +70,25 @@ public class Logic {
             board[i] = new int[9];
         }
         return board;
+    }
+
+    public static Bitmap buildBitmap(Drawable img){
+        Bitmap out; //Assuming no incoming drawable is a bitmap
+
+        int width = img.getIntrinsicWidth();
+        int height = img.getIntrinsicHeight();
+
+        if(width <= 0){
+            width = 1;
+        }
+        if(height <= 0){
+            height = 1;
+        }
+        out = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(out);
+        img.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        img.draw(canvas);
+
+        return out;
     }
 }

@@ -61,13 +61,13 @@ public class ScoreFragment extends Fragment {
     private void getHighScore() {
 
         if(currUser.getEasyHighScores() != Double.POSITIVE_INFINITY) {
-            userEasy.setText("Your high score for easy puzzles: " + Double.toString(currUser.getEasyHighScores()));
+            userEasy.setText("Your high score for easy puzzles:\n" + Double.toString(currUser.getEasyHighScores()));
         }
         if(currUser.getMediumHighScores() != Double.POSITIVE_INFINITY) {
-            userMedium.setText("Your high score for medium puzzles: " + Double.toString(currUser.getMediumHighScores()));
+            userMedium.setText("Your high score for medium puzzles:\n" + Double.toString(currUser.getMediumHighScores()));
         }
         if(currUser.getHardHighScores() != Double.POSITIVE_INFINITY) {
-            userHard.setText("Your high score for hard puzzles: " + Double.toString(currUser.getHardHighScores()));
+            userHard.setText("Your high score for hard puzzles:\n" + Double.toString(currUser.getHardHighScores()));
         }
     }
 
