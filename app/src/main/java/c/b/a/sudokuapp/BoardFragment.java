@@ -284,10 +284,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     //compares the current board to the solution. True = solved, false = unsolved
     private boolean isSolved(){
-        //showResumedBoard();
-        String one = intToString(currentBoard);
+        String userSol = intToString(currentBoard);
 
-        return one.equals(solution);
+        return userSol.equals(solution);
     }
 
 
@@ -397,7 +396,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showCurrentSolution() {
-        for(int i = 0 ; i < 9 ; i++){
+        for(int i = 0 ; i < 9 ; i++) {
             for(int j = 0 ; j < 9 ; j++){
                 if(stringToInt(userSolution)[i][j] != 0){
                     cellViews[i][j].setText(Integer.toString(stringToInt(userSolution)[i][j]));
@@ -409,11 +408,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private void combineBoards() {
 
         StringBuilder temp = new StringBuilder(initialBoard);
-        for(int i = 0 ; i < 9 ; i++){
-            for(int j = 0 ; j < 9 ; j++){
-                if(!(userSolution.charAt(i) == '0')){
-                    temp.setCharAt(i, userSolution.charAt(i));
-                }
+        for(int i = 0 ; i < 81 ; i++){
+            if(!(userSolution.charAt(i) == '0')){
+                temp.setCharAt(i, userSolution.charAt(i));
             }
         }
         currentBoard = stringToInt(temp.toString());
