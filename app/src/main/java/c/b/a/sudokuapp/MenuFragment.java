@@ -41,6 +41,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     private TextView logout;
     private Button newGame;
     private Button resume;
+    private Button highScore;
 
     // Authentication variables
     private FirebaseAuth firebaseAuth;
@@ -63,6 +64,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
     private DatabaseReference ref;
     private DatabaseReference userRef;
+    private DatabaseReference refMakeNewUser;
     private FirebaseDatabase mDatabase;
 
 
@@ -100,10 +102,18 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
               @Override
               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                  currUser = dataSnapshot.getValue(User.class);
+                  String email = firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail();
 
-                  if(currUser.getCurrentGame().equals("")) {
-                      resume.setEnabled(false);
+                  if(!dataSnapshot.exists()) {
+                      writeNewUser(email);
+                  }
+
+                    currUser = dataSnapshot.getValue(User.class);
+
+                  if(currUser != null) {
+                      if(currUser.getCurrentGame().equals("")) {
+                          resume.setEnabled(false);
+                      }
                   }
               }
 
@@ -111,11 +121,15 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
               public void onCancelled(@NonNull DatabaseError databaseError) {
 
               }
+
+
           });
 
         // Set click listeners
         setClickListeners();
     }
+
+
 
     @Override
     public void onStart() {
@@ -143,6 +157,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         logout.setOnClickListener(this);
         newGame.setOnClickListener(this);
         resume.setOnClickListener(this);
+        highScore.setOnClickListener(this);
     }
 
     /**
@@ -153,9 +168,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         userTxt = a.findViewById(R.id.user);
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
+        refMakeNewUser = FirebaseDatabase.getInstance().getReference();
+
         logout = a.findViewById(R.id.logout);
         newGame = a.findViewById(R.id.new_game_btn);
         resume = a.findViewById(R.id.resume_btn);
+        highScore = a.findViewById(R.id.highscore_btn);
 
         accessToken = AccessToken.getCurrentAccessToken();
         // Check if user is logged in via facebook
@@ -173,7 +191,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         mDatabase = FirebaseDatabase.getInstance();
         ref = mDatabase.getReference("users");
         userRef = ref.child(firebaseAuth.getUid());
-
     }
 
     /**
@@ -185,6 +202,18 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         fragmentManager = getFragmentManager();
 
         fragmentManager.beginTransaction().addToBackStack(null).replace(R.id.main_frag, new DifficultyFragment()).commit();
+        fragmentManager.executePendingTransactions();
+    }
+
+    /**
+     * Called when the "High score" button is clicked
+     * Shows 5 highest scores for each difficulty
+     * TODO bæta við global
+     */
+    private void getHighScore() {
+        fragmentManager = getFragmentManager();
+
+        fragmentManager.beginTransaction().addToBackStack(null).replace(R.id.main_frag, new ScoreFragment()).commit();
         fragmentManager.executePendingTransactions();
     }
 
@@ -222,6 +251,16 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         else if(v == resume) {
             startActivity(new Intent(a, GameActivity.class));
         }
+        else if(v == highScore) {
+            getHighScore();
+        }
 
+    }
+
+    private void writeNewUser(String email) {
+
+        User user = new User(email);
+
+        refMakeNewUser.child("users").child(firebaseAuth.getUid()).setValue(user);
     }
 }

@@ -106,11 +106,12 @@
             android:text="@string/new_game_btn" />
 
         <Button
+            android:id="@+id/highscore_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:width="150dp"
-            android:text="Eigin scores??" />
+            android:text="High score" />
 
     </LinearLayout>
 

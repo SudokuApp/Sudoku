@@ -5,10 +5,10 @@ import com.google.gson.JsonArray;
 public class User {
     private String currentGame;
     private String solution;
-    private String currentTime;
-    private String easyHighScores;
-    private String mediumHighScores;
-    private String hardHighScores;
+    private int currentTime;
+    private int easyHighScores;
+    private int mediumHighScores;
+    private int hardHighScores;
     private int totalCompleted;
     private String email;
 
@@ -21,10 +21,10 @@ public class User {
     public User(String email) {
         this.currentGame = "";
         this.solution = "";
-        this.currentTime = "";
-        this.easyHighScores = "";
-        this.mediumHighScores = "";
-        this.hardHighScores = "";
+        this.currentTime = 0;
+        this.easyHighScores = 0;
+        this.mediumHighScores = 0;
+        this.hardHighScores = 0;
         this.totalCompleted = 0;
         this.email = email;
 
@@ -43,19 +43,19 @@ public class User {
         this.solution = solution;
     }
 
-    public void setCurrentTime(String currentTime) {
+    public void setCurrentTime(int currentTime) {
         this.currentTime = currentTime;
     }
 
-    public void setEasyHighScores(String easyHighScores) {
+    public void setEasyHighScores(int easyHighScores) {
         this.easyHighScores = easyHighScores;
     }
 
-    public void setMediumHighScores(String mediumHighScores) {
+    public void setMediumHighScores(int mediumHighScores) {
         this.mediumHighScores = mediumHighScores;
     }
 
-    public void setHardHighScores(String hardHighScores) {
+    public void setHardHighScores(int hardHighScores) {
         this.hardHighScores = hardHighScores;
     }
 
@@ -72,19 +72,19 @@ public class User {
         return solution;
     }
 
-    public String getCurrentTime() {
+    public int getCurrentTime() {
         return currentTime;
     }
 
-    public String getEasyHighScores() {
+    public int getEasyHighScores() {
         return easyHighScores;
     }
 
-    public String getMediumHighScores() {
+    public int getMediumHighScores() {
         return mediumHighScores;
     }
 
-    public String getHardHighScores() {
+    public int getHardHighScores() {
         return hardHighScores;
     }
 
