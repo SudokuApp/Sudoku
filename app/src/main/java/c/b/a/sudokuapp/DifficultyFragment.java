@@ -94,7 +94,13 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
             a.startActivity(new Intent(a, LoginActivity.class));
         }
 
-        userTxt.setText(getString(R.string.welcome_user) + currUser.getEmail());
+        if(firebaseAuth.getCurrentUser() != null){
+            //If the user comes from firebase
+            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
+        } else {
+            //if the user comes from google or facebook
+            userTxt.setText(getString(R.string.welcome_user) + firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail());
+        }
     }
 
     /**
