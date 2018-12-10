@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import static c.b.a.sudokuapp.LoginActivity.account;
+import static c.b.a.sudokuapp.MenuFragment.currUser;
 
 
 /**
@@ -93,16 +94,7 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
             a.startActivity(new Intent(a, LoginActivity.class));
         }
 
-        // Say welcome to the user, using their email // TODO breyta ef við höfum eð annað en email
-        if(isLoggedIn) {
-            userTxt.setText(getString(R.string.welcome_user)); // TODO þarf að finna hvernig email eða nafn frá facebook
-        }
-        else if(account != null) {
-            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
-        }
-        else {
-            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
-        }
+        userTxt.setText(getString(R.string.welcome_user) + currUser.getEmail());
     }
 
     /**

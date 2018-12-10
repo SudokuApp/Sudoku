@@ -13,6 +13,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -27,8 +28,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.List;
 
 /**
  * A simple login screen where an existing user can sign in to his/her account
@@ -38,6 +43,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference refMakeNewUser;
 
     // Views
     private EditText login_email;
@@ -47,6 +53,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private GoogleSignInOptions gso;
     private GoogleSignInClient mGoogleSignInClient;
     // Used in MenuFragment and DifficultyFragment to know if user is logged in with Google
+    public static GoogleSignInAccount accountGoogle;
     public static GoogleSignInAccount account;
     private SignInButton signInButton;
 
@@ -54,6 +61,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private boolean isLoggedIn;
     private CallbackManager callbackManager;
     private LoginButton loginButton;
+
+    private DatabaseReference ref;
+    private FirebaseDatabase mDatabase;
+
 
 
     @Override
@@ -75,38 +86,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onStart();
 
         // If user is logged in, he/she is taken to the Main Menu
-        if (firebaseAuth.getCurrentUser() != null || isLoggedIn || account != null) {
+        if (firebaseAuth.getCurrentUser() != null || isLoggedIn || accountGoogle != null) {
             startActivity(new Intent(getApplicationContext(), MenuActivity.class));
             finish();
         }
     }
 
 
-    private void handleFacebookAccessToken(AccessToken accessToken) {
-        AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
-
-        firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-        loginButton.setReadPermissions("email", "public_profile");
-    }
 
     private void loginWithFacebook() {
         // Callback registration
+        loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                handleFacebookAccessToken(loginResult.getAccessToken());
-                goToMainMenu();
+                AuthCredential credential = FacebookAuthProvider.getCredential(loginResult.getAccessToken().getToken());
+                handleAccessToken(credential);
+
             }
 
             @Override
@@ -141,6 +137,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
+        refMakeNewUser = FirebaseDatabase.getInstance().getReference();
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = findViewById(R.id.login_button);
@@ -149,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-        account = GoogleSignIn.getLastSignedInAccount(this);
+        accountGoogle = GoogleSignIn.getLastSignedInAccount(this);
         signInButton = findViewById(R.id.sign_in_button);
 
 
@@ -162,6 +159,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
+        mDatabase = FirebaseDatabase.getInstance();
+        ref = mDatabase.getReference("users");
     }
 
 
@@ -247,17 +246,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
+
             account = completedTask.getResult(ApiException.class);
-            firebaseAuthWithGoogle(account);
-            //goToMainMenu();
+            AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+            handleAccessToken(credential);
         } catch (ApiException e) {
             Toast.makeText(this, "Failed google", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+    private void handleAccessToken(AuthCredential credential) {
 
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -265,13 +264,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (task.isSuccessful()) {
                             goToMainMenu();
                         } else {
-                            Toast.makeText(LoginActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            LoginManager.getInstance().logOut();
                         }
-
-                        // ...
                     }
                 });
     }
+
+
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -285,5 +286,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             signIn();
         }
     }
+
+
+
+
 }
 

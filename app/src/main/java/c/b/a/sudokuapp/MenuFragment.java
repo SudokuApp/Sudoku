@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,6 +22,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static c.b.a.sudokuapp.LoginActivity.account;
 
@@ -35,6 +41,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     private TextView logout;
     private Button newGame;
     private Button resume;
+    private Button highScore;
 
     // Authentication variables
     private FirebaseAuth firebaseAuth;
@@ -52,6 +59,15 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     // Variables for Google sign-in / sign-out
     private GoogleSignInOptions gso;
     private GoogleSignInClient mGoogleSignInClient;
+
+    public static User currUser;
+
+    private DatabaseReference ref;
+    private DatabaseReference userRef;
+    private DatabaseReference refMakeNewUser;
+    private FirebaseDatabase mDatabase;
+
+
 
     public MenuFragment() {
         // Required empty public constructor
@@ -77,8 +93,35 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
         // Set variables
         setVariables();
+
+
+        userRef.addValueEventListener(new ValueEventListener() {
+              @Override
+              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                  String email = firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail();
+
+                  if(!dataSnapshot.exists()) {
+                      writeNewUser(email);
+                  }
+
+                    currUser = dataSnapshot.getValue(User.class);
+
+                  if(currUser != null) {
+                      if(currUser.getCurrentGame().equals("")) {
+                          resume.setEnabled(false);
+                      }
+                  }
+              }
+
+              @Override
+              public void onCancelled(@NonNull DatabaseError databaseError) {
+
+              }
+          });
 
         // Set click listeners
         setClickListeners();
@@ -94,15 +137,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             a.startActivity(new Intent(a, LoginActivity.class));
         }
 
-        // Say welcome to the user, using their email // TODO breyta ef við höfum eð annað en email
-        if(isLoggedIn) {
-            userTxt.setText(getString(R.string.welcome_user)); // TODO þarf að finna hvernig email eða nafn frá facebook
-        }
-        else if(account != null) {
+        if(firebaseAuth.getCurrentUser() != null){
+            //If the user comes from firebase
             userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
-        }
-        else {
-            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
+        } else {
+            //if the user comes from google or facebook
+            userTxt.setText(getString(R.string.welcome_user) + firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail());
         }
     }
 
@@ -113,6 +153,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         logout.setOnClickListener(this);
         newGame.setOnClickListener(this);
         resume.setOnClickListener(this);
+        highScore.setOnClickListener(this);
     }
 
     /**
@@ -123,9 +164,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         userTxt = a.findViewById(R.id.user);
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
+        refMakeNewUser = FirebaseDatabase.getInstance().getReference();
+
         logout = a.findViewById(R.id.logout);
         newGame = a.findViewById(R.id.new_game_btn);
         resume = a.findViewById(R.id.resume_btn);
+        highScore = a.findViewById(R.id.highscore_btn);
 
         accessToken = AccessToken.getCurrentAccessToken();
         // Check if user is logged in via facebook
@@ -140,6 +184,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(a, gso);
 
+        mDatabase = FirebaseDatabase.getInstance();
+        ref = mDatabase.getReference("users");
+        userRef = ref.child(firebaseAuth.getUid());
     }
 
     /**
@@ -151,6 +198,18 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         fragmentManager = getFragmentManager();
 
         fragmentManager.beginTransaction().addToBackStack(null).replace(R.id.main_frag, new DifficultyFragment()).commit();
+        fragmentManager.executePendingTransactions();
+    }
+
+    /**
+     * Called when the "High score" button is clicked
+     * Shows 5 highest scores for each difficulty
+     * TODO bæta við global
+     */
+    private void getHighScore() {
+        fragmentManager = getFragmentManager();
+
+        fragmentManager.beginTransaction().addToBackStack(null).replace(R.id.main_frag, new ScoreFragment()).commit();
         fragmentManager.executePendingTransactions();
     }
 
@@ -188,6 +247,16 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         else if(v == resume) {
             startActivity(new Intent(a, GameActivity.class));
         }
+        else if(v == highScore) {
+            getHighScore();
+        }
 
+    }
+
+    private void writeNewUser(String email) {
+
+        User user = new User(email);
+
+        refMakeNewUser.child("users").child(firebaseAuth.getUid()).setValue(user);
     }
 }
