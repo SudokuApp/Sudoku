@@ -60,7 +60,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
     private BoardLinker boardlinker;
-    private ProgressDialog progress;
+    //private ProgressDialog progress;
     private int[][] cellIDs; //TODO
     private TextView[][] cellViews;
     private SharedPreferences sharedPref;
@@ -89,38 +89,43 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
         a = getActivity();
         //get the desired difficulty from DifficultyFragment
-        Intent i = a.getIntent();
-        diff = i.getStringExtra("DIFF");
+        if (savedInstanceState == null) {
 
-        linkButtons();
-        timer = new Timer();
-        logic = new Logic();
+            Intent i = a.getIntent();
+            diff = i.getStringExtra("DIFF");
 
-        mDatabase = FirebaseDatabase.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
-        ref = mDatabase.getReference("users");
-        userRef = ref.child(firebaseAuth.getUid());
-        goBack = a.findViewById(R.id.returnBtn);
-        goBack.setOnClickListener(this);
+            linkButtons();
+            timer = new Timer();
+            logic = new Logic();
 
-        progress = new ProgressDialog(a);
-        progress.setMessage(getString(R.string.loading));
-        progress.show();
+            mDatabase = FirebaseDatabase.getInstance();
+            firebaseAuth = FirebaseAuth.getInstance();
+            ref = mDatabase.getReference("users");
+            userRef = ref.child(firebaseAuth.getUid());
+            goBack = a.findViewById(R.id.returnBtn);
+            goBack.setOnClickListener(this);
 
-        //if diff is null, then we resume the current game.
-        if(diff == null){
-            initialBoard = currUser.getCurrentGame();
-            userSolution = stringToInt(currUser.getUserSolution());
-            solution = stringToInt(currUser.getSolution());
+            //progress = new ProgressDialog(a);
+            //progress.setMessage(getString(R.string.loading));
+            //progress.show();
+
+            //if diff is null, then we resume the current game.
+            if (diff == null) {
+                initialBoard = currUser.getCurrentGame();
+                userSolution = stringToInt(currUser.getUserSolution());
+                solution = stringToInt(currUser.getSolution());
+                resumeGame();
+            } else {
+                currentBoard = logic.createEmptyBoard();
+                solution = logic.createEmptyBoard();
+                initializeNewGame();
+            }
+        }
+        else{
             resumeGame();
         }
-        else {
-            currentBoard = logic.createEmptyBoard();
-            solution = logic.createEmptyBoard();
 
-            initializeNewGame();
-
-        }
+        //setRetainInstance(true);
     }
 
     @Override
@@ -273,11 +278,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         resetBoard();
         generateNewGame(diff);
-
+        /*
         if(progress.isShowing()){
             progress.hide();
         }
-
+*/
         // TODO passa að tíminn byrji ekki fyrr en borðið er birt
         timer.startTimeThread(0, timeTaken);
     }
@@ -449,7 +454,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         //timeTotal = getTimeTotal(); //TODO
         timer.startTimeThread(0, timeTaken);
-        progress.cancel();
+        //progress.cancel();
     }
 
 

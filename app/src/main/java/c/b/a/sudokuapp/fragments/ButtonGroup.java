@@ -32,7 +32,7 @@ public class ButtonGroup extends Fragment {
     private Activity a;
     private Button[] buttons;
     private String input = "";
-    private TextView status;
+    //private TextView status;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
@@ -67,18 +67,18 @@ public class ButtonGroup extends Fragment {
                 @Override
                 public void onClick(View v) {
                     input = v.getTag().toString();
-                    setOperator(input);
+                    setOperator();
 
                 }
             });
         }
-        status = a.findViewById(R.id.opField);
+        //status = a.findViewById(R.id.opField);
     }
 
 
     @SuppressLint("SetTextI18n")
-    public void setOperator(String in){
-        status.setText("Operation: "+in);
+    public void setOperator(){
+        //status.setText("Operation: "+in);
         editor.putString(getString(R.string.input), input).commit();
     }
 
