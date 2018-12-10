@@ -49,9 +49,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private String input = "";
     private String diff;
     private String initialBoard;
-    private int[][] userSolution;
+    private String userSolution;
     private int[][] currentBoard;//the current state of the board
-    private int[][] solution;   //the solution to the current game
+    private String solution;   //the solution to the current game
     private Activity a;
     private TextView timeTaken;
     private int emptyCells;
@@ -110,13 +110,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //if diff is null, then we resume the current game.
         if(diff == null){
             initialBoard = currUser.getCurrentGame();
-            userSolution = stringToInt(currUser.getUserSolution());
-            solution = stringToInt(currUser.getSolution());
+            userSolution = currUser.getUserSolution();
+            solution = currUser.getSolution();
             resumeGame();
         }
         else {
             currentBoard = logic.createEmptyBoard();
-            solution = logic.createEmptyBoard();
+            solution = intToString(logic.createEmptyBoard());
 
             initializeNewGame();
 
@@ -146,25 +146,19 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void cellClicked(int row, int cell, View view) {
         TextView boxClicked = (TextView) view;
-
         if(input.equals("m")){
             changeBackground(boxClicked);
         }
         else if(!input.equals("")){
 
+            boxClicked.setText(input);
             if(currentBoard[row][cell] == 0){
                 emptyCells--;
-            }
-            if(Integer.parseInt(input) == currentBoard[row][cell]){
-                boxClicked.setText("");
-            } else {
-                boxClicked.setText(input);
             }
             currentBoard[row][cell] = Integer.parseInt(input);
             if(emptyCells == 0){
                 checkBoard();
             }
-
         }
     }
 
@@ -286,7 +280,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     //compares the current board to the solution. True = solved, false = unsolved
     private boolean isSolved(){
-        return currentBoard == solution;
+        //showResumedBoard();
+        String one = intToString(currentBoard);
+
+        return one.equals(solution);
     }
 
 
@@ -344,6 +341,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                             showCurrentGame(currentBoard);
                             getSolution(currentBoard);
                             userRef.child("currentGame").setValue(intToString(currentBoard));
+
                         }
                         else{
                             //kannski breyta þessu
@@ -367,7 +365,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                     public void onCompleted(Exception e, JsonObject result) {
                         if(e == null){
                             JsonArray arr = result.getAsJsonArray("solution");
-                            solution = logic.parseJsonArrayToInt(arr);
+                            solution = intToString(logic.parseJsonArrayToInt(arr));
+                            userRef.child("solution").setValue(solution);
                         }
                         else{
                             //kannski breyta þessu
@@ -403,7 +402,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void saveToDatabase() {
-        userRef.child("solution").setValue(intToString(solution));
 
         StringBuilder current = new StringBuilder(intToString(currentBoard));
 
@@ -417,22 +415,22 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void showCurrentSolution() {
-        for(int i = 0 ; i < 9 ; i++){
+        for(int i = 0 ; i < 9 ; i++) {
             for(int j = 0 ; j < 9 ; j++){
-                if(userSolution[i][j] != 0){
-                    cellViews[i][j].setText(Integer.toString(userSolution[i][j]));
+                if(stringToInt(userSolution)[i][j] != 0){
+                    cellViews[i][j].setText(Integer.toString(stringToInt(userSolution)[i][j]));
                 }
             }
         }
     }
 
-    private void showResumedBoard() {
+    private void combineBoards() {
 
         StringBuilder temp = new StringBuilder(initialBoard);
         for(int i = 0 ; i < 9 ; i++){
             for(int j = 0 ; j < 9 ; j++){
-                if(!(intToString(userSolution).charAt(i) == '0')){
-                    temp.setCharAt(i, intToString(userSolution).charAt(i));
+                if(!(userSolution.charAt(i) == '0')){
+                    temp.setCharAt(i, userSolution.charAt(i));
                 }
             }
         }
@@ -440,7 +438,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resumeGame() {
-        showResumedBoard();
+        combineBoards();
         String curr = intToString(currentBoard);
         logic.countEmptyCells(currentBoard);
         showCurrentGame(stringToInt(initialBoard));
