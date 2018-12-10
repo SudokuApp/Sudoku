@@ -61,7 +61,7 @@ public class ButtonGroup extends Fragment {
     private void linkButtons(){
         buttons = new Button[]{a.findViewById(R.id.btn1), a.findViewById(R.id.btn2),a.findViewById(R.id.btn3),
                 a.findViewById(R.id.btn4),a.findViewById(R.id.btn5),a.findViewById(R.id.btn6),a.findViewById(R.id.btn7),
-                a.findViewById(R.id.btn8),a.findViewById(R.id.btn9),a.findViewById(R.id.btnMark)};
+                a.findViewById(R.id.btn8),a.findViewById(R.id.btn9),a.findViewById(R.id.btnMark), a.findViewById(R.id.clearBtn)};
 
         for(Button b : buttons){
             b.setOnClickListener(new View.OnClickListener() {
