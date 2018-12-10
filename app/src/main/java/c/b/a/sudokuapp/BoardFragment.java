@@ -150,14 +150,19 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
         else if(!input.equals("")){
 
-            boxClicked.setText(input);
             if(currentBoard[row][cell] == 0){
                 emptyCells--;
+            }
+            if(Integer.parseInt(input) == currentBoard[row][cell]){
+                boxClicked.setText("");
+            } else {
+                boxClicked.setText(input);
             }
             currentBoard[row][cell] = Integer.parseInt(input);
             if(emptyCells == 0){
                 checkBoard();
             }
+
         }
     }
 
@@ -177,6 +182,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                     public void onClick(View v) {
                         input = sharedPref.getString(getString(R.string.input), "");
                         cellClicked(finalI, finalJ, v);
+
                     }
                 });
             }
@@ -396,7 +402,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void saveToDatabase() {
         userRef.child("solution").setValue(intToString(solution));
-        String temp = initialBoard;
 
         StringBuilder current = new StringBuilder(intToString(currentBoard));
 
@@ -406,6 +411,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             }
         }
         userRef.child("userSolution").setValue(current.toString());
+
+
     }
 
     private void showCurrentSolution() {
