@@ -126,12 +126,14 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        saveToDatabase();
         timer.stopThread();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        saveToDatabase();
         timer.pauseTimer();
     }
 
@@ -409,7 +411,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             }
         }
         userRef.child("userSolution").setValue(current.toString());
-
+        userRef.child("currentTime").setValue(timer.getTime());
 
     }
 
@@ -443,10 +445,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         showCurrentSolution();
 
 
-        SystemClock.sleep(1000);
-
-        //timeTotal = getTimeTotal(); //TODO
-        timer.startTimeThread(0, timeTaken);
+        timer.startTimeThread(currUser.getCurrentTime(), timeTaken);
         progress.cancel();
     }
 
