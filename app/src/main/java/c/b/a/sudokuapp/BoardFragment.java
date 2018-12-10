@@ -423,7 +423,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void showResumedBoard() {
+    private void combineBoards() {
 
         StringBuilder temp = new StringBuilder(initialBoard);
         for(int i = 0 ; i < 9 ; i++){
@@ -437,7 +437,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resumeGame() {
-        showResumedBoard();
+        combineBoards();
         logic.countEmptyCells(currentBoard);
         showCurrentGame(stringToInt(initialBoard));
         showCurrentSolution();
