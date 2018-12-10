@@ -60,7 +60,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
     private BoardLinker boardlinker;
-    private ProgressDialog progress;
+    //private ProgressDialog progress;
     private int[][] cellIDs; //TODO
     private TextView[][] cellViews;
     private SharedPreferences sharedPref;
@@ -103,9 +103,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         goBack = a.findViewById(R.id.returnBtn);
         goBack.setOnClickListener(this);
 
-        progress = new ProgressDialog(a);
-        progress.setMessage(getString(R.string.loading));
-        progress.show();
+        //progress = new ProgressDialog(a);
+        //progress.setMessage(getString(R.string.loading));
+        //progress.show();
 
         //if diff is null, then we resume the current game.
         if(diff == null){
@@ -150,14 +150,21 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             changeBackground(boxClicked);
         }
         else if(!input.equals("")){
-
-            boxClicked.setText(input);
-            if(currentBoard[row][cell] == 0){
-                emptyCells--;
+            if(!input.equals("x")){
+                boxClicked.setText(input);
+                if(currentBoard[row][cell] == 0){
+                    emptyCells--;
+                }
+                currentBoard[row][cell] = Integer.parseInt(input);
+                if(emptyCells == 0){
+                    checkBoard();
+                }
             }
-            currentBoard[row][cell] = Integer.parseInt(input);
-            if(emptyCells == 0){
-                checkBoard();
+            else if(currentBoard[row][cell] != 0){
+                boxClicked.setText("");
+                boxClicked.setBackgroundResource(R.drawable.grid_b);
+                currentBoard[row][cell] = 0;
+                emptyCells++;
             }
         }
     }
@@ -183,7 +190,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 });
             }
         }
-
         timeTaken = a.findViewById(R.id.timeField);
         white_Draw = Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)).getConstantState();
         white_BMP = logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
@@ -269,11 +275,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         resetBoard();
         generateNewGame(diff);
-
-        if(progress.isShowing()){
-            progress.hide();
-        }
-
+        //if(progress.isShowing()){
+        //    progress.hide();
+        //}
         // TODO passa að tíminn byrji ekki fyrr en borðið er birt
         timer.startTimeThread(0, timeTaken);
     }
@@ -300,8 +304,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             field.setBackgroundResource(R.drawable.grid_m);
         }
     }
-
-
 
     //Should take in a difficulty parameter (easy, medium or hard) and fetch a json sudoku puzzle from an API
     private void generateNewGame(String difficulty){
@@ -422,7 +424,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
 
         timer.startTimeThread(currUser.getCurrentTime(), timeTaken);
-        progress.cancel();
+        //progress.cancel();
     }
 
     @Override
