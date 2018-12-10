@@ -411,7 +411,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             }
         }
         userRef.child("userSolution").setValue(current.toString());
-
+        userRef.child("currentTime").setValue(timer.getTime());
 
     }
 
@@ -447,8 +447,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         SystemClock.sleep(1000);
 
-        //timeTotal = getTimeTotal(); //TODO
-        timer.startTimeThread(0, timeTaken);
+        timer.startTimeThread(currUser.getCurrentTime(), timeTaken);
         progress.cancel();
     }
 
