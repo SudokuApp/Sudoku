@@ -60,7 +60,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
     private BoardLinker boardlinker;
-    //private ProgressDialog progress;
+    private ProgressDialog progress;
     private int[][] cellIDs; //TODO
     private TextView[][] cellViews;
     private SharedPreferences sharedPref;
@@ -85,12 +85,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         a = getActivity();
         //get the desired difficulty from DifficultyFragment
-        if (savedInstanceState == null) {
-
+        //if (savedInstanceState == null) {
             Intent i = a.getIntent();
             diff = i.getStringExtra("DIFF");
 
@@ -105,9 +104,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             goBack = a.findViewById(R.id.returnBtn);
             goBack.setOnClickListener(this);
 
-            //progress = new ProgressDialog(a);
-            //progress.setMessage(getString(R.string.loading));
-            //progress.show();
+            progress = new ProgressDialog(a);
+            progress.setMessage(getString(R.string.loading));
+            progress.show();
 
             //if diff is null, then we resume the current game.
             if (diff == null) {
@@ -120,11 +119,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 solution = logic.createEmptyBoard();
                 initializeNewGame();
             }
-        }
-        else{
-            resumeGame();
-        }
-
+        //}
+        //Use this?
         //setRetainInstance(true);
     }
 
@@ -195,7 +191,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         timeTaken = a.findViewById(R.id.timeField);
         white_Draw = Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)).getConstantState();
-        white_BMP = buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
+        white_BMP = logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
     }
 
 
@@ -278,11 +274,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         resetBoard();
         generateNewGame(diff);
-        /*
+
         if(progress.isShowing()){
             progress.hide();
         }
-*/
+
         // TODO passa að tíminn byrji ekki fyrr en borðið er birt
         timer.startTimeThread(0, timeTaken);
     }
@@ -300,32 +296,12 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         if(img == null){
             return;
         }
-        if(!Objects.equals(img.getConstantState(), white_Draw) || !buildBitmap(img).sameAs(white_BMP)){
+        if(!Objects.equals(img.getConstantState(), white_Draw) || !logic.buildBitmap(img).sameAs(white_BMP)){
             field.setBackgroundResource(R.drawable.grid_b);
         }
         else{
             field.setBackgroundResource(R.drawable.grid_m);
         }
-    }
-
-    public static Bitmap buildBitmap(Drawable img){
-        Bitmap out; //Assuming no incoming drawable is a bitmap
-
-        int width = img.getIntrinsicWidth();
-        int height = img.getIntrinsicHeight();
-
-        if(width <= 0){
-            width = 1;
-        }
-        if(height <= 0){
-            height = 1;
-        }
-        out = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(out);
-        img.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        img.draw(canvas);
-
-        return out;
     }
 
 
@@ -415,9 +391,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 current.setCharAt(i, '0');
             }
         }
-        userRef.child("userSolution").setValue(current.toString());
-
-
+        userRef.child("currentTime").setValue(timer.getTime());
     }
 
     private void showCurrentSolution() {
@@ -452,12 +426,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         SystemClock.sleep(1000);
 
-        //timeTotal = getTimeTotal(); //TODO
-        timer.startTimeThread(0, timeTaken);
-        //progress.cancel();
+        timer.startTimeThread(currUser.getCurrentTime(), timeTaken);
+        progress.cancel();
     }
-
-
 
     @Override
     public void onClick(View v) {

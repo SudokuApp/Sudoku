@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,8 +33,8 @@ public class ButtonGroup extends Fragment {
 
     private Activity a;
     private Button[] buttons;
+    private Button lastBtn;
     private String input = "";
-    //private TextView status;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
@@ -44,7 +46,6 @@ public class ButtonGroup extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_button_group, container, false);
         return inflater.inflate(R.layout.fragment_button_group, container, false);
     }
 
@@ -66,19 +67,24 @@ public class ButtonGroup extends Fragment {
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(lastBtn!=null){
+                        lastBtn.setBackgroundResource(R.drawable.button_default);
+                        lastBtn.setTextColor(Color.parseColor("#000000"));
+                    }
                     input = v.getTag().toString();
+                    v.setBackgroundResource(R.drawable.button_focused);
                     setOperator();
+                    lastBtn = v.findViewById(v.getId());
+                    lastBtn.setTextColor(Color.parseColor("#ffffff"));
 
                 }
             });
         }
-        //status = a.findViewById(R.id.opField);
     }
 
 
     @SuppressLint("SetTextI18n")
     public void setOperator(){
-        //status.setText("Operation: "+in);
         editor.putString(getString(R.string.input), input).commit();
     }
 
