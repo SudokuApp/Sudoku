@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     // Views
     private TextView userTxt;
     private TextView logout;
+    private TextView userEasy;
+    private TextView userMedium;
+    private TextView userHard;
     private Button newGame;
     private Button resume;
     private Button highScore;
@@ -114,6 +118,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                       if(currUser.getCurrentGame().equals("")) {
                           resume.setEnabled(false);
                       }
+                      getHighScore();
                   }
               }
 
@@ -170,6 +175,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         newGame = a.findViewById(R.id.new_game_btn);
         resume = a.findViewById(R.id.resume_btn);
         highScore = a.findViewById(R.id.highscore_btn);
+        userEasy = a.findViewById(R.id.user_highscore_easy);
+        userMedium = a.findViewById(R.id.user_highscore_medium);
+        userHard = a.findViewById(R.id.user_highscore_hard);
 
         accessToken = AccessToken.getCurrentAccessToken();
         // Check if user is logged in via facebook
@@ -206,7 +214,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * Shows 5 highest scores for each difficulty
      * TODO bæta við global
      */
-    private void getHighScore() {
+    private void getLeaderboards() {
         fragmentManager = getFragmentManager();
 
         fragmentManager.beginTransaction().addToBackStack(null).replace(R.id.main_frag, new ScoreFragment()).commit();
@@ -231,6 +239,20 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         a.startActivity(new Intent(a, LoginActivity.class));
     }
 
+    @SuppressLint("SetTextI18n")
+    private void getHighScore() {
+
+        if(currUser.getEasyHighScore() != Integer.MAX_VALUE) {
+            userEasy.setText("Your high score for easy puzzles: " + DateUtils.formatElapsedTime(currUser.getEasyHighScore()));
+        }
+        if(currUser.getMediumHighScore() != Integer.MAX_VALUE) {
+            userMedium.setText("Your high score for medium puzzles: " + DateUtils.formatElapsedTime(currUser.getMediumHighScore()));
+        }
+        if(currUser.getHardHighScore() != Integer.MAX_VALUE) {
+            userHard.setText("Your high score for hard puzzles: " + DateUtils.formatElapsedTime(currUser.getHardHighScore()));
+        }
+    }
+
     /**
      * Called when a view has been clicked
      * @param v
@@ -248,7 +270,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             startActivity(new Intent(a, GameActivity.class));
         }
         else if(v == highScore) {
-            getHighScore();
+            getLeaderboards();
         }
 
     }

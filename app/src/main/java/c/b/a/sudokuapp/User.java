@@ -7,9 +7,9 @@ public class User {
     private String userSolution;
     private String solution;
     private int currentTime;
-    private int easyHighScores;
-    private int mediumHighScores;
-    private int hardHighScores;
+    private int easyHighScore;
+    private int mediumHighScore;
+    private int hardHighScore;
     private int totalCompleted;
     private String email;
 
@@ -24,9 +24,9 @@ public class User {
         this.solution = "";
         this.userSolution = "";
         this.currentTime = 0;
-        this.easyHighScores = 0;
-        this.mediumHighScores = 0;
-        this.hardHighScores = 0;
+        this.easyHighScore = Integer.MAX_VALUE;
+        this.mediumHighScore = Integer.MAX_VALUE;
+        this.hardHighScore = Integer.MAX_VALUE;
         this.totalCompleted = 0;
         this.email = email;
 
@@ -48,16 +48,16 @@ public class User {
         return currentTime;
     }
 
-    public int getEasyHighScores() {
-        return easyHighScores;
+    public int getEasyHighScore() {
+        return easyHighScore;
     }
 
-    public int getMediumHighScores() {
-        return mediumHighScores;
+    public int getMediumHighScore() {
+        return mediumHighScore;
     }
 
-    public int getHardHighScores() {
-        return hardHighScores;
+    public int getHardHighScore() {
+        return hardHighScore;
     }
 
     public int getTotalCompleted() {
@@ -85,15 +85,15 @@ public class User {
     }
 
     public void setEasyHighScores(int easyHighScores) {
-        this.easyHighScores = easyHighScores;
+        this.easyHighScore = easyHighScores;
     }
 
     public void setMediumHighScores(int mediumHighScores) {
-        this.mediumHighScores = mediumHighScores;
+        this.mediumHighScore = mediumHighScores;
     }
 
     public void setHardHighScores(int hardHighScores) {
-        this.hardHighScores = hardHighScores;
+        this.hardHighScore = hardHighScores;
     }
 
     public void setTotalCompleted(int totalCompleted) {

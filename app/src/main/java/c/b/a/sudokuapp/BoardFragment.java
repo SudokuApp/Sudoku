@@ -64,6 +64,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private int[][] cellIDs; //TODO
     private TextView[][] cellViews;
     private SharedPreferences sharedPref;
+    private ScoreHandler scoreHandler;
 
     private FirebaseDatabase mDatabase;
     private FirebaseAuth firebaseAuth;
@@ -113,6 +114,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //progress = new ProgressDialog(a);
         //progress.setMessage(getString(R.string.loading));
         //progress.show();
+
+        scoreHandler = new ScoreHandler(mDatabase, diff);
+
 
         //if diff is null, then we resume the current game.
         if(!currUser.getCurrentGame().equals("")){
@@ -227,9 +231,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void winPopup() {
         timer.stopThread();
+        scoreHandler.compareToPrivate(timer.getTime());
+        saveToDatabase();
         AlertDialog.Builder msg = new AlertDialog.Builder(a);
         msg.setTitle("Congratulations!");
-        msg.setMessage("Your time was " + timer.getTime());
+        msg.setMessage("Your time was " + timer.getTimeReadable());
         msg.setCancelable(true);
         msg.setNeutralButton("New puzzle",
                 new DialogInterface.OnClickListener() {
@@ -402,6 +408,18 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void saveToDatabase() {
 
+
+        StringBuilder current = new StringBuilder(intToString(currentBoard));
+
+        for(int i = 0 ; i < 81 ; i++ ){
+            if(!(initialBoard.charAt(i) == '0')){
+                current.setCharAt(i, '0');
+            }
+        }
+        userRef.child("easyHighScore").setValue(currUser.getEasyHighScore());
+        userRef.child("mediumHighScore").setValue(currUser.getMediumHighScore());
+        userRef.child("hardHighScore").setValue(currUser.getHardHighScore());
+        userRef.child("userSolution").setValue(current.toString());
         userRef.child("currentTime").setValue(timer.getTime());
     }
 

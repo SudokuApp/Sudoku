@@ -17,6 +17,8 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
+
 
 /**
  * This Activity is to register new user into the app.
@@ -126,6 +128,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         User user = new User(email);
 
-        refMakeNewUser.child("users").child(firebaseAuth.getUid()).setValue(user);
+        refMakeNewUser.child("users").child(Objects.requireNonNull(firebaseAuth.getUid())).setValue(user);
     }
 }

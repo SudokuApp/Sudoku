@@ -1,12 +1,14 @@
 package c.b.a.sudokuapp;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,16 +60,17 @@ public class ScoreFragment extends Fragment {
         userHard = a.findViewById(R.id.user_highscore_hard);
     }
 
+    @SuppressLint("SetTextI18n")
     private void getHighScore() {
 
-        if(currUser.getEasyHighScores() != Double.POSITIVE_INFINITY) {
-            userEasy.setText("Your high score for easy puzzles:\n" + Double.toString(currUser.getEasyHighScores()));
+        if(currUser.getEasyHighScore() != Integer.MAX_VALUE) {
+            userEasy.setText("Your high score for easy puzzles: " + DateUtils.formatElapsedTime(currUser.getEasyHighScore()));
         }
-        if(currUser.getMediumHighScores() != Double.POSITIVE_INFINITY) {
-            userMedium.setText("Your high score for medium puzzles:\n" + Double.toString(currUser.getMediumHighScores()));
+        if(currUser.getMediumHighScore() != Integer.MAX_VALUE) {
+            userMedium.setText("Your high score for medium puzzles: " + DateUtils.formatElapsedTime(currUser.getMediumHighScore()));
         }
-        if(currUser.getHardHighScores() != Double.POSITIVE_INFINITY) {
-            userHard.setText("Your high score for hard puzzles:\n" + Double.toString(currUser.getHardHighScores()));
+        if(currUser.getHardHighScore() != Integer.MAX_VALUE) {
+            userHard.setText("Your high score for hard puzzles: " + DateUtils.formatElapsedTime(currUser.getHardHighScore()));
         }
     }
 
