@@ -92,7 +92,18 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
 
         linkButtons();
-        setVariables();
+        timer = new Timer();
+        logic = new Logic();
+
+        mDatabase = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        ref = mDatabase.getReference("users");
+        userRef = ref.child(firebaseAuth.getUid());
+        goBack = a.findViewById(R.id.returnBtn);
+        goBack.setOnClickListener(this);
+
+        userSolution = currUser.getUserSolution();
+        userS = new StringBuilder(userSolution);
 
         diff = i.getStringExtra("DIFF");
 
@@ -133,22 +144,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         timer.resumeTimer();
-    }
-
-
-    private void setVariables() {
-        timer = new Timer();
-        logic = new Logic();
-
-        mDatabase = FirebaseDatabase.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
-        ref = mDatabase.getReference("users");
-        userRef = ref.child(firebaseAuth.getUid());
-        goBack = a.findViewById(R.id.returnBtn);
-        goBack.setOnClickListener(this);
-
-        userSolution = currUser.getUserSolution();
-        userS = new StringBuilder(userSolution);
     }
 
     private void cellClicked(int row, int cell, View view) {
