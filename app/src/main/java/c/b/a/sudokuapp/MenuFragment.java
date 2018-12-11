@@ -126,8 +126,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                           resume.setEnabled(false);
                       }
                       getHighScore();
-                      LinearLayout leaderBoards = a.findViewById(R.id.linearLayout3);
-                      leaderBoards.setVisibility(LinearLayout.VISIBLE);
                   }
               }
 
