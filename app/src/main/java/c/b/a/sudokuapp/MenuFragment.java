@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
@@ -27,6 +28,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static c.b.a.sudokuapp.LoginActivity.account;
 
@@ -61,6 +65,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     private GoogleSignInClient mGoogleSignInClient;
 
     public static User currUser;
+    public static List<ScorePair> easyScores;
+    public static List<ScorePair> mediumScores;
+    public static List<ScorePair> hardScores;
+
 
     private DatabaseReference ref;
     private DatabaseReference userRef;
@@ -125,6 +133,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
         // Set click listeners
         setClickListeners();
+        getLeaderboards();
     }
 
     @Override
@@ -211,6 +220,62 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
         fragmentManager.beginTransaction().addToBackStack(null).replace(R.id.main_frag, new ScoreFragment()).commit();
         fragmentManager.executePendingTransactions();
+    }
+
+    private void getLeaderboards(){
+        DatabaseReference scoreref = mDatabase.getReference("leaderBoards");
+        DatabaseReference easyScoresRef = scoreref.child("easy");
+        DatabaseReference mediumScoresRef = scoreref.child("medium");
+        DatabaseReference hardScoresRef = scoreref.child("hard");
+
+        easyScoresRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                //read all the highest scores for this difficulty
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    easyScores = new ArrayList<>();
+                    easyScores.add(ds.getValue(ScorePair.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        mediumScoresRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                //read all the highest scores for this difficulty
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    mediumScores = new ArrayList<>();
+                    mediumScores.add(ds.getValue(ScorePair.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        hardScoresRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                //read all the highest scores for this difficulty
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    hardScores = new ArrayList<>();
+                    hardScores.add(ds.getValue(ScorePair.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
