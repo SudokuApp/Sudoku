@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private boolean isLoggedIn;
     private CallbackManager callbackManager;
     private LoginButton loginButton;
+    private int requestCode = 123;
 
     private DatabaseReference ref;
     private FirebaseDatabase mDatabase;
@@ -74,7 +75,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         setVariables();
 
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
         signInButton.setOnClickListener(this);
 
         loginWithFacebook();
@@ -120,7 +121,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 123) {
+        if (requestCode == requestCode) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -276,7 +277,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, 123);
+        startActivityForResult(signInIntent, requestCode);
     }
 
     @Override
