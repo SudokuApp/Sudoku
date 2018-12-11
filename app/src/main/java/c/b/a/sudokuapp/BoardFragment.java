@@ -14,6 +14,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -59,13 +60,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private Timer timer; // Instance of the Timer class
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
-    private BoardLinker boardlinker;
     //private ProgressDialog progress;
     private SharedPreferences sharedPref;
 
     private FirebaseDatabase mDatabase;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference ref;
     private DatabaseReference userRef;
 
     private StringBuilder userS;
@@ -77,7 +75,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_board, container, false);
@@ -97,9 +95,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         logic = new Logic();
 
         mDatabase = FirebaseDatabase.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
-        ref = mDatabase.getReference("users");
-        userRef = ref.child(firebaseAuth.getUid());
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference ref = mDatabase.getReference("users");
+        userRef = ref.child(Objects.requireNonNull(firebaseAuth.getUid()));
         goBack = a.findViewById(R.id.returnBtn);
         goBack.setOnClickListener(this);
 
@@ -110,10 +108,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //progress.setMessage(getString(R.string.loading));
         //progress.show();
 
+        sharedPref.edit().putString("INPUT", "").apply();
+
         // If diff is null, then we resume the current game.
         if(!currUser.getCurrentGame().equals("")){
             initialBoard = currUser.getCurrentGame();
-
             solution = currUser.getSolution();
             resumeGame();
         }
@@ -183,7 +182,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     // links stuff in the view
     private void linkButtons(){
-        boardlinker = new BoardLinker(a);
+        BoardLinker boardlinker = new BoardLinker(a);
         cellViews = boardlinker.cellViews;
         sharedPref = a.getPreferences(Context.MODE_PRIVATE);
 
@@ -203,7 +202,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
         timeTaken = a.findViewById(R.id.timeField);
         white_Draw = Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)).getConstantState();
-        white_BMP = logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
+        white_BMP = Logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
     }
 
 
@@ -314,7 +313,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         if(img == null){
             return;
         }
-        if(!Objects.equals(img.getConstantState(), white_Draw) || !logic.buildBitmap(img).sameAs(white_BMP)){
+        if(!Objects.equals(img.getConstantState(), white_Draw) || !Logic.buildBitmap(img).sameAs(white_BMP)){
             field.setBackgroundResource(R.drawable.grid_b);
         }
         else{
@@ -388,15 +387,15 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private String intToString(int[][] array) {
-        String string = "";
+        StringBuilder string = new StringBuilder();
         char temp;
         for(int i = 0 ; i < 9 ; i++) {
             for(int j = 0 ; j < 9 ; j++) {
                 temp = Character.forDigit(array[i][j], 10);
-                string = string + temp;
+                string.append(temp);
             }
         }
-        return string;
+        return string.toString();
     }
 
     private void saveToDatabase() {
@@ -404,6 +403,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         userRef.child("currentTime").setValue(timer.getTime());
     }
 
+    @SuppressLint("SetTextI18n")
     private void showCurrentSolution() {
         for(int i = 0 ; i < 9 ; i++) {
             for(int j = 0 ; j < 9 ; j++){
