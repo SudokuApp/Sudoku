@@ -88,8 +88,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
         a = getActivity();
         //get the desired difficulty from DifficultyFragment
+        assert a != null;
         Intent i = a.getIntent();
-
+        diff = i.getStringExtra("DIFF");
 
         linkButtons();
         timer = new Timer();
@@ -104,8 +105,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         userSolution = currUser.getUserSolution();
         userS = new StringBuilder(userSolution);
-
-        diff = i.getStringExtra("DIFF");
 
         //progress = new ProgressDialog(a);
         //progress.setMessage(getString(R.string.loading));

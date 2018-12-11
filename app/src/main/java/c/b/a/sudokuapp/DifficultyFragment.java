@@ -163,6 +163,7 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
     private void startGame(String diff){
         userRef.child("currentGame").setValue("");
         userRef.child("solution").setValue("");
+        userRef.child("diff").setValue(diff);
         userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));
         a.finish();
         Intent intent = new Intent(a, GameActivity.class);

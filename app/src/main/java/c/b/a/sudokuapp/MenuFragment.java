@@ -245,7 +245,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             newGame();
         }
         else if(v == resume) {
-            startActivity(new Intent(a, GameActivity.class));
+            Intent intent = new Intent(a, GameActivity.class);
+            intent.putExtra("DIFF", currUser.getDiff());
+            startActivity(intent);
         }
         else if(v == highScore) {
             getHighScore();
