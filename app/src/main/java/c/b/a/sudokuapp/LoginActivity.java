@@ -205,6 +205,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             if (task.isSuccessful()) {
                                 goToMainMenu();
                             } else {
+                                login_email.requestFocus();
+                                login_email.setError("!");
+                                login_password.setError("!");
                                 Toast.makeText(LoginActivity.this, "Email or password incorrect!", Toast.LENGTH_LONG).show();
                             }
                         }

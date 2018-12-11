@@ -46,30 +46,27 @@ import static c.b.a.sudokuapp.MenuFragment.currUser;
 public class BoardFragment extends Fragment implements View.OnClickListener {
 
 
-    private String input = "";
-    private String diff;
-    private String initialBoard;
-    private String userSolution;
-    private int[][] currentBoard;//the current state of the board
-    private String solution;   //the solution to the current game
+    private String input = "", diff, initialBoard, userSolution, solution;
+    private int[][] currentBoard;// The current state of the board
+    private int emptyCells;
+
     private Activity a;
     private TextView timeTaken;
-    private int emptyCells;
-    private Logic logic;
-    private Timer timer; //Timer
+    private TextView[][] cellViews;
+    private Button goBack;
+
+    private Logic logic; // Instance of the Logic class
+    private Timer timer; // Instance of the Timer class
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
     private BoardLinker boardlinker;
     //private ProgressDialog progress;
-    private int[][] cellIDs; //TODO
-    private TextView[][] cellViews;
     private SharedPreferences sharedPref;
 
     private FirebaseDatabase mDatabase;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference ref;
     private DatabaseReference userRef;
-    private Button goBack;
 
     private StringBuilder userS;
 
@@ -95,18 +92,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
 
         linkButtons();
-        timer = new Timer();
-        logic = new Logic();
-
-        mDatabase = FirebaseDatabase.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
-        ref = mDatabase.getReference("users");
-        userRef = ref.child(firebaseAuth.getUid());
-        goBack = a.findViewById(R.id.returnBtn);
-        goBack.setOnClickListener(this);
-
-        userSolution = currUser.getUserSolution();
-        userS = new StringBuilder(userSolution);
+        setVariables();
 
         diff = i.getStringExtra("DIFF");
 
@@ -114,7 +100,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //progress.setMessage(getString(R.string.loading));
         //progress.show();
 
-        //if diff is null, then we resume the current game.
+        // If diff is null, then we resume the current game.
         if(!currUser.getCurrentGame().equals("")){
             initialBoard = currUser.getCurrentGame();
 
@@ -150,6 +136,21 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    private void setVariables() {
+        timer = new Timer();
+        logic = new Logic();
+
+        mDatabase = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        ref = mDatabase.getReference("users");
+        userRef = ref.child(firebaseAuth.getUid());
+        goBack = a.findViewById(R.id.returnBtn);
+        goBack.setOnClickListener(this);
+
+        userSolution = currUser.getUserSolution();
+        userS = new StringBuilder(userSolution);
+    }
+
     private void cellClicked(int row, int cell, View view) {
         TextView boxClicked = (TextView) view;
         if(input.equals("m")){
@@ -180,7 +181,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private void updateUserSolution(int row, int cell) {
 
         char temp = Character.forDigit(currentBoard[row][cell], 10);
-        int index = (9 * row + cell );
+        int index = (9 * row + cell);
         userS.setCharAt(index, temp);
         userRef.child("userSolution").setValue(userS.toString());
     }
@@ -189,7 +190,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     // links stuff in the view
     private void linkButtons(){
         boardlinker = new BoardLinker(a);
-        cellIDs = boardlinker.cellIDs;
         cellViews = boardlinker.cellViews;
         sharedPref = a.getPreferences(Context.MODE_PRIVATE);
 
