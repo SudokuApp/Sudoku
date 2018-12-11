@@ -71,6 +71,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private DatabaseReference userRef;
     private Button goBack;
 
+    private StringBuilder userS;
+
 
     public BoardFragment() {
         // Required empty public constructor
@@ -90,7 +92,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         a = getActivity();
         //get the desired difficulty from DifficultyFragment
         Intent i = a.getIntent();
-        diff = i.getStringExtra("DIFF");
+
 
         linkButtons();
         timer = new Timer();
@@ -103,14 +105,19 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         goBack = a.findViewById(R.id.returnBtn);
         goBack.setOnClickListener(this);
 
+        userSolution = currUser.getUserSolution();
+        userS = new StringBuilder(userSolution);
+
+        diff = i.getStringExtra("DIFF");
+
         //progress = new ProgressDialog(a);
         //progress.setMessage(getString(R.string.loading));
         //progress.show();
 
         //if diff is null, then we resume the current game.
-        if(diff == null){
+        if(!currUser.getCurrentGame().equals("")){
             initialBoard = currUser.getCurrentGame();
-            userSolution = currUser.getUserSolution();
+
             solution = currUser.getSolution();
             resumeGame();
         }
@@ -119,14 +126,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             solution = intToString(logic.createEmptyBoard());
 
             initializeNewGame();
-
         }
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         saveToDatabase();
+        super.onDestroy();
         timer.stopThread();
     }
 
@@ -166,8 +172,19 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 currentBoard[row][cell] = 0;
                 emptyCells++;
             }
+            updateUserSolution(row, cell);
         }
+
     }
+
+    private void updateUserSolution(int row, int cell) {
+
+        char temp = Character.forDigit(currentBoard[row][cell], 10);
+        int index = (9 * row + cell );
+        userS.setCharAt(index, temp);
+        userRef.child("userSolution").setValue(userS.toString());
+    }
+
 
     // links stuff in the view
     private void linkButtons(){
@@ -275,6 +292,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         resetBoard();
         generateNewGame(diff);
+        diff = "";
         //if(progress.isShowing()){
         //    progress.hide();
         //}
@@ -284,10 +302,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     //compares the current board to the solution. True = solved, false = unsolved
     private boolean isSolved(){
-        //showResumedBoard();
-        String one = intToString(currentBoard);
+        String userSol = intToString(currentBoard);
 
-        return one.equals(solution);
+        return userSol.equals(solution);
     }
 
 
@@ -385,19 +402,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void saveToDatabase() {
 
-        StringBuilder current = new StringBuilder(intToString(currentBoard));
-
-        for(int i = 0 ; i < 81 ; i++ ){
-            if(!(initialBoard.charAt(i) == '0')){
-                current.setCharAt(i, '0');
-            }
-        }
-        userRef.child("userSolution").setValue(current.toString());
         userRef.child("currentTime").setValue(timer.getTime());
     }
 
     private void showCurrentSolution() {
-        for(int i = 0 ; i < 9 ; i++){
+        for(int i = 0 ; i < 9 ; i++) {
             for(int j = 0 ; j < 9 ; j++){
                 if(stringToInt(userSolution)[i][j] != 0){
                     cellViews[i][j].setText(Integer.toString(stringToInt(userSolution)[i][j]));
@@ -409,11 +418,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private void combineBoards() {
 
         StringBuilder temp = new StringBuilder(initialBoard);
-        for(int i = 0 ; i < 9 ; i++){
-            for(int j = 0 ; j < 9 ; j++){
-                if(!(userSolution.charAt(i) == '0')){
-                    temp.setCharAt(i, userSolution.charAt(i));
-                }
+        for(int i = 0 ; i < 81 ; i++){
+            if(!(userSolution.charAt(i) == '0')){
+                temp.setCharAt(i, userSolution.charAt(i));
             }
         }
         currentBoard = stringToInt(temp.toString());
