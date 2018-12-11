@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -29,11 +31,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserInfo;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.List;
 
 /**
  * A simple login screen where an existing user can sign in to his/her account
@@ -43,11 +42,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
-    private DatabaseReference refMakeNewUser;
 
     // Views
     private EditText login_email;
     private EditText login_password;
+    private Button login_btn;
+    private TextView signup_txt;
 
     // Variables for Google sign-in
     private GoogleSignInOptions gso;
@@ -62,7 +62,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private CallbackManager callbackManager;
     private LoginButton loginButton;
 
-    private DatabaseReference ref;
     private FirebaseDatabase mDatabase;
 
 
@@ -76,6 +75,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setOnClickListener(this);
+        login_btn.setOnClickListener(this);
+        signup_txt.setOnClickListener(this);
 
         loginWithFacebook();
 
@@ -134,10 +135,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void setVariables() {
         login_email = findViewById(R.id.login_email);
         login_password = findViewById(R.id.login_password);
+        login_btn = findViewById(R.id.login_btn);
+        signup_txt = findViewById(R.id.signup_txt);
 
         progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
-        refMakeNewUser = FirebaseDatabase.getInstance().getReference();
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = findViewById(R.id.login_button);
@@ -160,11 +162,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         mDatabase = FirebaseDatabase.getInstance();
-        ref = mDatabase.getReference("users");
     }
 
 
-    public void login(View view) {
+    private void loginWithEmail() {
 
         String email = login_email.getText().toString();
         String password = login_password.getText().toString();
@@ -202,10 +203,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     /**
      * If user does not have an account, he/she is taken to the Register screen
-     *
-     * @param view
      */
-    public void goToSignup(View view) {
+    private void goToSignup() {
         finish();
         startActivity(new Intent(this, RegisterActivity.class));
     }
@@ -281,10 +280,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+        // Called when user does not have an account and chooses to register
+        if (v == signup_txt) {
+            goToSignup();
+        }
+
+        // Called when user logs in with email and password
+        if (v == login_btn) {
+            loginWithEmail();
+        }
         // Called when the Google sign-in button is clicked
-        if (v == signInButton) {
+        else if (v == signInButton) {
             signIn();
         }
+
+
     }
 
 

@@ -6,7 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,9 +23,11 @@ import com.google.firebase.database.FirebaseDatabase;
 /**
  * This Activity is to register new user into the app.
  */
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText email, password;
+    private Button register;
+    private TextView login_txt;
 
     private ProgressDialog progressDialog;
 
@@ -37,6 +41,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         email = findViewById(R.id.emailreg);
         password = findViewById(R.id.passwordred);
+        register = findViewById(R.id.buttonregister);
+        register.setOnClickListener(this);
+        login_txt = findViewById(R.id.textgotolgoin);
+        login_txt.setOnClickListener(this);
 
         firebaseAuth = FirebaseAuth.getInstance();
         refMakeNewUser = FirebaseDatabase.getInstance().getReference();
@@ -50,7 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
     }
 
-    public void Register(View view) {
+    private void register() {
         String pw = password.getText().toString().trim();
         final String em = email.getText().toString().trim();
 
@@ -117,7 +125,7 @@ public class RegisterActivity extends AppCompatActivity {
     /**
      * if user already has an account
      */
-    public void goToLogin(View v) {
+    private void goToLogin() {
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
@@ -127,5 +135,17 @@ public class RegisterActivity extends AppCompatActivity {
         User user = new User(email);
 
         refMakeNewUser.child("users").child(firebaseAuth.getUid()).setValue(user);
+    }
+
+    @Override
+    public void onClick(View v) {
+        // Called when register button is clicked
+        if (v == register) {
+            register();
+        }
+        // Called when user already has an account and chooses to log in
+        if (v == login_txt) {
+            goToLogin();
+        }
     }
 }

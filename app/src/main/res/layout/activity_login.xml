@@ -69,7 +69,6 @@
             android:layout_height="wrap_content"
             android:width="150dp"
             android:text="@string/login_btn"
-            android:onClick="login"
             android:layout_marginBottom="10dp"/>
 
         <com.facebook.login.widget.LoginButton
@@ -91,7 +90,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:textAlignment="center"
-            android:onClick="goToSignup"
             android:text="@string/sign_up_here"/>
 
     </LinearLayout>
