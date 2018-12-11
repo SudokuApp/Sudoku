@@ -13,7 +13,10 @@ public class MenuActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager;
 
-    // TODO, commenta!
+    /**
+     * Activity is created and starts the Main menu fragment
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

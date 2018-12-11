@@ -304,6 +304,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
 
 
+    // TODO á þetta að vera public?
     public void changeBackground(TextView field){
 
         Drawable img = field.getBackground();
