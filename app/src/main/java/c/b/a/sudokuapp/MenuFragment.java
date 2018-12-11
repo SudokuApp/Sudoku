@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -125,6 +126,8 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                           resume.setEnabled(false);
                       }
                       getHighScore();
+                      LinearLayout leaderBoards = a.findViewById(R.id.linearLayout3);
+                      leaderBoards.setVisibility(LinearLayout.VISIBLE);
                   }
               }
 
