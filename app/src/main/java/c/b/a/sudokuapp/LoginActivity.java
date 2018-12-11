@@ -69,10 +69,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Set variables
         setVariables();
 
-        loginWithFacebook();
 
+        setUpFacebookLogin();
     }
 
     @Override
@@ -127,7 +128,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signup_txt.setOnClickListener(this);
     }
 
-    private void loginWithFacebook() {
+    private void setUpFacebookLogin() {
         // Callback registration
         facebookButton.setReadPermissions("email", "public_profile");
         facebookButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -135,7 +136,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onSuccess(LoginResult loginResult) {
                 AuthCredential credential = FacebookAuthProvider.getCredential(loginResult.getAccessToken().getToken());
                 handleAccessToken(credential);
-
             }
 
             @Override
@@ -190,28 +190,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
-     * User taken to the Main Menu
-     */
-    private void goToMainMenu() {
-        startActivity(new Intent(this, MenuActivity.class));
-        finish();
-    }
-
-    /**
-     * If user does not have an account, he/she is taken to the Register screen
-     */
-    private void goToSignup() {
-        finish();
-        startActivity(new Intent(this, RegisterActivity.class));
-    }
-
-    /**
      * Input validator for email input
      * Checks if input is empty and returns false if so
      *
      * @param email
      * @return
      */
+
     private boolean isEmailValid(String email) {
 
         if (email.trim().length() == 0) {
@@ -268,8 +253,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
+    /**
+     * User taken to the Main Menu
+     */
+    private void goToMainMenu() {
+        startActivity(new Intent(this, MenuActivity.class));
+        finish();
+    }
 
-    private void signIn() {
+    /**
+     * If user does not have an account, he/she is taken to the Register screen
+     */
+    private void goToSignup() {
+        finish();
+        startActivity(new Intent(this, RegisterActivity.class));
+    }
+
+    /**
+     * Called when user chooses to sign in with Google
+     */
+    private void GoogleSignIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, 123);
     }
@@ -286,7 +289,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         // Called when the Google sign-in button is clicked
         else if (v == googleButton) {
-            signIn();
+            GoogleSignIn();
         }
 
 
