@@ -72,16 +72,14 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/register"
-            android:onClick="Register"/>
+            android:text="@string/register" />
 
         <TextView
             android:id="@+id/textgotolgoin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/loginFromReg"
-            android:textAlignment="center"
-            android:onClick="goToLogin"/>
+            android:textAlignment="center" />
 
     </LinearLayout>
 </LinearLayout>

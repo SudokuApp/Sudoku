@@ -29,7 +29,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/user"
+                android:id="@+id/score_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -66,7 +66,7 @@
         <TextView
             android:layout_width="249dp"
             android:layout_height="wrap_content"
-            android:text="@string/high_scores"
+            android:text="@string/leaderboards"
             android:textAlignment="center"
             android:textSize="30sp" />
 
@@ -74,11 +74,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="301dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:layout_weight="0.9"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -89,31 +88,49 @@
         app:layout_constraintVertical_bias="0.21">
 
         <TextView
-            android:textSize="20sp"
-            android:layout_marginTop="20dp"
-            android:textAlignment="center"
-            android:text="No high score for easy"
-            android:id="@+id/user_highscore_easy"
+            android:id="@+id/global_highscore_easy"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Best times for easy puzzles"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/global_easy_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
 
         <TextView
-            android:textSize="20sp"
-            android:layout_marginTop="20dp"
-            android:textAlignment="center"
-            android:text="No high score for medium"
-            android:id="@+id/user_highscore_medium"
+            android:id="@+id/global_highscore_medium"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Best times for medium puzzles"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/global_medium_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
 
         <TextView
-            android:textSize="20sp"
-            android:layout_marginTop="20dp"
-            android:textAlignment="center"
-            android:text="No high score for hard"
-            android:id="@+id/user_highscore_hard"
+            android:id="@+id/global_highscore_hard"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Best times for hard puzzles"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/global_hard_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
 
     </LinearLayout>
 

@@ -14,6 +14,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -46,31 +47,25 @@ import static c.b.a.sudokuapp.MenuFragment.currUser;
 public class BoardFragment extends Fragment implements View.OnClickListener {
 
 
-    private String input = "";
-    private String diff;
-    private String initialBoard;
-    private String userSolution;
-    private int[][] currentBoard;//the current state of the board
-    private String solution;   //the solution to the current game
+    private String input = "", diff, initialBoard, userSolution, solution;
+    private int[][] currentBoard;// The current state of the board
+    private int emptyCells;
+
     private Activity a;
     private TextView timeTaken;
-    private int emptyCells;
-    private Logic logic;
-    private Timer timer; //Timer
+    private TextView[][] cellViews;
+    private Button goBack;
+
+    private Logic logic; // Instance of the Logic class
+    private Timer timer; // Instance of the Timer class
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
-    private BoardLinker boardlinker;
     //private ProgressDialog progress;
-    private int[][] cellIDs; //TODO
-    private TextView[][] cellViews;
     private SharedPreferences sharedPref;
     private ScoreHandler scoreHandler;
 
     private FirebaseDatabase mDatabase;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference ref;
     private DatabaseReference userRef;
-    private Button goBack;
 
     private StringBuilder userS;
 
@@ -81,7 +76,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_board, container, false);
@@ -92,36 +87,35 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
         a = getActivity();
         //get the desired difficulty from DifficultyFragment
+        assert a != null;
         Intent i = a.getIntent();
-
+        diff = i.getStringExtra("DIFF");
 
         linkButtons();
         timer = new Timer();
         logic = new Logic();
 
         mDatabase = FirebaseDatabase.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
-        ref = mDatabase.getReference("users");
-        userRef = ref.child(firebaseAuth.getUid());
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference ref = mDatabase.getReference("users");
+        userRef = ref.child(Objects.requireNonNull(firebaseAuth.getUid()));
         goBack = a.findViewById(R.id.returnBtn);
         goBack.setOnClickListener(this);
 
         userSolution = currUser.getUserSolution();
         userS = new StringBuilder(userSolution);
 
-        diff = i.getStringExtra("DIFF");
-
         //progress = new ProgressDialog(a);
         //progress.setMessage(getString(R.string.loading));
         //progress.show();
 
-        scoreHandler = new ScoreHandler(mDatabase, diff);
-
 
         //if diff is null, then we resume the current game.
+        sharedPref.edit().putString("INPUT", "").apply();
+
+        // If diff is null, then we resume the current game.
         if(!currUser.getCurrentGame().equals("")){
             initialBoard = currUser.getCurrentGame();
-
             solution = currUser.getSolution();
             resumeGame();
         }
@@ -153,7 +147,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         timer.resumeTimer();
     }
 
-
     private void cellClicked(int row, int cell, View view) {
         TextView boxClicked = (TextView) view;
         if(input.equals("m")){
@@ -184,7 +177,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private void updateUserSolution(int row, int cell) {
 
         char temp = Character.forDigit(currentBoard[row][cell], 10);
-        int index = (9 * row + cell );
+        int index = (9 * row + cell);
         userS.setCharAt(index, temp);
         userRef.child("userSolution").setValue(userS.toString());
     }
@@ -192,8 +185,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     // links stuff in the view
     private void linkButtons(){
-        boardlinker = new BoardLinker(a);
-        cellIDs = boardlinker.cellIDs;
+        BoardLinker boardlinker = new BoardLinker(a);
         cellViews = boardlinker.cellViews;
         sharedPref = a.getPreferences(Context.MODE_PRIVATE);
 
@@ -213,7 +205,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
         timeTaken = a.findViewById(R.id.timeField);
         white_Draw = Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)).getConstantState();
-        white_BMP = logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
+        white_BMP = Logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
     }
 
 
@@ -231,8 +223,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void winPopup() {
         timer.stopThread();
-        scoreHandler.compareToPrivate(timer.getTime());
-        saveToDatabase();
+
+        ScoreHandler scorehandler = new ScoreHandler(diff, mDatabase);
+        scorehandler.compareToPrivate(timer.getTime(), userRef);
+
+
         AlertDialog.Builder msg = new AlertDialog.Builder(a);
         msg.setTitle("Congratulations!");
         msg.setMessage("Your time was " + timer.getTimeReadable());
@@ -241,7 +236,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        resetBoard();
                         initializeNewGame();
                     }
                 });
@@ -258,6 +252,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resetBoard(){
+        userRef.child("currentGame").setValue("");
+        userRef.child("solution").setValue("");
+        userRef.child("diff").setValue(diff);
+        userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));
         for(int i = 0 ; i < 9 ; i++){
             for(int j = 0 ; j < 9 ; j++){
                 cellViews[i][j].setText("");
@@ -298,7 +296,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         resetBoard();
         generateNewGame(diff);
-        diff = "";
         //if(progress.isShowing()){
         //    progress.hide();
         //}
@@ -315,13 +312,14 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
 
 
+    // TODO á þetta að vera public?
     public void changeBackground(TextView field){
 
         Drawable img = field.getBackground();
         if(img == null){
             return;
         }
-        if(!Objects.equals(img.getConstantState(), white_Draw) || !logic.buildBitmap(img).sameAs(white_BMP)){
+        if(!Objects.equals(img.getConstantState(), white_Draw) || !Logic.buildBitmap(img).sameAs(white_BMP)){
             field.setBackgroundResource(R.drawable.grid_b);
         }
         else{
@@ -395,15 +393,15 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private String intToString(int[][] array) {
-        String string = "";
+        StringBuilder string = new StringBuilder();
         char temp;
         for(int i = 0 ; i < 9 ; i++) {
             for(int j = 0 ; j < 9 ; j++) {
                 temp = Character.forDigit(array[i][j], 10);
-                string = string + temp;
+                string.append(temp);
             }
         }
-        return string;
+        return string.toString();
     }
 
     private void saveToDatabase() {
@@ -416,13 +414,14 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 current.setCharAt(i, '0');
             }
         }
-        userRef.child("easyHighScore").setValue(currUser.getEasyHighScore());
-        userRef.child("mediumHighScore").setValue(currUser.getMediumHighScore());
-        userRef.child("hardHighScore").setValue(currUser.getHardHighScore());
+        userRef.child("easyHighScore").setValue(currUser.getEasyHighScores());
+        userRef.child("mediumHighScore").setValue(currUser.getMediumHighScores());
+        userRef.child("hardHighScore").setValue(currUser.getHardHighScores());
         userRef.child("userSolution").setValue(current.toString());
         userRef.child("currentTime").setValue(timer.getTime());
     }
 
+    @SuppressLint("SetTextI18n")
     private void showCurrentSolution() {
         for(int i = 0 ; i < 9 ; i++) {
             for(int j = 0 ; j < 9 ; j++){
@@ -446,7 +445,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void resumeGame() {
         combineBoards();
-        logic.countEmptyCells(currentBoard);
+        emptyCells = logic.countEmptyCells(currentBoard);
         showCurrentGame(stringToInt(initialBoard));
         showCurrentSolution();
 

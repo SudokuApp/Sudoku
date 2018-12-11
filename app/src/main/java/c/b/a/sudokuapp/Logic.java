@@ -8,11 +8,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 public class Logic {
-    public Logic(){
 
-    }
+    public Logic(){ }
 
-    public int countEmptyCells(int[][] board){
+    public static int countEmptyCells(int[][] board){
         int emptyCells = 0;
         for(int i = 0 ; i < 9 ; i++){
             for(int j = 0 ; j < 9 ; j++){
@@ -26,7 +25,7 @@ public class Logic {
 
 
     //converts the 2 dimensional array into a string. Used by getSolution()
-    public String convertBoardToString(int[][] game){
+    public static String convertBoardToString(int[][] game){
         StringBuilder result = new StringBuilder("[[");
         for(int i = 0 ; i < 9 ; i++){
             for(int j = 0 ; j < 9 ; j++){
@@ -63,7 +62,7 @@ public class Logic {
 
 
     //creates an empty 9x9 integer array
-    public int[][] createEmptyBoard(){
+    public static int[][] createEmptyBoard(){
         int[][] board = new int[9][];
 
         for(int i = 0 ; i < 9 ; i++){

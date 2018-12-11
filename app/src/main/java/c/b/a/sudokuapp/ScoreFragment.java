@@ -3,19 +3,24 @@ package c.b.a.sudokuapp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.List;
+
 import static c.b.a.sudokuapp.MenuFragment.currUser;
+import static c.b.a.sudokuapp.MenuFragment.easyScores;
+import static c.b.a.sudokuapp.MenuFragment.mediumScores;
+import static c.b.a.sudokuapp.MenuFragment.hardScores;
 
 
 /**
@@ -24,9 +29,11 @@ import static c.b.a.sudokuapp.MenuFragment.currUser;
 public class ScoreFragment extends Fragment {
 
 
-    private TextView userEasy;
-    private TextView userMedium;
-    private TextView userHard;
+    private LinearLayout easyListView;
+    private LinearLayout mediumListView;
+    private LinearLayout hardListView;
+    private FirebaseAuth firebaseAuth;
+    private TextView userTxt;
 
     private Activity a;
 
@@ -42,36 +49,49 @@ public class ScoreFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_score, container, false);
     }
 
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+    }
+
+    private String splitUserEmail(String email) {
+        String[] emailArr = email.split("@");
+        return emailArr[0];
+    }
+
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Set variables
         setVariables();
 
-        // Show high score
-        getHighScore();
+        // Inflate into lists
+        inflateIntoLists(easyListView, easyScores);
+        inflateIntoLists(mediumListView, mediumScores);
+        inflateIntoLists(hardListView, hardScores);
 
     }
 
     private void setVariables() {
         a = getActivity();
-        userEasy = a.findViewById(R.id.user_highscore_easy);
-        userMedium = a.findViewById(R.id.user_highscore_medium);
-        userHard = a.findViewById(R.id.user_highscore_hard);
+        userTxt = a.findViewById(R.id.score_user);
+        easyListView = a.findViewById(R.id.global_easy_list);
+        mediumListView = a.findViewById(R.id.global_medium_list);
+        hardListView = a.findViewById(R.id.global_hard_list);
+        firebaseAuth = FirebaseAuth.getInstance();
     }
 
-    @SuppressLint("SetTextI18n")
-    private void getHighScore() {
 
-        if(currUser.getEasyHighScore() != Integer.MAX_VALUE) {
-            userEasy.setText("Your high score for easy puzzles: " + DateUtils.formatElapsedTime(currUser.getEasyHighScore()));
-        }
-        if(currUser.getMediumHighScore() != Integer.MAX_VALUE) {
-            userMedium.setText("Your high score for medium puzzles: " + DateUtils.formatElapsedTime(currUser.getMediumHighScore()));
-        }
-        if(currUser.getHardHighScore() != Integer.MAX_VALUE) {
-            userHard.setText("Your high score for hard puzzles: " + DateUtils.formatElapsedTime(currUser.getHardHighScore()));
+    private void inflateIntoLists(LinearLayout list, List<ScorePair> scores){
+        for(ScorePair s : scores){
+            View view = View.inflate(a, R.layout.layout_scorepair, null);
+            TextView name = view.findViewById(R.id.scorepair_name);
+            TextView time = view.findViewById(R.id.scorepair_time);
+            name.setText(s.getName());
+            time.setText(DateUtils.formatElapsedTime(s.getScore()));
+            list.addView(view);
         }
     }
-
 }

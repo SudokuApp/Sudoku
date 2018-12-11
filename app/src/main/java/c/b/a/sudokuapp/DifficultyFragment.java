@@ -23,7 +23,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import static c.b.a.sudokuapp.LoginActivity.account;
 import static c.b.a.sudokuapp.MenuFragment.currUser;
 
 
@@ -41,13 +40,10 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
 
     // Authentication variables
     private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
 
     // Current activity
     private Activity a;
 
-    // Variables for Facebook sign-in / sign-out
-    private boolean isLoggedIn;
     private AccessToken accessToken;
 
     // Variables for Google sign-in / sign-out
@@ -91,23 +87,17 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         setClickListeners();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onStart() {
         super.onStart();
 
-        // If user is not logged in, he/she is taken to the login screen
-        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn && account == null) {
-            a.finish();
-            a.startActivity(new Intent(a, LoginActivity.class));
-        }
+        userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+    }
 
-        if(firebaseAuth.getCurrentUser() != null){
-            //If the user comes from firebase
-            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
-        } else {
-            //if the user comes from google or facebook
-            userTxt.setText(getString(R.string.welcome_user) + firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail());
-        }
+    private String splitUserEmail(String email) {
+        String[] emailArr = email.split("@");
+        return emailArr[0];
     }
 
     /**
@@ -127,7 +117,6 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         a = getActivity();
         userTxt = a.findViewById(R.id.diff_user);
         firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
         logout = a.findViewById(R.id.diff_logout);
         easy = a.findViewById(R.id.easy);
         medium = a.findViewById(R.id.medium);
@@ -138,8 +127,6 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         userRef = ref.child(firebaseAuth.getUid());
 
         accessToken = AccessToken.getCurrentAccessToken();
-        // Check if user is logged in via facebook
-        isLoggedIn = accessToken != null && !accessToken.isExpired();
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -163,6 +150,7 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
     private void startGame(String diff){
         userRef.child("currentGame").setValue("");
         userRef.child("solution").setValue("");
+        userRef.child("diff").setValue(diff);
         userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));
         a.finish();
         Intent intent = new Intent(a, GameActivity.class);
@@ -175,15 +163,10 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
      * Takes user back to the login screen
      */
     private void logout() {
-        if(isLoggedIn) {
-            LoginManager.getInstance().logOut();
-            firebaseAuth.signOut();
-        } else if(account != null) {
-            firebaseAuth.signOut();
-            mGoogleSignInClient.signOut();
-        } else if(firebaseAuth.getCurrentUser() != null) {
-            firebaseAuth.signOut();
-        }
+        LoginManager.getInstance().logOut();
+        mGoogleSignInClient.signOut();
+        firebaseAuth.signOut();
+
         a.finish();
         a.startActivity(new Intent(a, LoginActivity.class));
     }

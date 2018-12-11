@@ -7,11 +7,12 @@ public class User {
     private String userSolution;
     private String solution;
     private int currentTime;
-    private int easyHighScore;
-    private int mediumHighScore;
-    private int hardHighScore;
+    private int easyHighScores;
+    private int mediumHighScores;
+    private int hardHighScores;
     private int totalCompleted;
     private String email;
+    private String diff;
 
     //total games? number of cancelled games?
 
@@ -24,11 +25,12 @@ public class User {
         this.solution = "";
         this.userSolution = "";
         this.currentTime = 0;
-        this.easyHighScore = Integer.MAX_VALUE;
-        this.mediumHighScore = Integer.MAX_VALUE;
-        this.hardHighScore = Integer.MAX_VALUE;
+        this.easyHighScores = Integer.MAX_VALUE;
+        this.mediumHighScores = Integer.MAX_VALUE;
+        this.hardHighScores = Integer.MAX_VALUE;
         this.totalCompleted = 0;
         this.email = email;
+        this.diff = "";
 
     }
 
@@ -44,20 +46,18 @@ public class User {
         return solution;
     }
 
-    public int getCurrentTime() {
-        return currentTime;
+    public int getCurrentTime() { return currentTime; }
+
+    public int getEasyHighScores() {
+        return easyHighScores;
     }
 
-    public int getEasyHighScore() {
-        return easyHighScore;
+    public int getMediumHighScores() {
+        return mediumHighScores;
     }
 
-    public int getMediumHighScore() {
-        return mediumHighScore;
-    }
-
-    public int getHardHighScore() {
-        return hardHighScore;
+    public int getHardHighScores() {
+        return hardHighScores;
     }
 
     public int getTotalCompleted() {
@@ -85,15 +85,13 @@ public class User {
     }
 
     public void setEasyHighScores(int easyHighScores) {
-        this.easyHighScore = easyHighScores;
+        this.easyHighScores = easyHighScores;
     }
 
-    public void setMediumHighScores(int mediumHighScores) {
-        this.mediumHighScore = mediumHighScores;
-    }
+    public void setMediumHighScores(int mediumHighScores) { this.mediumHighScores = mediumHighScores; }
 
     public void setHardHighScores(int hardHighScores) {
-        this.hardHighScore = hardHighScores;
+        this.hardHighScores = hardHighScores;
     }
 
     public void setTotalCompleted(int totalCompleted) {
@@ -102,5 +100,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getDiff() {
+        return diff;
+    }
+
+    public void setDiff(String diff) {
+        this.diff = diff;
     }
 }
