@@ -25,39 +25,63 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
+    // Views
     private EditText email, password;
     private Button register;
     private TextView login_txt;
 
     private ProgressDialog progressDialog;
 
+    // Firebase authentication
     private FirebaseAuth firebaseAuth;
-    private DatabaseReference refMakeNewUser;
+    // Reference of Firebase database
+    private DatabaseReference mDatabaseRef;
 
+
+    /**
+     * Sets variables and makes sure to take the user to the Main menu if he/she
+     * is already logged in
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        email = findViewById(R.id.emailreg);
-        password = findViewById(R.id.passwordred);
-        register = findViewById(R.id.buttonregister);
-        register.setOnClickListener(this);
-        login_txt = findViewById(R.id.textgotolgoin);
-        login_txt.setOnClickListener(this);
+        // Set variables
+        setVariables();
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        refMakeNewUser = FirebaseDatabase.getInstance().getReference();
-
-        //if you are logged in, you should go straight to the menu activity
+        // If you are logged in, you should go straight to the menu activity
         if(firebaseAuth.getCurrentUser() != null) {
             finish();
             startActivity(new Intent(getApplicationContext(), MenuActivity.class));
         }
-
-        progressDialog = new ProgressDialog(this);
     }
 
+    /**
+     * Set instance variables
+     */
+    private void setVariables() {
+        email = findViewById(R.id.emailreg);
+        password = findViewById(R.id.passwordred);
+        register = findViewById(R.id.buttonregister);
+        login_txt = findViewById(R.id.textgotolgoin);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference();
+        progressDialog = new ProgressDialog(this);
+
+        // Set click listeners
+        register.setOnClickListener(this);
+        login_txt.setOnClickListener(this);
+    }
+
+    /**
+     * Called when the register button is clicked
+     * If registration is successful, user is created in the database
+     * and the user is taken to the Main menu
+     * If registration fails, user gets descriptive message
+     */
     private void register() {
         String pw = password.getText().toString().trim();
         final String em = email.getText().toString().trim();
@@ -82,30 +106,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                             } else if(task.getException() instanceof FirebaseAuthUserCollisionException) {
                                     email.requestFocus();
-                                    email.setError("Email taken");
+                                    email.setError(getString(R.string.email_taken));
                             } else {
-                                Toast.makeText(RegisterActivity.this, "Registration failed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegisterActivity.this, getString(R.string.registration_failed), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
         }
     }
 
-    private boolean validPassword(String pw) {
-        if(pw.length() == 0) {
-            password.requestFocus();
-            password.setError(getString(R.string.required));
-            return false;
-
-        }
-        //the password has to be 6 or more letters
-        else if(pw.length() < 6) {
-            password.requestFocus();
-            password.setError(getString(R.string.invalidPassword));
-            return false;
-        }
-        return true;
-    }
+    /**
+     * Input validator without db access
+     * @param em the email
+     * @return
+     */
 
     private boolean validEmail(String em) {
         if(em.length() == 0) {
@@ -123,18 +137,44 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * if user already has an account
+     * Input validator without db access
+     * @param pw the password
+     * @return
+     */
+    private boolean validPassword(String pw) {
+        if(pw.length() == 0) {
+            password.requestFocus();
+            password.setError(getString(R.string.required));
+            return false;
+
+        }
+        //the password has to be 6 or more letters
+        else if(pw.length() < 6) {
+            password.requestFocus();
+            password.setError(getString(R.string.invalidPassword));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * If user already has an account he/she is taken to the Login screen
      */
     private void goToLogin() {
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
+    /**
+     * Called when registration is successful
+     * Creates a new user in the database
+     * @param email user's email
+     */
     private void writeNewUser(String email) {
 
         User user = new User(email);
 
-        refMakeNewUser.child("users").child(firebaseAuth.getUid()).setValue(user);
+        mDatabaseRef.child("users").child(firebaseAuth.getUid()).setValue(user);
     }
 
     @Override

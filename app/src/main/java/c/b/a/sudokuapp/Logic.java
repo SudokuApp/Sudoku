@@ -8,9 +8,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 public class Logic {
-    public Logic(){
 
-    }
+    public Logic(){ }
 
     public int countEmptyCells(int[][] board){
         int emptyCells = 0;
