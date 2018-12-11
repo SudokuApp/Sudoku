@@ -49,6 +49,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     private Button newGame;
     private Button resume;
     private Button leaderBoards;
+    private Button instructions;
 
     // Authentication variables
     private FirebaseAuth firebaseAuth;
@@ -172,6 +173,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         newGame.setOnClickListener(this);
         resume.setOnClickListener(this);
         leaderBoards.setOnClickListener(this);
+        instructions.setOnClickListener(this);
     }
 
     /**
@@ -192,6 +194,8 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         userEasy = a.findViewById(R.id.user_highscore_easy);
         userMedium = a.findViewById(R.id.user_highscore_medium);
         userHard = a.findViewById(R.id.user_highscore_hard);
+
+        instructions = a.findViewById(R.id.instructions);
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -302,6 +306,13 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    private void goToInstuctions() {
+        fragmentManager = getFragmentManager();
+
+        fragmentManager.beginTransaction().addToBackStack(null).replace(R.id.main_frag, new InstructionFragment()).commit();
+        fragmentManager.executePendingTransactions();
+    }
+
     /**
      * Called when the log out button is clicked.
      * Called when the log out button is clicked.
@@ -337,6 +348,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         }
         else if(v == leaderBoards) {
             goToLeaderBoards();
+        }
+        else if(v == instructions) {
+            goToInstuctions();
         }
 
     }

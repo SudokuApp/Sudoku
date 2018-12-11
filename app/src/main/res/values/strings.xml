@@ -41,7 +41,7 @@
 
 
     <!-- Instruction Strings -->
-    <string name="how_to_play">How to play!</string>
+    <string name="how_to_play">How to play</string>
     <string name="what_is_sudoku_answer">Sudoku is a number puzzle in which players insert the
         numbers 1 to 9 into a grid consisting of nine squares subdivided into a further nine
         smaller squares in such way that every number appears once in each horizontal line,

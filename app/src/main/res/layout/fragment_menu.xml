@@ -72,12 +72,10 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.1"
-
         android:layout_marginStart="8dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="8dp"
-
+        android:layout_weight="0.1"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -90,8 +88,7 @@
             android:id="@+id/resume_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="19dp"
             android:width="150dp"
             android:text="@string/resume_btn" />
 
@@ -99,17 +96,25 @@
             android:id="@+id/new_game_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="19dp"
             android:width="150dp"
             android:text="@string/new_game_btn" />
+
+        <Button
+            android:id="@+id/instructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="19dp"
+            android:width="150dp"
+            android:text="@string/how_to_play" />
 
         <Button
             android:id="@+id/leaderboards_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:width="150dp"
             android:text="@string/leaderboards" />
+
 
     </LinearLayout>
 
@@ -119,9 +124,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
