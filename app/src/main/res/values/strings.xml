@@ -25,11 +25,12 @@
     <string name="hard">Hard</string>
     <string name="facebook_app_id">313601652830022</string>
     <string name="fb_login_protocol_scheme">8a9157c2ee903be5543e146977c87571</string>
-    <string name="time"><![CDATA[<Time>]]></string>
     <string name="loading">Loading...</string>
     <string name="high_scores">High scores</string>
     <string name="input">INPUT</string>
     <string name="email_taken">Email taken</string>
     <string name="registration_failed">Registration failed</string>
     <string name="initalizeUserSolution">000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</string>
+    <string name="name_placeholder"><![CDATA[<name>]]></string>
+    <string name="time_placeholder"><![CDATA[<time>]]></string>
 </resources>
