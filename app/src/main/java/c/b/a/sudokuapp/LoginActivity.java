@@ -31,7 +31,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -52,18 +51,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // Variables for Google sign-in
     private GoogleSignInOptions gso;
     private GoogleSignInClient mGoogleSignInClient;
+
+    // Last signed in Google account
+    private GoogleSignInAccount accountGoogle;
     // Used in MenuFragment and DifficultyFragment to know if user is logged in with Google
-    public static GoogleSignInAccount accountGoogle;
     public static GoogleSignInAccount account;
-    private SignInButton signInButton;
+    private SignInButton googleButton;
 
     // Variables for Facebook sign-in
     private boolean isLoggedIn;
     private CallbackManager callbackManager;
-    private LoginButton loginButton;
-
-    private FirebaseDatabase mDatabase;
-
+    private LoginButton facebookButton;
 
 
     @Override
@@ -72,11 +70,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         setVariables();
-
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setOnClickListener(this);
-        login_btn.setOnClickListener(this);
-        signup_txt.setOnClickListener(this);
 
         loginWithFacebook();
 
@@ -93,12 +86,51 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    /**
+     * Set instance variables
+     */
+    private void setVariables() {
+        login_email = findViewById(R.id.login_email);
+        login_password = findViewById(R.id.login_password);
+        login_btn = findViewById(R.id.login_btn);
+        signup_txt = findViewById(R.id.signup_txt);
 
+        progressDialog = new ProgressDialog(this);
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        callbackManager = CallbackManager.Factory.create();
+        // Facebook login button
+        facebookButton = findViewById(R.id.login_button);
+
+        // Check if user is logged in via Facebook
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        isLoggedIn = accessToken != null && !accessToken.isExpired();
+
+        // Current Google account / last signed in Google account
+        accountGoogle = GoogleSignIn.getLastSignedInAccount(this);
+        googleButton = findViewById(R.id.sign_in_button);
+
+        // Configure sign-in to request the user's ID, email address, and basic profile
+        // ID and basic profile are included in DEFAULT_SIGN_IN.
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        // The Google sign in button
+        googleButton.setSize(SignInButton.SIZE_STANDARD);
+
+        // Set click listeners on buttons
+        googleButton.setOnClickListener(this);
+        login_btn.setOnClickListener(this);
+        signup_txt.setOnClickListener(this);
+    }
 
     private void loginWithFacebook() {
         // Callback registration
-        loginButton.setReadPermissions("email", "public_profile");
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        facebookButton.setReadPermissions("email", "public_profile");
+        facebookButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 AuthCredential credential = FacebookAuthProvider.getCredential(loginResult.getAccessToken().getToken());
@@ -128,42 +160,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             handleSignInResult(task);
         }
     }
-
-    /**
-     * Set instance variables
-     */
-    private void setVariables() {
-        login_email = findViewById(R.id.login_email);
-        login_password = findViewById(R.id.login_password);
-        login_btn = findViewById(R.id.login_btn);
-        signup_txt = findViewById(R.id.signup_txt);
-
-        progressDialog = new ProgressDialog(this);
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        callbackManager = CallbackManager.Factory.create();
-        loginButton = findViewById(R.id.login_button);
-
-        //check if user is logged in via facebook
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        isLoggedIn = accessToken != null && !accessToken.isExpired();
-
-        accountGoogle = GoogleSignIn.getLastSignedInAccount(this);
-        signInButton = findViewById(R.id.sign_in_button);
-
-
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        mDatabase = FirebaseDatabase.getInstance();
-    }
-
 
     private void loginWithEmail() {
 
@@ -284,13 +280,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (v == signup_txt) {
             goToSignup();
         }
-
         // Called when user logs in with email and password
-        if (v == login_btn) {
+        else if (v == login_btn) {
             loginWithEmail();
         }
         // Called when the Google sign-in button is clicked
-        else if (v == signInButton) {
+        else if (v == googleButton) {
             signIn();
         }
 
