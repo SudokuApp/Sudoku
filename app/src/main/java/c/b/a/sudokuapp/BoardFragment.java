@@ -55,6 +55,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private TextView timeTaken;
     private TextView[][] cellViews;
     private Button goBack;
+    private int currentTime;
 
     private Logic logic; // Instance of the Logic class
     private Timer timer; // Instance of the Timer class
@@ -84,6 +85,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         a = getActivity();
         //get the desired difficulty from DifficultyFragment
         assert a != null;
@@ -110,22 +112,25 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         sharedPref.edit().putString("INPUT", "").apply();
 
+
         // If diff is null, then we resume the current game.
         if(!currUser.getCurrentGame().equals("")){
             initialBoard = currUser.getCurrentGame();
             solution = currUser.getSolution();
+            currentTime = currUser.getCurrentTime();
             resumeGame();
         }
         else {
             currentBoard = logic.createEmptyBoard();
             solution = intToString(logic.createEmptyBoard());
-
+            currentTime = 0;
             initializeNewGame();
         }
     }
 
     @Override
     public void onDestroy() {
+        currUser.setCurrentTime(timer.getTime());
         saveToDatabase();
         super.onDestroy();
         timer.stopThread();
@@ -133,6 +138,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onPause() {
+        currUser.setCurrentTime(timer.getTime());
         super.onPause();
         saveToDatabase();
         timer.pauseTimer();
@@ -225,7 +231,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         AlertDialog.Builder msg = new AlertDialog.Builder(a);
         msg.setTitle("Congratulations!");
-        msg.setMessage("Your time was " + timer.getTime());
+        msg.setMessage("Your time was " + timer.getTimeReadable());
         msg.setCancelable(true);
         msg.setNeutralButton("New puzzle",
                 new DialogInterface.OnClickListener() {
@@ -295,7 +301,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //    progress.hide();
         //}
         // TODO passa að tíminn byrji ekki fyrr en borðið er birt
-        timer.startTimeThread(0, timeTaken);
+        timer.startTimeThread(currentTime, timeTaken);
     }
 
     //compares the current board to the solution. True = solved, false = unsolved
@@ -432,7 +438,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         showCurrentSolution();
 
 
-        timer.startTimeThread(currUser.getCurrentTime(), timeTaken);
+        timer.startTimeThread(currentTime, timeTaken);
         //progress.cancel();
     }
 

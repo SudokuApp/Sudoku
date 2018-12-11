@@ -1,6 +1,7 @@
 package c.b.a.sudokuapp;
 
 import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
 import android.widget.TextView;
@@ -36,7 +37,7 @@ public class Timer {
     public void startTimeThread(final int start, final TextView timeTaken){
         if(t != null){
             stopThread();
-        } 
+        }
         t = new Thread() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -51,7 +52,7 @@ public class Timer {
                     }
                     else{
                         timeTotal = (int) SystemClock.currentThreadTimeMillis() / 1000 + start;
-                        timeTaken.setText(DateUtils.formatElapsedTime(timeTotal));
+                        timeTaken.setText(getTimeReadable());
                     }
                 }
             }
