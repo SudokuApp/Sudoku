@@ -20,6 +20,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import static c.b.a.sudokuapp.LoginActivity.account;
 import static c.b.a.sudokuapp.MenuFragment.currUser;
@@ -51,6 +53,11 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
     // Variables for Google sign-in / sign-out
     private GoogleSignInOptions gso;
     private GoogleSignInClient mGoogleSignInClient;
+
+    // Variables for database
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference ref;
+    private DatabaseReference userRef;
 
 
     public DifficultyFragment() {
@@ -126,6 +133,10 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         medium = a.findViewById(R.id.medium);
         hard = a.findViewById(R.id.hard);
 
+        mDatabase = FirebaseDatabase.getInstance();
+        ref = mDatabase.getReference("users");
+        userRef = ref.child(firebaseAuth.getUid());
+
         accessToken = AccessToken.getCurrentAccessToken();
         // Check if user is logged in via facebook
         isLoggedIn = accessToken != null && !accessToken.isExpired();
@@ -150,6 +161,9 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
 
 
     private void startGame(String diff){
+        userRef.child("currentGame").setValue("");
+        userRef.child("solution").setValue("");
+        userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));
         a.finish();
         Intent intent = new Intent(a, GameActivity.class);
         intent.putExtra("DIFF", diff);

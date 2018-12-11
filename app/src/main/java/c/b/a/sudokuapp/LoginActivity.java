@@ -57,13 +57,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // Used in MenuFragment and DifficultyFragment to know if user is logged in with Google
     public static GoogleSignInAccount account;
     private SignInButton googleButton;
+    private int RC_SIGN_IN = 123;
 
     // Variables for Facebook sign-in
-    private boolean isLoggedIn;
+    private boolean isLoggedInWithFB;
     private CallbackManager callbackManager;
     private LoginButton facebookButton;
 
 
+    /**
+     * Sets variables and sets up the login option for Facebook
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,16 +77,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Set variables
         setVariables();
 
-
         setUpFacebookLogin();
     }
 
+    /**
+     * Makes sure to take the user to the Main menu
+     */
     @Override
     public void onStart() {
         super.onStart();
 
         // If user is logged in, he/she is taken to the Main Menu
-        if (firebaseAuth.getCurrentUser() != null || isLoggedIn || accountGoogle != null) {
+        if (firebaseAuth.getCurrentUser() != null || isLoggedInWithFB || accountGoogle != null) {
             startActivity(new Intent(getApplicationContext(), MenuActivity.class));
             finish();
         }
@@ -105,7 +112,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // Check if user is logged in via Facebook
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        isLoggedIn = accessToken != null && !accessToken.isExpired();
+        isLoggedInWithFB = accessToken != null && !accessToken.isExpired();
 
         // Current Google account / last signed in Google account
         accountGoogle = GoogleSignIn.getLastSignedInAccount(this);
@@ -128,6 +135,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signup_txt.setOnClickListener(this);
     }
 
+    /**
+     * Initializes the Facebook Login button
+     */
     private void setUpFacebookLogin() {
         // Callback registration
         facebookButton.setReadPermissions("email", "public_profile");
@@ -146,21 +156,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    //The structure for this code was gotten from the facebook developer-site.
-    //https://firebase.google.com/docs/auth/android/facebook-login >> Authenticate with Firebase >> developer's documentation
+    /**
+     * For both Facebook and Google login
+     * Structure for the code obtained from firebase.google.com
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 123) {
+        // Pass the activity result back to the Facebook SDK
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        // Google
+        if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
+            handleGoogleSignInResult(task);
         }
     }
 
+    /**
+     * Called when user chooses to log in with email and passwords
+     * If login is successful, user is taken to the Main menu
+     * If login fails, user gets descriptive message
+     */
     private void loginWithEmail() {
 
         String email = login_email.getText().toString();
@@ -190,13 +213,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
-     * Input validator for email input
+     * Input validator for email input without db access
      * Checks if input is empty and returns false if so
-     *
      * @param email
      * @return
      */
-
     private boolean isEmailValid(String email) {
 
         if (email.trim().length() == 0) {
@@ -208,9 +229,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
-     * Input validator for password input
+     * Input validator for password input without db access
      * Checks if input is empty and returns false if so
-     *
      * @param password
      * @return
      */
@@ -224,17 +244,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return true;
     }
 
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+    /**
+     * Called then user chooses to log in via Google
+     * If login is successful, user is authenticated with Firebase
+     * If login fails, a message appears on the screen for user to know
+     * @param completedTask
+     */
+    private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
 
             account = completedTask.getResult(ApiException.class);
             AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
             handleAccessToken(credential);
         } catch (ApiException e) {
-            Toast.makeText(this, "Failed google", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Login with Google failed", Toast.LENGTH_LONG).show();
         }
     }
 
+    /**
+     * Called when user chooses to login via Google or Facebook
+     * If login is successful, user is taken to the Main menu
+     * If login fails, a message appears on screen for user to know
+     * @param credential either Facebook or Google
+     */
     private void handleAccessToken(AuthCredential credential) {
 
         firebaseAuth.signInWithCredential(credential)
@@ -251,7 +283,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
     }
-
 
     /**
      * User taken to the Main Menu
@@ -274,7 +305,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void GoogleSignIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, 123);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -291,12 +322,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else if (v == googleButton) {
             GoogleSignIn();
         }
-
-
     }
-
-
-
-
 }
 
