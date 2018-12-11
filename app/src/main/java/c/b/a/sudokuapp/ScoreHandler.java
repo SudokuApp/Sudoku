@@ -32,7 +32,7 @@ class ScoreHandler {
         if(globalScores == null){
             globalScores = new ArrayList<>();
         }
-        globalScores.add(new ScorePair(currUser.getEmail(), newScore));
+        globalScores.add(new ScorePair(splitUserEmail(currUser.getEmail()), newScore));
         if(globalScores.size() > 5){
 
             ScorePair highestGlobal = new ScorePair();
@@ -45,6 +45,11 @@ class ScoreHandler {
             globalScores.remove(highestGlobal);
         }
         ref.setValue(globalScores);
+    }
+
+    private String splitUserEmail(String email) {
+        String[] emailArr = email.split("@");
+        return emailArr[0];
     }
 
     //check if this new score is better than the users old one for this difficulty

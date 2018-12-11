@@ -91,23 +91,17 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         setClickListeners();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onStart() {
         super.onStart();
 
-        // If user is not logged in, he/she is taken to the login screen
-        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn && account == null) {
-            a.finish();
-            a.startActivity(new Intent(a, LoginActivity.class));
-        }
+        userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+    }
 
-        if(firebaseAuth.getCurrentUser() != null){
-            //If the user comes from firebase
-            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
-        } else {
-            //if the user comes from google or facebook
-            userTxt.setText(getString(R.string.welcome_user) + firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail());
-        }
+    private String splitUserEmail(String email) {
+        String[] emailArr = email.split("@");
+        return emailArr[0];
     }
 
     /**
