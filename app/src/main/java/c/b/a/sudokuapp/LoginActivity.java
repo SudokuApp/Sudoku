@@ -54,8 +54,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     // Last signed in Google account
     private GoogleSignInAccount accountGoogle;
-    // Used in MenuFragment and DifficultyFragment to know if user is logged in with Google
-    public static GoogleSignInAccount account;
     private SignInButton googleButton;
     private int RC_SIGN_IN = 123;
 
@@ -255,7 +253,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-
+            GoogleSignInAccount account;
             account = completedTask.getResult(ApiException.class);
             AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
             handleAccessToken(credential);
