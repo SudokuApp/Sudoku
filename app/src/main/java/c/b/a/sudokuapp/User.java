@@ -12,6 +12,7 @@ public class User {
     private int hardHighScores;
     private int totalCompleted;
     private String email;
+    private String diff;
 
     //total games? number of cancelled games?
 
@@ -24,11 +25,12 @@ public class User {
         this.solution = "";
         this.userSolution = "";
         this.currentTime = 0;
-        this.easyHighScores = 0;
-        this.mediumHighScores = 0;
-        this.hardHighScores = 0;
+        this.easyHighScores = Integer.MAX_VALUE;
+        this.mediumHighScores = Integer.MAX_VALUE;
+        this.hardHighScores = Integer.MAX_VALUE;
         this.totalCompleted = 0;
         this.email = email;
+        this.diff = "";
 
     }
 
@@ -102,5 +104,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getDiff() {
+        return diff;
+    }
+
+    public void setDiff(String diff) {
+        this.diff = diff;
     }
 }
