@@ -29,10 +29,7 @@
     <string name="loading">Loading...</string>
     <string name="high_scores">High scores</string>
     <string name="input">INPUT</string>
-<<<<<<< HEAD
     <string name="email_taken">Email taken</string>
     <string name="registration_failed">Registration failed</string>
-=======
     <string name="initalizeUserSolution">000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</string>
->>>>>>> cb413e856772d32d263a4b7b4fa759ad85746a54
 </resources>

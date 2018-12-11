@@ -205,7 +205,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             if (task.isSuccessful()) {
                                 goToMainMenu();
                             } else {
-                                Toast.makeText(LoginActivity.this, "Email or password incorrect!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Email or password incorrect!", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -277,7 +277,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             goToMainMenu();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_LONG).show();
                             LoginManager.getInstance().logOut();
                         }
                     }

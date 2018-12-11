@@ -109,7 +109,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                     email.requestFocus();
                                     email.setError(getString(R.string.email_taken));
                             } else {
-                                Toast.makeText(RegisterActivity.this, getString(R.string.registration_failed), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegisterActivity.this, getString(R.string.registration_failed), Toast.LENGTH_LONG).show();
                             }
                         }
                     });
