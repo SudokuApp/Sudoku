@@ -34,8 +34,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static c.b.a.sudokuapp.LoginActivity.account;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,10 +58,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     private Activity a;
 
     private FragmentManager fragmentManager;
-
-    // Variables for Facebook sign-in / sign-out
-    private boolean isLoggedIn;
-    private AccessToken accessToken;
 
     // Variables for Google sign-in / sign-out
     private GoogleSignInOptions gso;
@@ -145,7 +139,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         super.onStart();
 
         // If user is not logged in, he/she is taken to the login screen
-        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn && account == null) {
+        if(firebaseAuth.getCurrentUser() == null) {
             a.finish();
             a.startActivity(new Intent(a, LoginActivity.class));
         }
@@ -197,10 +191,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         userEasy = a.findViewById(R.id.user_highscore_easy);
         userMedium = a.findViewById(R.id.user_highscore_medium);
         userHard = a.findViewById(R.id.user_highscore_hard);
-
-        accessToken = AccessToken.getCurrentAccessToken();
-        // Check if user is logged in via facebook
-        isLoggedIn = accessToken != null && !accessToken.isExpired();
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -312,18 +302,14 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
     /**
      * Called when the log out button is clicked.
+     * Called when the log out button is clicked.
      * Takes user back to the login screen
      */
     private void logout() {
-        if(isLoggedIn) {
-            LoginManager.getInstance().logOut();
-            firebaseAuth.signOut();
-        } else if(account != null) {
-            firebaseAuth.signOut();
-            mGoogleSignInClient.signOut();
-        } else if(firebaseAuth.getCurrentUser() != null) {
-            firebaseAuth.signOut();
-        }
+        mGoogleSignInClient.signOut();
+        firebaseAuth.signOut();
+        LoginManager.getInstance().logOut();
+
         a.finish();
         a.startActivity(new Intent(a, LoginActivity.class));
     }
