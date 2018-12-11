@@ -34,4 +34,7 @@
     <string name="name_placeholder"><![CDATA[<name>]]></string>
     <string name="time_placeholder"><![CDATA[<time>]]></string>
     <string name="leaderboards">Leaderboards</string>
+    <string name="go_back">Go Back</string>
+    <string name="erase">Erase</string>
+    <string name="mark">Mark</string>
 </resources>
