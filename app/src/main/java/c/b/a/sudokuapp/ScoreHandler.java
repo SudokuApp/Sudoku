@@ -55,7 +55,7 @@ class ScoreHandler {
         if (diff.equals("easy")){
             if (newScore < currUser.getEasyHighScores()){
                 currUser.setEasyHighScores(newScore);
-                userRef.child("mediumHighScores").setValue(newScore);
+                userRef.child("easyHighScores").setValue(newScore);
             }
             compareToGlobal(newScore, easyScores, scoreref.child("easy"));
         }
