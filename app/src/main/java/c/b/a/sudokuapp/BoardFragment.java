@@ -88,8 +88,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
         a = getActivity();
         //get the desired difficulty from DifficultyFragment
+        assert a != null;
         Intent i = a.getIntent();
-
+        diff = i.getStringExtra("DIFF");
 
         linkButtons();
         timer = new Timer();
@@ -104,8 +105,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         userSolution = currUser.getUserSolution();
         userS = new StringBuilder(userSolution);
-
-        diff = i.getStringExtra("DIFF");
 
         //progress = new ProgressDialog(a);
         //progress.setMessage(getString(R.string.loading));
@@ -222,6 +221,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void winPopup() {
         timer.stopThread();
+        ScoreHandler scorehandler = new ScoreHandler(diff, mDatabase);
+        scorehandler.compareToPrivate(timer.getTime(), userRef);
+
         AlertDialog.Builder msg = new AlertDialog.Builder(a);
         msg.setTitle("Congratulations!");
         msg.setMessage("Your time was " + timer.getTime());
@@ -230,7 +232,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        resetBoard();
                         initializeNewGame();
                     }
                 });
@@ -247,6 +248,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resetBoard(){
+        userRef.child("currentGame").setValue("");
+        userRef.child("solution").setValue("");
+        userRef.child("diff").setValue(diff);
+        userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));
         for(int i = 0 ; i < 9 ; i++){
             for(int j = 0 ; j < 9 ; j++){
                 cellViews[i][j].setText("");
@@ -287,7 +292,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         resetBoard();
         generateNewGame(diff);
-        diff = "";
         //if(progress.isShowing()){
         //    progress.hide();
         //}
@@ -424,7 +428,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void resumeGame() {
         combineBoards();
-        logic.countEmptyCells(currentBoard);
+        emptyCells = logic.countEmptyCells(currentBoard);
         showCurrentGame(stringToInt(initialBoard));
         showCurrentSolution();
 

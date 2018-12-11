@@ -6,9 +6,11 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static c.b.a.sudokuapp.LoginActivity.account;
 
 
@@ -39,9 +44,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     // Views
     private TextView userTxt;
     private TextView logout;
+    private TextView userEasy;
+    private TextView userMedium;
+    private TextView userHard;
     private Button newGame;
     private Button resume;
-    private Button highScore;
+    private Button leaderBoards;
 
     // Authentication variables
     private FirebaseAuth firebaseAuth;
@@ -61,6 +69,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     private GoogleSignInClient mGoogleSignInClient;
 
     public static User currUser;
+    public static List<ScorePair> easyScores;
+    public static List<ScorePair> mediumScores;
+    public static List<ScorePair> hardScores;
+
 
     private DatabaseReference ref;
     private DatabaseReference userRef;
@@ -114,6 +126,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                       if(currUser.getCurrentGame().equals("")) {
                           resume.setEnabled(false);
                       }
+                      getHighScore();
                   }
               }
 
@@ -125,6 +138,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
         // Set click listeners
         setClickListeners();
+        getLeaderboards();
     }
 
     @Override
@@ -153,7 +167,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         logout.setOnClickListener(this);
         newGame.setOnClickListener(this);
         resume.setOnClickListener(this);
-        highScore.setOnClickListener(this);
+        leaderBoards.setOnClickListener(this);
     }
 
     /**
@@ -169,7 +183,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         logout = a.findViewById(R.id.logout);
         newGame = a.findViewById(R.id.new_game_btn);
         resume = a.findViewById(R.id.resume_btn);
-        highScore = a.findViewById(R.id.highscore_btn);
+        leaderBoards = a.findViewById(R.id.leaderboards_btn);
+        userEasy = a.findViewById(R.id.user_highscore_easy);
+        userMedium = a.findViewById(R.id.user_highscore_medium);
+        userHard = a.findViewById(R.id.user_highscore_hard);
 
         accessToken = AccessToken.getCurrentAccessToken();
         // Check if user is logged in via facebook
@@ -206,11 +223,81 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * Shows 5 highest scores for each difficulty
      * TODO bæta við global
      */
-    private void getHighScore() {
+    private void goToLeaderBoards() {
         fragmentManager = getFragmentManager();
 
         fragmentManager.beginTransaction().addToBackStack(null).replace(R.id.main_frag, new ScoreFragment()).commit();
         fragmentManager.executePendingTransactions();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void getHighScore() {
+
+        if(currUser.getEasyHighScores() != Integer.MAX_VALUE) {
+            userEasy.setText("Your high score for easy puzzles:\n" + DateUtils.formatElapsedTime(currUser.getEasyHighScores()));
+        }
+        if(currUser.getMediumHighScores() != Integer.MAX_VALUE) {
+            userMedium.setText("Your high score for medium puzzles:\n" + DateUtils.formatElapsedTime(currUser.getMediumHighScores()));
+        }
+        if(currUser.getHardHighScores() != Integer.MAX_VALUE) {
+            userHard.setText("Your high score for hard puzzles:\n" + DateUtils.formatElapsedTime(currUser.getHardHighScores()));
+        }
+    }
+
+    private void getLeaderboards(){
+        DatabaseReference scoreref = mDatabase.getReference("leaderBoards");
+        DatabaseReference easyScoresRef = scoreref.child("easy");
+        DatabaseReference mediumScoresRef = scoreref.child("medium");
+        DatabaseReference hardScoresRef = scoreref.child("hard");
+
+        easyScoresRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                easyScores = new ArrayList<>();
+
+                //read all the highest scores for this difficulty
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    easyScores.add(ds.getValue(ScorePair.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        mediumScoresRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mediumScores = new ArrayList<>();
+
+                //read all the highest scores for this difficulty
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    mediumScores.add(ds.getValue(ScorePair.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        hardScoresRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                hardScores = new ArrayList<>();
+
+                //read all the highest scores for this difficulty
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    hardScores.add(ds.getValue(ScorePair.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
@@ -245,10 +332,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             newGame();
         }
         else if(v == resume) {
-            startActivity(new Intent(a, GameActivity.class));
+            Intent intent = new Intent(a, GameActivity.class);
+            intent.putExtra("DIFF", currUser.getDiff());
+            startActivity(intent);
         }
-        else if(v == highScore) {
-            getHighScore();
+        else if(v == leaderBoards) {
+            goToLeaderBoards();
         }
 
     }
