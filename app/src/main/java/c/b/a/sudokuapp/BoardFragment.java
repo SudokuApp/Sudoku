@@ -427,7 +427,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     private void resumeGame() {
         combineBoards();
-        logic.countEmptyCells(currentBoard);
+        emptyCells = logic.countEmptyCells(currentBoard);
         showCurrentGame(stringToInt(initialBoard));
         showCurrentSolution();
 
