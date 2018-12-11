@@ -1,32 +1,63 @@
 package c.b.a.sudokuapp;
 
 import android.annotation.SuppressLint;
-import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
 import android.widget.TextView;
 
-public class Timer {
-    public Thread t;
-    private boolean isPaused;
-    public int timeTotal;
+import java.lang.ref.WeakReference;
 
-    public Timer(){
-        isPaused = false;
+
+public class Timer {
+    private Thread t;
+    private static TimeHandler handler;
+    private boolean isPaused;
+    private int timeTotal;
+    private TextView timeTaken;
+
+    static class TimeHandler extends Handler{
+        final WeakReference<Timer> timerReference;
+
+        TimeHandler(Timer timer){
+            timerReference = new WeakReference<>(timer);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            int status = msg.what;
+            if(status == 0){
+                printTime();
+            }
+        }
+
+        void printTime(){
+            timerReference.get().printTime();
+        }
     }
-    public void pauseTimer(){
+
+
+    Timer(TextView timeTaken){
+        this.timeTaken = timeTaken;
+        isPaused = false;
+        handler = new TimeHandler(this);
+    }
+
+    private void printTime(){
+        timeTaken.setText(getTimeReadable());
+    }
+
+    void pauseTimer(){
         this.isPaused = true;
     }
 
-    public void resumeTimer(){
+    void resumeTimer(){
         this.isPaused = false;
     }
 
-    public boolean isAlive(){
-        return t.isAlive();
-    }
-
-    public String getTimeReadable(){
+    String getTimeReadable(){
         return DateUtils.formatElapsedTime((timeTotal));
     }
 
@@ -34,7 +65,7 @@ public class Timer {
         return timeTotal;
     }
 
-    public void startTimeThread(final int start, final TextView timeTaken){
+    void startTimeThread(final int start){
         if(t != null){
             stopThread();
         }
@@ -52,7 +83,7 @@ public class Timer {
                     }
                     else{
                         timeTotal = (int) SystemClock.currentThreadTimeMillis() / 1000 + start;
-                        timeTaken.setText(getTimeReadable());
+                        handler.handleMessage(new Message());
                     }
                 }
             }
@@ -60,7 +91,7 @@ public class Timer {
         t.start();
     }
 
-    public void stopThread(){
+    void stopThread(){
         if(t != null){
             while(!t.isInterrupted()){
                 t.interrupt();

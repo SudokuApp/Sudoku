@@ -93,7 +93,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         diff = i.getStringExtra("DIFF");
 
         linkButtons();
-        timer = new Timer();
+        timer = new Timer(timeTaken);
         logic = new Logic();
 
         mDatabase = FirebaseDatabase.getInstance();
@@ -301,7 +301,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //    progress.hide();
         //}
         // TODO passa að tíminn byrji ekki fyrr en borðið er birt
-        timer.startTimeThread(currentTime, timeTaken);
+        timer.startTimeThread(currentTime);
     }
 
     //compares the current board to the solution. True = solved, false = unsolved
@@ -438,7 +438,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         showCurrentSolution();
 
 
-        timer.startTimeThread(currentTime, timeTaken);
+        timer.startTimeThread(currentTime);
         //progress.cancel();
     }
 
