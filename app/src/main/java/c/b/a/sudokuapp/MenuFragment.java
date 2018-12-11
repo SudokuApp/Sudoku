@@ -100,7 +100,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         return inflater.inflate(R.layout.fragment_menu, container, false);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -114,13 +113,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
               @Override
               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                  String email = firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail();
-
                   if(!dataSnapshot.exists()) {
+                      String email = firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail();
                       writeNewUser(email);
                   }
 
-                    currUser = dataSnapshot.getValue(User.class);
+                  currUser = dataSnapshot.getValue(User.class);
 
                   if(currUser != null) {
                       if(currUser.getCurrentGame().equals("")) {
@@ -131,13 +129,13 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
               }
 
               @Override
-              public void onCancelled(@NonNull DatabaseError databaseError) {
-
-              }
+              public void onCancelled(@NonNull DatabaseError databaseError) { }
           });
 
         // Set click listeners
         setClickListeners();
+
+        // Show top high scores for each difficulty
         getLeaderboards();
     }
 
@@ -151,13 +149,24 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             a.startActivity(new Intent(a, LoginActivity.class));
         }
 
-        if(firebaseAuth.getCurrentUser() != null){
-            //If the user comes from firebase
-            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
+        welcomeUser();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void welcomeUser() {
+        String emailRegular = firebaseAuth.getCurrentUser().getEmail();
+        String emailGoogleFB = firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail();
+
+        if(firebaseAuth.getCurrentUser() != null) {
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(emailRegular));
         } else {
-            //if the user comes from google or facebook
-            userTxt.setText(getString(R.string.welcome_user) + firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail());
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(emailGoogleFB));
         }
+    }
+
+    private String splitUserEmail(String email) {
+        String[] emailArr = email.split("@");
+        return emailArr[0];
     }
 
     /**

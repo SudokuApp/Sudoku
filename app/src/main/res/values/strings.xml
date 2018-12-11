@@ -33,4 +33,5 @@
     <string name="initalizeUserSolution">000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</string>
     <string name="name_placeholder"><![CDATA[<name>]]></string>
     <string name="time_placeholder"><![CDATA[<time>]]></string>
+    <string name="leaderboards">Leaderboards</string>
 </resources>
