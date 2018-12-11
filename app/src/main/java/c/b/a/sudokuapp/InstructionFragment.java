@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HowToPlayFragment extends Fragment {
+public class InstructionFragment extends Fragment {
 
 
-    public HowToPlayFragment() {
+    public InstructionFragment() {
         // Required empty public constructor
     }
 
@@ -23,7 +23,7 @@ public class HowToPlayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_how_to_play, container, false);
+        return inflater.inflate(R.layout.fragment_instructions, container, false);
     }
 
 }
