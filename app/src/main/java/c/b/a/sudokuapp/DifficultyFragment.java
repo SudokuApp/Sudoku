@@ -84,8 +84,10 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
     public void onStart() {
         super.onStart();
 
-        // Welcome the user with his/her email
-        userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+        // If some user is logged in, welcome the user with his/her email
+        if(currUser != null) {
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+        }
     }
 
     /**
@@ -195,6 +197,5 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         if(v == hard) {
             startGame("hard");
         }
-
     }
 }
