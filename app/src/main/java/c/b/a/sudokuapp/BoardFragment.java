@@ -327,7 +327,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         msg.setTitle("Incorrect!");
         msg.setMessage("Your solution is incorrect, do you want to continue trying without help?");
         msg.setCancelable(true);
-        msg.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+        msg.setNeutralButton("Continue", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -335,24 +335,14 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 timer.resumeTimer();
             }
         });
-        msg.setNeutralButton("New puzzle", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                //if the player is a quitter, stop the timer thread and start a new game
-                timer.stopThread();
-                timer = null;
-                timer = new Timer(timeTaken);
-                initializeNewGame();
-            }
-        });
 
         msg.setNegativeButton("Get help", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //get all incorrect numbers
+
+                //if player wants to resume this game but get some help
                 getHelp();
-                //start time thread again
+                //resume timer
                 timer.startTimeThread(currUser.getCurrentTime());
             }
         });
