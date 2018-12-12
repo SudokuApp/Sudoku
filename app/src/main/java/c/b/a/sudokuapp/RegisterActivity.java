@@ -61,6 +61,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+    }
+
     /**
      * Set instance variables
      */

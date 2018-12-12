@@ -11,12 +11,13 @@ import java.util.List;
 
 import static c.b.a.sudokuapp.MenuFragment.currUser;
 
-//A class class with a name and a score, used only by ScoreHandler
+// A class that handles the scores (time)
 class ScoreHandler {
 
     private String diff;
     private FirebaseDatabase mDatabase;
 
+    //class needs the difficulty and a reference to the database
     ScoreHandler(String diff, FirebaseDatabase mDatabase) {
 
         this.diff = diff;
@@ -26,27 +27,25 @@ class ScoreHandler {
 
     //add this score to the leaderboards and the remove the highest score if there are more than 5.
     private void compareToGlobal(int newScore, List<ScorePair> globalScores, DatabaseReference ref){
+
         if(globalScores == null){
             globalScores = new ArrayList<>();
         }
-        globalScores.add(new ScorePair(splitUserEmail(currUser.getEmail()), newScore));
+        globalScores.add(new ScorePair(Logic.splitUserEmail(currUser.getEmail()), newScore));
+
         if(globalScores.size() > 5){
 
             ScorePair highestGlobal = new ScorePair();
+            highestGlobal.setScore(0);
 
             for(ScorePair s : globalScores){
-                if(highestGlobal.getScore() > s.getScore()){
+                if(highestGlobal.getScore() < s.getScore()){
                     highestGlobal = s;
                 }
             }
             globalScores.remove(highestGlobal);
         }
         ref.setValue(globalScores);
-    }
-
-    private String splitUserEmail(String email) {
-        String[] emailArr = email.split("@");
-        return emailArr[0];
     }
 
     //check if this new score is better than the users old one for this difficulty

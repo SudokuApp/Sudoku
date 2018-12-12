@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import java.util.Collections;
 import java.util.List;
 import static c.b.a.sudokuapp.MenuFragment.currUser;
 import static c.b.a.sudokuapp.MenuFragment.easyScores;
@@ -41,6 +42,13 @@ public class ScoreFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_score, container, false);
     }
 
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(currUser.getEmail()));
+    }
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -92,6 +100,9 @@ public class ScoreFragment extends Fragment {
      * @param scores
      */
     private void inflateIntoLists(LinearLayout list, List<ScorePair> scores){
+
+        Collections.sort(scores, ScorePair.ScoreComparator);
+
         for(ScorePair s : scores){
             View view = View.inflate(a, R.layout.layout_scorepair, null);
             TextView name = view.findViewById(R.id.scorepair_name);

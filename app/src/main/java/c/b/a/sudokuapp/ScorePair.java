@@ -1,9 +1,15 @@
 package c.b.a.sudokuapp;
 
-//A class class with a name and a score, used only by ScoreHandler
-public class ScorePair{
+import java.util.Comparator;
+
+
+//A class class with a name and a score, used for the leaderboards
+public class ScorePair implements Comparable<ScorePair>{
+
     private String name;
     private int score;
+
+    // init the score as the highest value possible (the worst possible)
     ScorePair(){
         this.name = "";
         this.score = Integer.MAX_VALUE;
@@ -25,4 +31,25 @@ public class ScorePair{
     int getScore() {
         return score;
     }
+
+    void setScore(int score){
+        this.score = score;
+    }
+
+
+    // Method to compare 2 ScorePairs based on code from
+    // https://www.mkyong.com/java/java-object-sorting-example-comparable-and-comparator/
+
+    @Override
+    public int compareTo(ScorePair o) {
+        return this.getScore() - o.getScore();
+    }
+
+    static Comparator<ScorePair> ScoreComparator
+            = new Comparator<ScorePair>() {
+
+        public int compare(ScorePair pair1, ScorePair pair2) {
+            return pair1.compareTo(pair2);
+        }
+    };
 }
