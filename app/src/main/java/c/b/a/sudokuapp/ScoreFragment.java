@@ -15,6 +15,10 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static c.b.a.sudokuapp.MenuFragment.currUser;
@@ -85,6 +89,9 @@ public class ScoreFragment extends Fragment {
 
 
     private void inflateIntoLists(LinearLayout list, List<ScorePair> scores){
+
+        Collections.sort(scores, ScorePair.ScoreComparator);
+
         for(ScorePair s : scores){
             View view = View.inflate(a, R.layout.layout_scorepair, null);
             TextView name = view.findViewById(R.id.scorepair_name);

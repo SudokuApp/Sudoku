@@ -33,9 +33,10 @@ class ScoreHandler {
         if(globalScores.size() > 5){
 
             ScorePair highestGlobal = new ScorePair();
+            highestGlobal.setScore(0);
 
             for(ScorePair s : globalScores){
-                if(highestGlobal.getScore() > s.getScore()){
+                if(highestGlobal.getScore() < s.getScore()){
                     highestGlobal = s;
                 }
             }

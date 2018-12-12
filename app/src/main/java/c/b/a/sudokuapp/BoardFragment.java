@@ -170,11 +170,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                     checkBoard();
                 }
             }
-            else if(currentBoard[row][cell] != 0){
-                boxClicked.setText("");
+            else{
+                if(currentBoard[row][cell] != 0){
+                    boxClicked.setText("");
+                    currentBoard[row][cell] = 0;
+                    emptyCells++;
+                }
                 boxClicked.setBackgroundResource(R.drawable.grid_b);
-                currentBoard[row][cell] = 0;
-                emptyCells++;
             }
             updateUserSolution(row, cell);
         }
@@ -263,7 +265,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private void incorrectPopup() {
 
         timer.stopThread();
-        currUser.setCurrentTime(timer.getTime());
+        userRef.child("currentTime").setValue(timer.getTime());
         AlertDialog.Builder msg = new AlertDialog.Builder(a);
         msg.setTitle("Incorrect!");
         msg.setMessage("Your solution is incorrect, do you want to continue trying without help?");
