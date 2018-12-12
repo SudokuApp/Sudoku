@@ -33,4 +33,40 @@
     <string name="initalizeUserSolution">000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</string>
     <string name="name_placeholder"><![CDATA[<name>]]></string>
     <string name="time_placeholder"><![CDATA[<time>]]></string>
+    <string name="leaderboards">Leaderboards</string>
+    <string name="go_back">Go Back</string>
+    <string name="erase">Erase</string>
+    <string name="mark">Mark</string>
+    <string name="choose_difficulty">Choose difficulty</string>
+
+
+    <!-- Instruction Strings -->
+    <string name="how_to_play">How to play</string>
+    <string name="what_is_sudoku_answer">Sudoku is a number puzzle in which players insert the
+        numbers 1 to 9 into a grid consisting of nine squares subdivided into a further nine
+        smaller squares in such way that every number appears once in each horizontal line,
+        vertical line and square.</string>
+    <string name="step_1_text">The objective is to fill a 9x9 grid so that each column, each row,
+        and each of the nine 3x3 boxes (also called blocks or regions) contains the digits from 1
+        to 9.\nA cell is the smallest block in the game. A row , column and region consists of 9
+        cells and the whole game consists of 81 cells. A region has thicker lines surrounding it.
+        This simply makes it easier to play the game.</string>
+    <string name="buttons_how_to">To play the game, there are buttons with the digits from 1 to 9.
+        Press the number that you would like to add to the puzzle, and then the place where you
+        want to put it.</string>
+    <string name="button_erease_mark_how_to">To erase a number that has been put in the board,
+        you can click the erase button and the number you want to erase. If there is a place on the
+        board that you are not sure is right, you can mark it with the mark button. If you want to
+        go back, the puzzle will be saved, so you can continue later on with the same puzzle.</string>
+    <string name="first_rule_how_to">Let\'s get into the rules of the game. As the picture below
+        shows, the goal of the game is to fill all empty cells with the correct digits. In this
+        case, we have found a place for 9 on the board. We see that it is correct because all of
+        the other empty cells in the box can\'t have 9 in it (as shown with the green line).</string>
+    <string name="second_rule_how_to">In the picture below we can see that the 2 with the circle
+        around it is misplaced. The box already has a 2 in it.</string>
+    <string name="third_rule_how_to">In the last picture the 8 in the red circle is misplaced,
+        because there is another 8 in the same row (as shown with the red line).</string>
+    <string name="fourth_rule_how_to">The last and the most important rule is to enjoy the game
+        and have fun. So go and enjoy! \n\nArnbjörg, Haraldur, Hreiðar and Þórný</string>
+    <string name="hint">Hint</string>
 </resources>

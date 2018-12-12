@@ -10,7 +10,6 @@ public class User {
     private int easyHighScores;
     private int mediumHighScores;
     private int hardHighScores;
-    private int totalCompleted;
     private String email;
     private String diff;
 
@@ -28,7 +27,6 @@ public class User {
         this.easyHighScores = Integer.MAX_VALUE;
         this.mediumHighScores = Integer.MAX_VALUE;
         this.hardHighScores = Integer.MAX_VALUE;
-        this.totalCompleted = 0;
         this.email = email;
         this.diff = "";
 
@@ -46,9 +44,7 @@ public class User {
         return solution;
     }
 
-    public int getCurrentTime() {
-        return currentTime;
-    }
+    public int getCurrentTime() { return currentTime; }
 
     public int getEasyHighScores() {
         return easyHighScores;
@@ -62,24 +58,8 @@ public class User {
         return hardHighScores;
     }
 
-    public int getTotalCompleted() {
-        return totalCompleted;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setCurrentGame(String currentGame) {
-        this.currentGame = currentGame;
-    }
-
-    public void setUserSolution(String userSolution) {
-        this.userSolution = userSolution;
-    }
-
-    public void setSolution(String solution) {
-        this.solution = solution;
     }
 
     public void setCurrentTime(int currentTime) {
@@ -90,27 +70,13 @@ public class User {
         this.easyHighScores = easyHighScores;
     }
 
-    public void setMediumHighScores(int mediumHighScores) {
-        this.mediumHighScores = mediumHighScores;
-    }
+    public void setMediumHighScores(int mediumHighScores) { this.mediumHighScores = mediumHighScores; }
 
     public void setHardHighScores(int hardHighScores) {
         this.hardHighScores = hardHighScores;
     }
 
-    public void setTotalCompleted(int totalCompleted) {
-        this.totalCompleted = totalCompleted;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getDiff() {
         return diff;
-    }
-
-    public void setDiff(String diff) {
-        this.diff = diff;
     }
 }

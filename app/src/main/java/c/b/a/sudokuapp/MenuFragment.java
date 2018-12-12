@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -33,8 +34,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static c.b.a.sudokuapp.LoginActivity.account;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,6 +49,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     private Button newGame;
     private Button resume;
     private Button leaderBoards;
+    private Button instructions;
 
     // Authentication variables
     private FirebaseAuth firebaseAuth;
@@ -59,10 +59,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     private Activity a;
 
     private FragmentManager fragmentManager;
-
-    // Variables for Facebook sign-in / sign-out
-    private boolean isLoggedIn;
-    private AccessToken accessToken;
 
     // Variables for Google sign-in / sign-out
     private GoogleSignInOptions gso;
@@ -100,7 +96,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         return inflater.inflate(R.layout.fragment_menu, container, false);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -114,13 +109,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
               @Override
               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                  String email = firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail();
-
                   if(!dataSnapshot.exists()) {
+                      String email = firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail();
                       writeNewUser(email);
                   }
 
-                    currUser = dataSnapshot.getValue(User.class);
+                  currUser = dataSnapshot.getValue(User.class);
 
                   if(currUser != null) {
                       if(currUser.getCurrentGame().equals("")) {
@@ -131,13 +125,13 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
               }
 
               @Override
-              public void onCancelled(@NonNull DatabaseError databaseError) {
-
-              }
+              public void onCancelled(@NonNull DatabaseError databaseError) { }
           });
 
         // Set click listeners
         setClickListeners();
+
+        // Show top high scores for each difficulty
         getLeaderboards();
     }
 
@@ -146,18 +140,29 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         super.onStart();
 
         // If user is not logged in, he/she is taken to the login screen
-        if(firebaseAuth.getCurrentUser() == null && !isLoggedIn && account == null) {
+        if(firebaseAuth.getCurrentUser() == null) {
             a.finish();
             a.startActivity(new Intent(a, LoginActivity.class));
         }
 
-        if(firebaseAuth.getCurrentUser() != null){
-            //If the user comes from firebase
-            userTxt.setText(getString(R.string.welcome_user) + firebaseUser.getEmail());
+        welcomeUser();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void welcomeUser() {
+        String emailRegular = firebaseAuth.getCurrentUser().getEmail();
+        String emailGoogleFB = firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail();
+
+        if(firebaseAuth.getCurrentUser() != null) {
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(emailRegular));
         } else {
-            //if the user comes from google or facebook
-            userTxt.setText(getString(R.string.welcome_user) + firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail());
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(emailGoogleFB));
         }
+    }
+
+    private String splitUserEmail(String email) {
+        String[] emailArr = email.split("@");
+        return emailArr[0];
     }
 
     /**
@@ -168,6 +173,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         newGame.setOnClickListener(this);
         resume.setOnClickListener(this);
         leaderBoards.setOnClickListener(this);
+        instructions.setOnClickListener(this);
     }
 
     /**
@@ -183,14 +189,13 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         logout = a.findViewById(R.id.logout);
         newGame = a.findViewById(R.id.new_game_btn);
         resume = a.findViewById(R.id.resume_btn);
+
         leaderBoards = a.findViewById(R.id.leaderboards_btn);
         userEasy = a.findViewById(R.id.user_highscore_easy);
         userMedium = a.findViewById(R.id.user_highscore_medium);
         userHard = a.findViewById(R.id.user_highscore_hard);
 
-        accessToken = AccessToken.getCurrentAccessToken();
-        // Check if user is logged in via facebook
-        isLoggedIn = accessToken != null && !accessToken.isExpired();
+        instructions = a.findViewById(R.id.instructions);
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -223,6 +228,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * Shows 5 highest scores for each difficulty
      * TODO bæta við global
      */
+
     private void goToLeaderBoards() {
         fragmentManager = getFragmentManager();
 
@@ -300,23 +306,27 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    private void goToInstuctions() {
+        fragmentManager = getFragmentManager();
+
+        fragmentManager.beginTransaction().addToBackStack(null).replace(R.id.main_frag, new InstructionFragment()).commit();
+        fragmentManager.executePendingTransactions();
+    }
+
     /**
+     * Called when the log out button is clicked.
      * Called when the log out button is clicked.
      * Takes user back to the login screen
      */
     private void logout() {
-        if(isLoggedIn) {
-            LoginManager.getInstance().logOut();
-            firebaseAuth.signOut();
-        } else if(account != null) {
-            firebaseAuth.signOut();
-            mGoogleSignInClient.signOut();
-        } else if(firebaseAuth.getCurrentUser() != null) {
-            firebaseAuth.signOut();
-        }
+        mGoogleSignInClient.signOut();
+        firebaseAuth.signOut();
+        LoginManager.getInstance().logOut();
+
         a.finish();
         a.startActivity(new Intent(a, LoginActivity.class));
     }
+
 
     /**
      * Called when a view has been clicked
@@ -338,6 +348,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         }
         else if(v == leaderBoards) {
             goToLeaderBoards();
+        }
+        else if(v == instructions) {
+            goToInstuctions();
         }
 
     }

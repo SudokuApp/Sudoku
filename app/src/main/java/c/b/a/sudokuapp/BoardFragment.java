@@ -14,6 +14,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -54,18 +55,18 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private TextView timeTaken;
     private TextView[][] cellViews;
     private Button goBack;
+    private Button getHint;
+    private int currentTime;
 
     private Logic logic; // Instance of the Logic class
     private Timer timer; // Instance of the Timer class
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
-    private BoardLinker boardlinker;
     //private ProgressDialog progress;
     private SharedPreferences sharedPref;
+    private ScoreHandler scoreHandler;
 
     private FirebaseDatabase mDatabase;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference ref;
     private DatabaseReference userRef;
 
     private StringBuilder userS;
@@ -77,7 +78,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_board, container, false);
@@ -86,6 +87,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         a = getActivity();
         //get the desired difficulty from DifficultyFragment
         assert a != null;
@@ -93,15 +95,17 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         diff = i.getStringExtra("DIFF");
 
         linkButtons();
-        timer = new Timer();
+        timer = new Timer(timeTaken);
         logic = new Logic();
 
         mDatabase = FirebaseDatabase.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
-        ref = mDatabase.getReference("users");
-        userRef = ref.child(firebaseAuth.getUid());
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference ref = mDatabase.getReference("users");
+        userRef = ref.child(Objects.requireNonNull(firebaseAuth.getUid()));
         goBack = a.findViewById(R.id.returnBtn);
+        getHint = a.findViewById(R.id.btnHint);
         goBack.setOnClickListener(this);
+        getHint.setOnClickListener(this);
 
         userSolution = currUser.getUserSolution();
         userS = new StringBuilder(userSolution);
@@ -110,23 +114,29 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //progress.setMessage(getString(R.string.loading));
         //progress.show();
 
+
+        //if diff is null, then we resume the current game.
+        sharedPref.edit().putString("INPUT", "").apply();
+
+
         // If diff is null, then we resume the current game.
         if(!currUser.getCurrentGame().equals("")){
             initialBoard = currUser.getCurrentGame();
-
             solution = currUser.getSolution();
+            currentTime = currUser.getCurrentTime();
             resumeGame();
         }
         else {
             currentBoard = logic.createEmptyBoard();
             solution = intToString(logic.createEmptyBoard());
-
+            currentTime = 0;
             initializeNewGame();
         }
     }
 
     @Override
     public void onDestroy() {
+        currUser.setCurrentTime(timer.getTime());
         saveToDatabase();
         super.onDestroy();
         timer.stopThread();
@@ -134,6 +144,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onPause() {
+        currUser.setCurrentTime(timer.getTime());
         super.onPause();
         saveToDatabase();
         timer.pauseTimer();
@@ -161,11 +172,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                     checkBoard();
                 }
             }
-            else if(currentBoard[row][cell] != 0){
-                boxClicked.setText("");
+            else{
+                if(currentBoard[row][cell] != 0){
+                    boxClicked.setText("");
+                    currentBoard[row][cell] = 0;
+                    emptyCells++;
+                }
                 boxClicked.setBackgroundResource(R.drawable.grid_b);
-                currentBoard[row][cell] = 0;
-                emptyCells++;
             }
             updateUserSolution(row, cell);
         }
@@ -181,9 +194,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
 
+
     // links stuff in the view
     private void linkButtons(){
-        boardlinker = new BoardLinker(a);
+        BoardLinker boardlinker = new BoardLinker(a);
         cellViews = boardlinker.cellViews;
         sharedPref = a.getPreferences(Context.MODE_PRIVATE);
 
@@ -203,7 +217,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
         timeTaken = a.findViewById(R.id.timeField);
         white_Draw = Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)).getConstantState();
-        white_BMP = logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
+        white_BMP = Logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
     }
 
 
@@ -215,18 +229,20 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             userRef.child("solution").setValue("");
         }
         else{
-            Toast.makeText(a, "Incorrect", Toast.LENGTH_SHORT).show();
+            incorrectPopup();
         }
     }
 
     private void winPopup() {
         timer.stopThread();
+
         ScoreHandler scorehandler = new ScoreHandler(diff, mDatabase);
         scorehandler.compareToPrivate(timer.getTime(), userRef);
 
+
         AlertDialog.Builder msg = new AlertDialog.Builder(a);
         msg.setTitle("Congratulations!");
-        msg.setMessage("Your time was " + timer.getTime());
+        msg.setMessage("Your time was " + timer.getTimeReadable());
         msg.setCancelable(true);
         msg.setNeutralButton("New puzzle",
                 new DialogInterface.OnClickListener() {
@@ -244,8 +260,40 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 });
         AlertDialog alertMsg = msg.create();
         alertMsg.show();
-
     }
+
+    private void incorrectPopup() {
+
+        timer.stopThread();
+        userRef.child("currentTime").setValue(timer.getTime());
+        AlertDialog.Builder msg = new AlertDialog.Builder(a);
+        msg.setTitle("Incorrect!");
+        msg.setMessage("Your solution is incorrect, do you want to continue trying without help?");
+        msg.setCancelable(true);
+        msg.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                timer.startTimeThread(currUser.getCurrentTime());
+            }
+        });
+        msg.setNeutralButton("New puzzle", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                initializeNewGame();
+            }
+        });
+        msg.setNegativeButton("Get help", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO
+            }
+        });
+
+        AlertDialog alertMsg = msg.create();
+        alertMsg.show();
+    }
+
+
 
     private void resetBoard(){
         userRef.child("currentGame").setValue("");
@@ -296,7 +344,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //    progress.hide();
         //}
         // TODO passa að tíminn byrji ekki fyrr en borðið er birt
-        timer.startTimeThread(0, timeTaken);
+        timer.startTimeThread(currentTime);
     }
 
     //compares the current board to the solution. True = solved, false = unsolved
@@ -315,7 +363,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         if(img == null){
             return;
         }
-        if(!Objects.equals(img.getConstantState(), white_Draw) || !logic.buildBitmap(img).sameAs(white_BMP)){
+        if(!Objects.equals(img.getConstantState(), white_Draw) || !Logic.buildBitmap(img).sameAs(white_BMP)){
             field.setBackgroundResource(R.drawable.grid_b);
         }
         else{
@@ -389,22 +437,25 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private String intToString(int[][] array) {
-        String string = "";
+        StringBuilder string = new StringBuilder();
         char temp;
         for(int i = 0 ; i < 9 ; i++) {
             for(int j = 0 ; j < 9 ; j++) {
                 temp = Character.forDigit(array[i][j], 10);
-                string = string + temp;
+                string.append(temp);
             }
         }
-        return string;
+        return string.toString();
     }
 
     private void saveToDatabase() {
-
+        userRef.child("easyHighScore").setValue(currUser.getEasyHighScores());
+        userRef.child("mediumHighScore").setValue(currUser.getMediumHighScores());
+        userRef.child("hardHighScore").setValue(currUser.getHardHighScores());
         userRef.child("currentTime").setValue(timer.getTime());
     }
 
+    @SuppressLint("SetTextI18n")
     private void showCurrentSolution() {
         for(int i = 0 ; i < 9 ; i++) {
             for(int j = 0 ; j < 9 ; j++){
@@ -433,8 +484,41 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         showCurrentSolution();
 
 
-        timer.startTimeThread(currUser.getCurrentTime(), timeTaken);
+        timer.startTimeThread(currentTime);
         //progress.cancel();
+    }
+
+    private void getHint() {
+        int random;
+
+        while(emptyCells > 0) {
+            random = (int) (Math.random() * 80);
+
+            if(intToString(currentBoard).charAt(random) == '0') {
+
+                int number = Character.getNumericValue(solution.charAt(random));
+                int row = random / 9;
+                int cell = random % 9;
+
+                currentBoard[row][cell] = number;
+                updateUserSolution(row, cell);
+                cellViews[row][cell].setText(Integer.toString(number));
+                //TODO - bæta min við tímaþráðinn í hvert sinn
+                emptyCells--;
+                break;
+            }
+
+            if(emptyCells == 0) {
+                checkBoard();
+                break;
+            }
+        }
+
+        if(emptyCells == 0) {
+            checkBoard();
+        }
+
+
     }
 
     @Override
@@ -443,5 +527,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             saveToDatabase();
             goToMainMenu();
         }
+        else if(v == getHint) {
+            getHint();
+        }
+
     }
 }

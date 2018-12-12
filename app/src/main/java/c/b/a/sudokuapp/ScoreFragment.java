@@ -15,8 +15,13 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import static c.b.a.sudokuapp.MenuFragment.currUser;
 import static c.b.a.sudokuapp.MenuFragment.easyScores;
 import static c.b.a.sudokuapp.MenuFragment.mediumScores;
 import static c.b.a.sudokuapp.MenuFragment.hardScores;
@@ -53,14 +58,12 @@ public class ScoreFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        if(firebaseAuth.getCurrentUser() != null){
-            //If the user comes from firebase
-            userTxt.setText(getString(R.string.welcome_user) + firebaseAuth.getCurrentUser().getEmail());
-        } else {
-            //if the user comes from google or facebook
-            userTxt.setText(getString(R.string.welcome_user) + firebaseAuth.getCurrentUser().getProviderData().get(1).getEmail());
-        }
+        userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+    }
 
+    private String splitUserEmail(String email) {
+        String[] emailArr = email.split("@");
+        return emailArr[0];
     }
 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -84,7 +87,11 @@ public class ScoreFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
+
     private void inflateIntoLists(LinearLayout list, List<ScorePair> scores){
+
+        Collections.sort(scores, ScorePair.ScoreComparator);
+
         for(ScorePair s : scores){
             View view = View.inflate(a, R.layout.layout_scorepair, null);
             TextView name = view.findViewById(R.id.scorepair_name);
