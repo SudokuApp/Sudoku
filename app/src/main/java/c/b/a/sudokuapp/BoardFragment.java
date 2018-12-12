@@ -259,7 +259,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private void incorrectPopup() {
 
         timer.stopThread();
-        currUser.setCurrentTime(timer.getTime());
+        userRef.child("currentTime").setValue(timer.getTime());
         AlertDialog.Builder msg = new AlertDialog.Builder(a);
         msg.setTitle("Incorrect!");
         msg.setMessage("Your solution is incorrect, do you want to continue trying without help?");
@@ -443,19 +443,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void saveToDatabase() {
-
-
-        StringBuilder current = new StringBuilder(intToString(currentBoard));
-
-        for(int i = 0 ; i < 81 ; i++ ){
-            if(!(initialBoard.charAt(i) == '0')){
-                current.setCharAt(i, '0');
-            }
-        }
         userRef.child("easyHighScore").setValue(currUser.getEasyHighScores());
         userRef.child("mediumHighScore").setValue(currUser.getMediumHighScores());
         userRef.child("hardHighScore").setValue(currUser.getHardHighScores());
-        userRef.child("userSolution").setValue(current.toString());
         userRef.child("currentTime").setValue(timer.getTime());
     }
 
