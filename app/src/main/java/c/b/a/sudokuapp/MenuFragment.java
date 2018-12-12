@@ -41,15 +41,8 @@ import java.util.List;
 public class MenuFragment extends Fragment implements View.OnClickListener {
 
     // Views
-    private TextView userTxt;
-    private TextView logout;
-    private TextView userEasy;
-    private TextView userMedium;
-    private TextView userHard;
-    private Button newGame;
-    private Button resume;
-    private Button leaderBoards;
-    private Button instructions;
+    private TextView userTxt, logout, userEasy, userMedium, userHard;
+    private Button newGame, resume, leaderBoards, instructions;
 
     // Authentication variables
     private FirebaseAuth firebaseAuth;
