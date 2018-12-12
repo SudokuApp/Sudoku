@@ -355,9 +355,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
-    // TODO á þetta að vera public?
-    public void changeBackground(TextView field){
+    private void changeBackground(TextView field){
 
         Drawable img = field.getBackground();
         if(img == null){
@@ -423,7 +421,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
-    private int[][] stringToInt(String string) {
+    protected int[][] stringToInt(String string) {
         int[][] board = new int[9][9];
         int temp = 0;
 
@@ -436,7 +434,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         return board;
     }
 
-    private String intToString(int[][] array) {
+    protected String intToString(int[][] array) {
         StringBuilder string = new StringBuilder();
         char temp;
         for(int i = 0 ; i < 9 ; i++) {
