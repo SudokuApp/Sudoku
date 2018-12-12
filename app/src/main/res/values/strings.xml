@@ -5,6 +5,7 @@
     <string name="register">Register</string>
     <string name="loginFromReg">Already have an account?\nLog in here!</string>
     <string name="invalidEmail">Invalid email!</string>
+    <string name="email_password_incorrect">Email or password incorrect!</string>
     <string name="invalidPassword">Password has to be at least 6 characters"</string>
     <string name="emailTaken">This email is taken!</string>
     <string name="progressRegister">Registering user...</string>
@@ -68,4 +69,5 @@
         because there is another 8 in the same row (as shown with the red line).</string>
     <string name="fourth_rule_how_to">The last and the most important rule is to enjoy the game
         and have fun. So go and enjoy! \n\nArnbjörg, Haraldur, Hreiðar and Þórný</string>
+    <string name="hint">Hint</string>
 </resources>
