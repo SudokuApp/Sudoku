@@ -42,13 +42,6 @@ public class ScoreFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_score, container, false);
     }
 
-    @SuppressLint("SetTextI18n")
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(currUser.getEmail()));
-    }
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
