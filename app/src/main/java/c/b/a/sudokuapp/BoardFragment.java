@@ -44,12 +44,15 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private int emptyCells; //the number of cells currently empty
 
     private Activity a;
+
     private TextView timeTaken; //the TextView where the time is displayed
     private TextView[][] cellViews; // every cell in the board
     private Button goBack; //the back button
     private int currentTime; //the current time
     private String gameUrl = "https://sugoku2.herokuapp.com/board?difficulty=";
     private String solutionUrl = "https://sugoku2.herokuapp.com/solve";
+    private Button getHint;
+
 
     private Logic logic; // Instance of the Logic class
     private Timer timer; // Instance of the Timer class
@@ -214,6 +217,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
 
+
     // links stuff in the view
     private void linkButtons(){
 
@@ -246,6 +250,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         white_BMP = Logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
         goBack = a.findViewById(R.id.returnBtn);
         goBack.setOnClickListener(this);
+        getHint = a.findViewById(R.id.btnHint);
+        getHint.setOnClickListener(this);
     }
 
 
@@ -542,6 +548,41 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         timer.startTimeThread(currentTime);
     }
 
+
+    @SuppressLint("SetTextI18n")
+    private void getHint() {
+        int random;
+
+        while(emptyCells > 0) {
+            random = (int) (Math.random() * 80);
+
+            if(logic.intToString(currentBoard).charAt(random) == '0') {
+
+                int number = Character.getNumericValue(solution.charAt(random));
+                int row = random / 9;
+                int cell = random % 9;
+
+                currentBoard[row][cell] = number;
+                updateUserSolution(row, cell);
+                cellViews[row][cell].setText(Integer.toString(number));
+                //TODO - bæta min við tímaþráðinn í hvert sinn
+                emptyCells--;
+                break;
+            }
+
+            if(emptyCells == 0) {
+                checkBoard();
+                break;
+            }
+        }
+
+        if(emptyCells == 0) {
+            checkBoard();
+        }
+
+
+    }
+
     //a click listener to go back to the menu
     @Override
     public void onClick(View v) {
@@ -549,5 +590,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             saveToDatabase();
             goToMainMenu();
         }
+        else if(v == getHint) {
+            getHint();
+        }
+
     }
 }
