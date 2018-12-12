@@ -13,11 +13,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +31,6 @@ public class ScoreFragment extends Fragment {
     private LinearLayout easyListView;
     private LinearLayout mediumListView;
     private LinearLayout hardListView;
-    private FirebaseAuth firebaseAuth;
     private TextView userTxt;
 
     private Activity a;
@@ -58,12 +52,7 @@ public class ScoreFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
-    }
-
-    private String splitUserEmail(String email) {
-        String[] emailArr = email.split("@");
-        return emailArr[0];
+        userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(currUser.getEmail()));
     }
 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -84,7 +73,6 @@ public class ScoreFragment extends Fragment {
         easyListView = a.findViewById(R.id.global_easy_list);
         mediumListView = a.findViewById(R.id.global_medium_list);
         hardListView = a.findViewById(R.id.global_hard_list);
-        firebaseAuth = FirebaseAuth.getInstance();
     }
 
 
