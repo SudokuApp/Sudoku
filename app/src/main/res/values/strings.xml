@@ -57,7 +57,8 @@
     <string name="button_erease_mark_how_to">To erase a number that has been put in the board,
         you can click the erase button and the number you want to erase. If there is a place on the
         board that you are not sure is right, you can mark it with the mark button. If you want to
-        go back, the puzzle will be saved, so you can continue later on with the same puzzle.</string>
+        go back, the puzzle will be saved, so you can continue later on with the same puzzle.
+        If you need a hint, you get get one with the hint button, but be careful - it adds 1 minute to your time!</string>
     <string name="first_rule_how_to">Let\'s get into the rules of the game. As the picture below
         shows, the goal of the game is to fill all empty cells with the correct digits. In this
         case, we have found a place for 9 on the board. We see that it is correct because all of

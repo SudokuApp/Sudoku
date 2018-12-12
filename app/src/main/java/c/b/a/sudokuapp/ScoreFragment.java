@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
-
 import static c.b.a.sudokuapp.MenuFragment.currUser;
 import static c.b.a.sudokuapp.MenuFragment.easyScores;
 import static c.b.a.sudokuapp.MenuFragment.mediumScores;
@@ -26,10 +25,8 @@ import static c.b.a.sudokuapp.MenuFragment.hardScores;
  */
 public class ScoreFragment extends Fragment {
 
-
-    private LinearLayout easyListView;
-    private LinearLayout mediumListView;
-    private LinearLayout hardListView;
+    // Layouts for top 5 leaders in each difficulty
+    private LinearLayout easyListView, mediumListView, hardListView;
     private TextView userTxt;
 
     private Activity a;
@@ -38,20 +35,11 @@ public class ScoreFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_score, container, false);
-    }
-
-    @SuppressLint("SetTextI18n")
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(currUser.getEmail()));
     }
 
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -66,6 +54,30 @@ public class ScoreFragment extends Fragment {
 
     }
 
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // If some user is logged in, welcome the user with his/her email
+        if(currUser != null) {
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+        }
+    }
+
+    /**
+     * A method to cut of the part in front of the @ symbol
+     * @param email
+     * @return
+     */
+    private String splitUserEmail(String email) {
+        String[] emailArr = email.split("@");
+        return emailArr[0];
+    }
+
+    /**
+     * Set instance variables
+     */
     private void setVariables() {
         a = getActivity();
         userTxt = a.findViewById(R.id.score_user);
@@ -74,7 +86,12 @@ public class ScoreFragment extends Fragment {
         hardListView = a.findViewById(R.id.global_hard_list);
     }
 
-
+    /**
+     * Show 5 highest scores in each difficulty, as well as the name of the user
+     * who owns the score
+     * @param list
+     * @param scores
+     */
     private void inflateIntoLists(LinearLayout list, List<ScorePair> scores){
 
         Collections.sort(scores, ScorePair.ScoreComparator);

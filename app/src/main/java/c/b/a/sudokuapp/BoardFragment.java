@@ -60,6 +60,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private Bitmap white_BMP;
     private SharedPreferences sharedPref;
 
+    //Variables for database
     private FirebaseDatabase mDatabase;
     private DatabaseReference userRef;
 
@@ -207,11 +208,12 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     //update the user solution
     private void updateUserSolution(int row, int cell) {
-
+        //
         char temp = Character.forDigit(currentBoard[row][cell], 10);
         int index = (9 * row + cell);
         userS.setCharAt(index, temp);
 
+        //saving to database
         currUser.setUserSolution(userSolution);
         userRef.child("userSolution").setValue(userS.toString());
     }
@@ -317,7 +319,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     //shows a popup when the player has an incorrect solution
     private void incorrectPopup() {
 
-
         //pause the timer
         timer.pauseTimer();
 
@@ -326,7 +327,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         msg.setTitle("Incorrect!");
         msg.setMessage("Your solution is incorrect, do you want to continue trying without help?");
         msg.setCancelable(true);
-        msg.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+        msg.setNeutralButton("Continue", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -334,22 +335,14 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 timer.resumeTimer();
             }
         });
-        msg.setNeutralButton("New puzzle", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                //if the player is a quitter, stop the timer thread and start a new game
-                timer.stopThread();
-                timer = null;
-                timer = new Timer(timeTaken);
-                initializeNewGame();
-            }
-        });
 
         msg.setNegativeButton("Get help", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                //if player wants to resume this game but get some help
                 getHelp();
+                //resume timer
                 timer.startTimeThread(currUser.getCurrentTime());
             }
         });
@@ -358,20 +351,30 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         alertMsg.show();
     }
 
+    /**
+     * When user fills up a board and it is incorrect he can choose to get help
+     * This function sets the backround of the incorrect digits to red.
+     */
     private void getHelp() {
-        String stringone = currUser.getUserSolution();
-        String stringtwo = solution;
-        String stringthr = logic.intToString(currentBoard);
+        String userSolution = currUser.getUserSolution();
+        String currBoard = logic.intToString(currentBoard);
+
         for(int i = 0; i < 81 ; i++) {
+            //getting row and cell
             int row = i / 9;
             int cell = i % 9;
 
+            //The initial numbers are set to grey
             if(currUser.getCurrentGame().charAt(i) != '0') {
                 cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_x));
-            } else if(solution.charAt(i) != currUser.getUserSolution().charAt(i) && logic.intToString(currentBoard).charAt(i) == stringone.charAt(i)) {
+            }
+            //The incorrect digits are set to red
+            else if(solution.charAt(i) != userSolution.charAt(i) && currBoard.charAt(i) == userSolution.charAt(i)) {
 
                 cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_w));
-            } else {
+            }
+            //others set to white
+            else {
                 cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_b));
             }
         }
