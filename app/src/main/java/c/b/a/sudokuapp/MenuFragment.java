@@ -122,11 +122,15 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         welcomeUser();
     }
 
+    /**
+     * A method to retrieve data from the database
+     */
     private void retrieveData() {
 
         // Attach a listener to read the data at posts reference
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
+            // Called with a snapshot of the data at this location. Called each time that data changes
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 // If user does not exist in the database, one is created with user's email
@@ -324,6 +328,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    /**
+     * Called when the How to play button is clicked
+     * Takes user to the instruction page
+     */
     private void goToInstuctions() {
         fragmentManager = getFragmentManager();
 
@@ -332,7 +340,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     }
 
     /**
-     * Called when the log out button is clicked.
      * Called when the log out button is clicked.
      * Takes user back to the login screen
      */
@@ -353,26 +360,32 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
+        // Log current user out
         if(v == logout) {
             logout();
         }
+        // Start a new game
         else if(v == newGame) {
             newGame();
         }
+        // Resume an existing game
         else if(v == resume) {
             Intent intent = new Intent(a, GameActivity.class);
             intent.putExtra("DIFF", currUser.getDiff());
             startActivity(intent);
         }
+        // See top 5 leaders in each difficulty
         else if(v == leaderBoards) {
             goToLeaderBoards();
         }
+        // Learn how to play the game
         else if(v == instructions) {
             goToInstuctions();
         }
 
     }
 
+    // Creates new user in the database
     private void writeNewUser(String email) {
 
         User user = new User(email);
