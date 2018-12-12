@@ -12,14 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -32,19 +29,14 @@ import static c.b.a.sudokuapp.MenuFragment.currUser;
 public class DifficultyFragment extends Fragment implements View.OnClickListener {
 
     // Views
-    private TextView userTxt;
-    private TextView logout;
-    private Button easy;
-    private Button medium;
-    private Button hard;
+    private TextView userTxt, logout;
+    private Button easy, medium, hard;
 
     // Authentication variables
     private FirebaseAuth firebaseAuth;
 
     // Current activity
     private Activity a;
-
-    private AccessToken accessToken;
 
     // Variables for Google sign-in / sign-out
     private GoogleSignInOptions gso;
@@ -92,9 +84,17 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
     public void onStart() {
         super.onStart();
 
-        userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+        // If some user is logged in, welcome the user with his/her email
+        if(currUser != null) {
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+        }
     }
 
+    /**
+     * A method to cut of the part in front of the @ symbol
+     * @param email
+     * @return
+     */
     private String splitUserEmail(String email) {
         String[] emailArr = email.split("@");
         return emailArr[0];
@@ -114,19 +114,18 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
      * Set instance variables
      */
     private void setVariables() {
+        // Current activity
         a = getActivity();
         userTxt = a.findViewById(R.id.diff_user);
+
+        // Instance of the Firebase authentication
         firebaseAuth = FirebaseAuth.getInstance();
+
+        // Buttons
         logout = a.findViewById(R.id.diff_logout);
         easy = a.findViewById(R.id.easy);
         medium = a.findViewById(R.id.medium);
         hard = a.findViewById(R.id.hard);
-
-        mDatabase = FirebaseDatabase.getInstance();
-        ref = mDatabase.getReference("users");
-        userRef = ref.child(firebaseAuth.getUid());
-
-        accessToken = AccessToken.getCurrentAccessToken();
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -136,21 +135,25 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(a, gso);
+
+        mDatabase = FirebaseDatabase.getInstance();
+        ref = mDatabase.getReference("users");
+        userRef = ref.child(firebaseAuth.getUid());
     }
 
-
-    // TODO, commenta betur!
     /**
      * Called when any of the difficulty buttons has been clicked.
-     *
+     * Starts the game itself
      * @param diff
      */
-
-
     private void startGame(String diff){
+        // Reset the value for Current game in the database
         userRef.child("currentGame").setValue("");
+        // Resets the value for Solution game in the database
         userRef.child("solution").setValue("");
+        // Saves the difficulty the user chose in the database
         userRef.child("diff").setValue(diff);
+        // Resets the user's solution in the database
         userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));
         a.finish();
         Intent intent = new Intent(a, GameActivity.class);
@@ -178,19 +181,21 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
 
+        // Log current user out
         if(v == logout) {
             logout();
         }
-
+        // Start an easy game
         if(v == easy) {
             startGame("easy");
         }
+        // Starts a medium game
         if(v == medium) {
             startGame("medium");
         }
+        // Starts a hard game
         if(v == hard) {
             startGame("hard");
         }
-
     }
 }

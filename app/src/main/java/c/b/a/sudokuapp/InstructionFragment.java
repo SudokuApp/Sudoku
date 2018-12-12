@@ -71,11 +71,21 @@ public class InstructionFragment extends Fragment implements View.OnClickListene
     public void onStart() {
         super.onStart();
 
+        // Current activity
         Activity a = getActivity();
         TextView userTxt = a.findViewById(R.id.diff_user);
-        userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+
+        // If some user is logged in, welcome the user with his/her email
+        if(currUser != null) {
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+        }
     }
 
+    /**
+     * A method to cut of the part in front of the @ symbol
+     * @param email
+     * @return
+     */
     private String splitUserEmail(String email) {
         String[] emailArr = email.split("@");
         return emailArr[0];
