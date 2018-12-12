@@ -55,6 +55,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private TextView timeTaken;
     private TextView[][] cellViews;
     private Button goBack;
+    private Button getHint;
     private int currentTime;
 
     private Logic logic; // Instance of the Logic class
@@ -102,7 +103,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         DatabaseReference ref = mDatabase.getReference("users");
         userRef = ref.child(Objects.requireNonNull(firebaseAuth.getUid()));
         goBack = a.findViewById(R.id.returnBtn);
+        getHint = a.findViewById(R.id.btnHint);
         goBack.setOnClickListener(this);
+        getHint.setOnClickListener(this);
 
         userSolution = currUser.getUserSolution();
         userS = new StringBuilder(userSolution);
@@ -187,6 +190,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         userS.setCharAt(index, temp);
         userRef.child("userSolution").setValue(userS.toString());
     }
+
 
 
     // links stuff in the view
@@ -443,19 +447,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     private void saveToDatabase() {
-
-
-        StringBuilder current = new StringBuilder(intToString(currentBoard));
-
-        for(int i = 0 ; i < 81 ; i++ ){
-            if(!(initialBoard.charAt(i) == '0')){
-                current.setCharAt(i, '0');
-            }
-        }
         userRef.child("easyHighScore").setValue(currUser.getEasyHighScores());
         userRef.child("mediumHighScore").setValue(currUser.getMediumHighScores());
         userRef.child("hardHighScore").setValue(currUser.getHardHighScores());
-        userRef.child("userSolution").setValue(current.toString());
         userRef.child("currentTime").setValue(timer.getTime());
     }
 
@@ -492,11 +486,48 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //progress.cancel();
     }
 
+    private void getHint() {
+        int random;
+
+        while(emptyCells > 0) {
+            random = (int) (Math.random() * 80);
+
+            if(intToString(currentBoard).charAt(random) == '0') {
+
+                int number = Character.getNumericValue(solution.charAt(random));
+                int row = random / 9;
+                int cell = random % 9;
+
+                currentBoard[row][cell] = number;
+                updateUserSolution(row, cell);
+                cellViews[row][cell].setText(Integer.toString(number));
+                //TODO - bæta min við tímaþráðinn í hvert sinn
+                emptyCells--;
+                break;
+            }
+
+            if(emptyCells == 0) {
+                checkBoard();
+                break;
+            }
+        }
+
+        if(emptyCells == 0) {
+            checkBoard();
+        }
+
+
+    }
+
     @Override
     public void onClick(View v) {
         if(v == goBack) {
             saveToDatabase();
             goToMainMenu();
         }
+        else if(v == getHint) {
+            getHint();
+        }
+
     }
 }
