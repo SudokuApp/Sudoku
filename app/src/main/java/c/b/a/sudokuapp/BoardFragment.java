@@ -286,6 +286,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 getHelp();
+                timer.startTimeThread(currUser.getCurrentTime());
             }
         });
 
@@ -301,9 +302,14 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             int row = i / 9;
             int cell = i % 9;
 
-            cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_b));
-            if(solution.charAt(i) != currUser.getUserSolution().charAt(i) && intToString(currentBoard).charAt(i) == stringone.charAt(i)) {
+            if(currUser.getCurrentGame().charAt(i) != '0') {
+                cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_x));
+            }
+            else if(solution.charAt(i) != currUser.getUserSolution().charAt(i) && intToString(currentBoard).charAt(i) == stringone.charAt(i)) {
                 cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_w));
+            }
+            else {
+                cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_b));
             }
         }
     }
@@ -525,7 +531,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
                 break;
             }
-
         }
 
         if(emptyCells == 0) {
