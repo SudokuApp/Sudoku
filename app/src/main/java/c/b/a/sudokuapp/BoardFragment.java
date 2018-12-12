@@ -169,11 +169,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                     checkBoard();
                 }
             }
-            else if(currentBoard[row][cell] != 0){
-                boxClicked.setText("");
+            else{
+                if(currentBoard[row][cell] != 0){
+                    boxClicked.setText("");
+                    currentBoard[row][cell] = 0;
+                    emptyCells++;
+                }
                 boxClicked.setBackgroundResource(R.drawable.grid_b);
-                currentBoard[row][cell] = 0;
-                emptyCells++;
             }
             updateUserSolution(row, cell);
         }
