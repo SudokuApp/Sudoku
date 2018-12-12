@@ -385,7 +385,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    // Creates new user in the database
+    /**
+     * Creates new user in the database
+     */
     private void writeNewUser(String email) {
 
         User user = new User(email);
