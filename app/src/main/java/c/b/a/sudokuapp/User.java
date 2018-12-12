@@ -40,6 +40,10 @@ public class User {
         return userSolution;
     }
 
+    public void setUserSolution(String userSolution) {
+        this.userSolution = userSolution;
+    }
+
     public String getSolution() {
         return solution;
     }

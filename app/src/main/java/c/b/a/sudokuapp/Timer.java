@@ -15,6 +15,7 @@ public class Timer {
     private static TimeHandler handler;
     private boolean isPaused;
     private int timeTotal;
+    private int punishment;
     private TextView timeTaken;
 
     // A handler for the Timer class to interact with the UI thread based on code from
@@ -46,6 +47,7 @@ public class Timer {
         this.timeTaken = timeTaken;
         isPaused = false;
         handler = new TimeHandler(this);
+        this.punishment = 0;
     }
 
     //print the time to the UI
@@ -92,10 +94,10 @@ public class Timer {
                             e.printStackTrace();
                         }
                     }
-                    // get the time elapsed + the starting value and have the handler post it to
-                    // the UI thread
+                    // get the time elapsed + the starting value + your punishment and have the
+                    // handler post it the UI thread
                     else{
-                        timeTotal = (int) SystemClock.currentThreadTimeMillis() / 1000 + start;
+                        timeTotal = (int) SystemClock.currentThreadTimeMillis() / 1000 + start + punishment;
                         handler.handleMessage(new Message());
                     }
                 }
@@ -104,9 +106,14 @@ public class Timer {
         t.start();
     }
 
-    //apparently, you can no longer just stop a thread. So this function interrupts the therad and
+    void addMinute(){
+        punishment += 60;
+    }
+
+    //apparently, you can no longer just stop a thread. So this function interrupts the thread and
     // sets it's priority to the lowest possible
     void stopThread(){
+        punishment = 0;
         if(t != null){
             while(!t.isInterrupted()){
                 t.interrupt();
