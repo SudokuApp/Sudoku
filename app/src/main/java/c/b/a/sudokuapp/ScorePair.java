@@ -2,6 +2,7 @@ package c.b.a.sudokuapp;
 
 import java.util.Comparator;
 
+
 //A class class with a name and a score, used for the leaderboards
 public class ScorePair implements Comparable<ScorePair>{
 
