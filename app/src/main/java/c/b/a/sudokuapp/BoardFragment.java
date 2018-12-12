@@ -223,7 +223,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             userRef.child("solution").setValue("");
         }
         else{
-            incorrectPopup();
+            winPopup();
+           // incorrectPopup();
         }
     }
 
