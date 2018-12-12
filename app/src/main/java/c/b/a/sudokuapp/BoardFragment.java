@@ -368,7 +368,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
             if(currUser.getCurrentGame().charAt(i) != '0') {
                 cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_x));
-            } else if(solution.charAt(i) != currUser.getUserSolution().charAt(i) && logicgit .intToString(currentBoard).charAt(i) == stringone.charAt(i)) {
+            } else if(solution.charAt(i) != currUser.getUserSolution().charAt(i) && logic.intToString(currentBoard).charAt(i) == stringone.charAt(i)) {
 
                 cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_w));
             } else {
