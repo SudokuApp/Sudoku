@@ -223,7 +223,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             userRef.child("solution").setValue("");
         }
         else{
-            Toast.makeText(a, "Incorrect", Toast.LENGTH_SHORT).show();
+            incorrectPopup();
         }
     }
 
@@ -254,8 +254,40 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 });
         AlertDialog alertMsg = msg.create();
         alertMsg.show();
-
     }
+
+    private void incorrectPopup() {
+
+        timer.stopThread();
+        currUser.setCurrentTime(timer.getTime());
+        AlertDialog.Builder msg = new AlertDialog.Builder(a);
+        msg.setTitle("Incorrect!");
+        msg.setMessage("Your solution is incorrect, do you want to continue trying without help?");
+        msg.setCancelable(true);
+        msg.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                timer.startTimeThread(currUser.getCurrentTime());
+            }
+        });
+        msg.setNeutralButton("New puzzle", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                initializeNewGame();
+            }
+        });
+        msg.setNegativeButton("Get help", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO
+            }
+        });
+
+        AlertDialog alertMsg = msg.create();
+        alertMsg.show();
+    }
+
+
 
     private void resetBoard(){
         userRef.child("currentGame").setValue("");
