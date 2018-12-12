@@ -2,10 +2,14 @@ package c.b.a.sudokuapp;
 
 import java.util.Comparator;
 
-//A class class with a name and a score, used only by ScoreHandler
+
+//A class class with a name and a score, used for the leaderboards
 public class ScorePair implements Comparable<ScorePair>{
+
     private String name;
     private int score;
+
+    // init the score as the highest value possible (the worst possible)
     ScorePair(){
         this.name = "";
         this.score = Integer.MAX_VALUE;
