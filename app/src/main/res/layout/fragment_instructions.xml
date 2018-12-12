@@ -171,22 +171,3 @@
 
 
 </LinearLayout>
-
-<!--             <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textAlignment="center"
-                    android:text="What is Sudoku?" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textAlignment="center"
-                    android:text="@string/what_is_sudoku_answer" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="How to play!"
-                    android:textAlignment="center"
-                    android:textSize="30sp" /> -->
