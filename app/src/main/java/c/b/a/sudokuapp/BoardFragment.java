@@ -343,7 +343,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 //if player wants to resume this game but get some help
                 getHelp();
                 //resume timer
-                timer.startTimeThread(currUser.getCurrentTime());
+                timer.resumeTimer();
             }
         });
 
