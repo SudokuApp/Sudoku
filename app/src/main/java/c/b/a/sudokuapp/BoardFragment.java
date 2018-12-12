@@ -127,9 +127,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             resumeGame();
         }
         else {
-            currentBoard = logic.createEmptyBoard();
-            solution = intToString(logic.createEmptyBoard());
-            currentTime = 0;
+
             initializeNewGame();
         }
     }
@@ -188,6 +186,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         char temp = Character.forDigit(currentBoard[row][cell], 10);
         int index = (9 * row + cell);
         userS.setCharAt(index, temp);
+
+        currUser.setUserSolution(userSolution.toString());
         userRef.child("userSolution").setValue(userS.toString());
     }
 
@@ -283,12 +283,27 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         msg.setNegativeButton("Get help", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO
+                getHelp();
             }
         });
 
         AlertDialog alertMsg = msg.create();
         alertMsg.show();
+    }
+
+    private void getHelp() {
+        String stringone = currUser.getUserSolution();
+        String stringtwo = solution;
+        String stringthr = intToString(currentBoard);
+        for(int i = 0; i < 81 ; i++) {
+            int row = i / 9;
+            int cell = i % 9;
+
+            cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_b));
+            if(solution.charAt(i) != currUser.getUserSolution().charAt(i) && intToString(currentBoard).charAt(i) == stringone.charAt(i)) {
+                cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_w));
+            }
+        }
     }
 
 
@@ -335,7 +350,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     //sets up a new game from the received JsonObjcet from the API
     private void initializeNewGame(){
-
+        currentBoard = logic.createEmptyBoard();
+        solution = intToString(logic.createEmptyBoard());
+        currentTime = 0;
         resetBoard();
         generateNewGame(diff);
         //if(progress.isShowing()){
@@ -498,18 +515,15 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 int row = random / 9;
                 int cell = random % 9;
 
+                emptyCells--;
                 currentBoard[row][cell] = number;
                 updateUserSolution(row, cell);
                 cellViews[row][cell].setText(Integer.toString(number));
-                //TODO - bæta min við tímaþráðinn í hvert sinn
-                emptyCells--;
+                //TODO - bæta min við tímaþráðinn í hver t sinn
+
                 break;
             }
 
-            if(emptyCells == 0) {
-                checkBoard();
-                break;
-            }
         }
 
         if(emptyCells == 0) {
