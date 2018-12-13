@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.fragments;
 
 
 import android.annotation.SuppressLint;
@@ -28,7 +28,14 @@ import com.koushikdutta.ion.Ion;
 
 import java.util.Objects;
 
-import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
+import c.b.a.sudokuapp.services.BoardLinker;
+import c.b.a.sudokuapp.services.Logic;
+import c.b.a.sudokuapp.MenuActivity;
+import c.b.a.sudokuapp.R;
+import c.b.a.sudokuapp.services.ScoreHandler;
+import c.b.a.sudokuapp.services.Timer;
+
+import static c.b.a.sudokuapp.fragments.MenuFragment.fireBaseHandler;
 
 
 /**

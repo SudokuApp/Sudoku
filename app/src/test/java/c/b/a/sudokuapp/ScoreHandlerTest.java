@@ -1,21 +1,19 @@
 package c.b.a.sudokuapp;
 
-import android.app.Activity;
-
-import org.hamcrest.core.Is;
-import org.hamcrest.core.IsAnything;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Any;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
+import c.b.a.sudokuapp.entities.ScorePair;
+import c.b.a.sudokuapp.fragments.MenuFragment;
+import c.b.a.sudokuapp.services.FireBaseHandler;
+import c.b.a.sudokuapp.services.ScoreHandler;
+
+import static c.b.a.sudokuapp.fragments.MenuFragment.fireBaseHandler;
 import static org.junit.Assert.*;
 
 public class ScoreHandlerTest {

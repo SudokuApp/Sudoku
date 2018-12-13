@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.fragments;
 
 
 import android.annotation.SuppressLint;
@@ -18,8 +18,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
-import static c.b.a.sudokuapp.Logic.splitUserEmail;
-import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
+import c.b.a.sudokuapp.GameActivity;
+import c.b.a.sudokuapp.LoginActivity;
+import c.b.a.sudokuapp.R;
+import c.b.a.sudokuapp.services.Logic;
+
+import static c.b.a.sudokuapp.fragments.MenuFragment.fireBaseHandler;
 
 
 /**
@@ -79,7 +83,7 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
 
         // If some user is logged in, welcome the user with his/her email
         if(fireBaseHandler.currUser != null) {
-            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(fireBaseHandler.currUser.getEmail()));
+            userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(fireBaseHandler.currUser.getEmail()));
         }
     }
 

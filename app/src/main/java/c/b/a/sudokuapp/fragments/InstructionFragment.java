@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.fragments;
 
 
 import android.annotation.SuppressLint;
@@ -18,8 +18,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
-import static c.b.a.sudokuapp.Logic.splitUserEmail;
-import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
+import c.b.a.sudokuapp.LoginActivity;
+import c.b.a.sudokuapp.R;
+
+import static c.b.a.sudokuapp.services.Logic.splitUserEmail;
+import static c.b.a.sudokuapp.fragments.MenuFragment.fireBaseHandler;
 
 
 /**

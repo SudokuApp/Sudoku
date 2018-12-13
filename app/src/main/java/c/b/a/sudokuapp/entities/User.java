@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.entities;
 
 public class User {
     private String currentGame;

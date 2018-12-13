@@ -12,7 +12,7 @@ tools:context=".GameActivity">
 
 <fragment
     android:id="@+id/board_frag"
-    android:name="c.b.a.sudokuapp.BoardFragment"
+    android:name="c.b.a.sudokuapp.fragments.BoardFragment"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     app:layout_constraintBottom_toTopOf="@+id/buttons_frag"
@@ -24,7 +24,7 @@ tools:context=".GameActivity">
 
 <fragment
     android:id="@+id/buttons_frag"
-    android:name="c.b.a.sudokuapp.fragments.ButtonGroup"
+    android:name="c.b.a.sudokuapp.fragments.ButtonFragment"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_marginTop="7dp"

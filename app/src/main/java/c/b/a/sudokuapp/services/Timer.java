@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.services;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
@@ -44,7 +44,7 @@ public class Timer {
     }
 
     //Timer needs to know where to print the time
-    Timer(TextView timeTaken){
+    public Timer(TextView timeTaken){
         this.timeTaken = timeTaken;
         isPaused = false;
         handler = new TimeHandler(this);
@@ -58,12 +58,12 @@ public class Timer {
     }
 
     //pause the timer
-    void pauseTimer(){
+    public void pauseTimer(){
         this.isPaused = true;
     }
 
     //resume the timer
-    void resumeTimer(){
+    public void resumeTimer(){
         this.isPaused = false;
     }
 
@@ -76,7 +76,7 @@ public class Timer {
     }
 
     //get time in mm:ss or hh:mm:ss if you suck
-    String getTimeReadable(){
+    public String getTimeReadable(){
         return DateUtils.formatElapsedTime((getTime()));
     }
 
@@ -86,7 +86,7 @@ public class Timer {
     }
 
     // starts a thread that counts the seconds, starting from 'start'
-    void startTimeThread(final int start){
+    public void startTimeThread(final int start){
 
         this.start = start;
 
@@ -112,13 +112,13 @@ public class Timer {
         t.start();
     }
 
-    void addMinute(){
+    public void addMinute(){
         punishment += 60;
     }
 
     //apparently, you can no longer just stop a thread. So this function interrupts the thread and
     // sets it's priority to the lowest possible
-    void stopThread(){
+    public void stopThread(){
         punishment = 0;
         if(isAlive()){
             while(!t.isInterrupted()){

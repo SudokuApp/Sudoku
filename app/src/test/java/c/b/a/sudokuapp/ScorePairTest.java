@@ -2,6 +2,8 @@ package c.b.a.sudokuapp;
 
 import org.junit.Test;
 
+import c.b.a.sudokuapp.entities.ScorePair;
+
 import static org.junit.Assert.*;
 
 public class ScorePairTest {

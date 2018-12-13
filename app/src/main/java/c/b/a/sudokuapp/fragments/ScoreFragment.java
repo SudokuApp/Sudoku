@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.fragments;
 
 
 import android.annotation.SuppressLint;
@@ -15,7 +15,11 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
+import c.b.a.sudokuapp.services.Logic;
+import c.b.a.sudokuapp.R;
+import c.b.a.sudokuapp.entities.ScorePair;
+
+import static c.b.a.sudokuapp.fragments.MenuFragment.fireBaseHandler;
 
 
 /**

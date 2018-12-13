@@ -1,17 +1,19 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.services;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
+import c.b.a.sudokuapp.entities.ScorePair;
+
+import static c.b.a.sudokuapp.fragments.MenuFragment.fireBaseHandler;
 
 // A class that handles the scores (time)
-class ScoreHandler {
+public class ScoreHandler {
 
     private String diff;
 
     //class needs the difficulty and a reference to the database
-    ScoreHandler(String diff) {
+    public ScoreHandler(String diff) {
 
         this.diff = diff;
 
@@ -41,7 +43,7 @@ class ScoreHandler {
     }
 
     //check if this new score is better than the users old one for this difficulty
-    void compareToPrivate(int newScore){
+    public void compareToPrivate(int newScore){
 
         List<ScorePair> temp;
 

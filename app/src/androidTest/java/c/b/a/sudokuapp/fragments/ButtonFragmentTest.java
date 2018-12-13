@@ -1,26 +1,22 @@
 package c.b.a.sudokuapp.fragments;
 
-import android.support.test.espresso.ViewInteraction;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.widget.Button;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4.class)
-public class ButtonGroupTest {
+public class ButtonFragmentTest {
 
-    private ButtonGroup BG;
+    private ButtonFragment BG;
 
     @Before
     public void init(){
-        BG = new ButtonGroup();
+        BG = new ButtonFragment();
     }
 
     @After

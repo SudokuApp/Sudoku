@@ -1,11 +1,6 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.services;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.text.format.DateUtils;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,7 +11,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
+import c.b.a.sudokuapp.entities.ScorePair;
+import c.b.a.sudokuapp.entities.User;
 
 public class FireBaseHandler {
 

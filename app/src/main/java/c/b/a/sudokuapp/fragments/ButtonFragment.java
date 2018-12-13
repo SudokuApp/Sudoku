@@ -23,7 +23,7 @@ import c.b.a.sudokuapp.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ButtonGroup extends Fragment {
+public class ButtonFragment extends Fragment {
 
 
     private Activity a;
@@ -34,7 +34,7 @@ public class ButtonGroup extends Fragment {
     private SharedPreferences.Editor editor;
 
 
-    public ButtonGroup() { }
+    public ButtonFragment() { }
 
 
     @Override

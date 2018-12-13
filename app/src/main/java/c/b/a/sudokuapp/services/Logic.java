@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.services;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -7,15 +7,15 @@ import android.graphics.drawable.Drawable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
-class Logic {
+public class Logic {
 
-    Logic(){ }
+    public Logic(){ }
 
     /**
      * @param board
      * @return the number of empty cells on the board
      */
-    int countEmptyCells(int[][] board){
+    public int countEmptyCells(int[][] board){
         int emptyCells = 0;
         for(int i = 0 ; i < 9 ; i++){
             for(int j = 0 ; j < 9 ; j++){
@@ -31,7 +31,7 @@ class Logic {
      * @param string
      * @return the string of numbers in the form of a two dimensional integer array
      */
-    int[][] stringToInt(String string) {
+    public int[][] stringToInt(String string) {
         int[][] board = new int[9][9];
         int temp = 0;
 
@@ -48,7 +48,7 @@ class Logic {
      * @param array
      * @return the two dimensional integer array in the form of a string
      */
-    String intToString(int[][] array) {
+    public String intToString(int[][] array) {
         StringBuilder string = new StringBuilder();
         char temp;
         for(int i = 0 ; i < 9 ; i++) {
@@ -64,7 +64,7 @@ class Logic {
      * @param email from user
      * @return the email without the @ symbol and everything after that
      */
-    static String splitUserEmail(String email) {
+    public static String splitUserEmail(String email) {
         String[] emailArr = email.split("@");
         return emailArr[0];
     }
@@ -74,7 +74,7 @@ class Logic {
      * @param game the sudoku board
      * @return the board in the form of a string
      */
-    String convertBoardToString(int[][] game){
+    public String convertBoardToString(int[][] game){
         StringBuilder result = new StringBuilder("[[");
         for(int i = 0 ; i < 9 ; i++){
             for(int j = 0 ; j < 9 ; j++){
@@ -96,7 +96,7 @@ class Logic {
      * @param arr from the API
      * @return the JsonArray in the form of two dimensional integer array
      */
-    int[][] parseJsonArrayToInt(JsonArray arr){
+    public int[][] parseJsonArrayToInt(JsonArray arr){
         int[][] board = createEmptyBoard();
         int inner = 0;
         int outer = 0;
@@ -115,7 +115,7 @@ class Logic {
     /**
      * @return an empty 9x9 integer array
      */
-    static int[][] createEmptyBoard(){
+    public static int[][] createEmptyBoard(){
         int[][] board = new int[9][];
 
         for(int i = 0 ; i < 9 ; i++){
@@ -124,7 +124,7 @@ class Logic {
         return board;
     }
 
-    static Bitmap buildBitmap(Drawable img){
+    public static Bitmap buildBitmap(Drawable img){
         Bitmap out; //Assuming no incoming drawable is a bitmap
 
         int width = img.getIntrinsicWidth();

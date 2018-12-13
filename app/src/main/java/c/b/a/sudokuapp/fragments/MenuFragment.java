@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.fragments;
 
 
 import android.annotation.SuppressLint;
@@ -27,7 +27,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
-import static c.b.a.sudokuapp.Logic.splitUserEmail;
+import c.b.a.sudokuapp.services.FireBaseHandler;
+import c.b.a.sudokuapp.GameActivity;
+import c.b.a.sudokuapp.LoginActivity;
+import c.b.a.sudokuapp.R;
+import c.b.a.sudokuapp.entities.User;
+
+import static c.b.a.sudokuapp.services.Logic.splitUserEmail;
 
 
 /**

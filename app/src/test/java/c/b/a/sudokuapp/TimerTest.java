@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import c.b.a.sudokuapp.services.Timer;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
