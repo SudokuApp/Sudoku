@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     productFlavors {
     }
 }
@@ -40,3 +44,4 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:4.38.1'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
 }
+

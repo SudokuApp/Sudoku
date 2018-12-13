@@ -462,7 +462,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
 
         //if the background is grey, make it white
-        if(!Objects.equals(img.getConstantState(), white_Draw) || !logic.buildBitmap(img).sameAs(white_BMP)){
+        if(!Objects.equals(img.getConstantState(), white_Draw) || !Logic.buildBitmap(img).sameAs(white_BMP)){
             field.setBackgroundResource(R.drawable.grid_b);
         }
 

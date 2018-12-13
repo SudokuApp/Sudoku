@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
+import static c.b.a.sudokuapp.Logic.splitUserEmail;
 import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
 
 
@@ -82,15 +83,9 @@ public class InstructionFragment extends Fragment implements View.OnClickListene
     }
 
     /**
-     * A method to cut of the part in front of the @ symbol
-     * @param email
-     * @return
+     * Called when the log out button is clicked.
+     * Takes user back to the login screen
      */
-    private String splitUserEmail(String email) {
-        String[] emailArr = email.split("@");
-        return emailArr[0];
-    }
-
     private void logout() {
         LoginManager.getInstance().logOut();
         mGoogleSignInClient.signOut();
@@ -100,6 +95,10 @@ public class InstructionFragment extends Fragment implements View.OnClickListene
         a.startActivity(new Intent(a, LoginActivity.class));
     }
 
+    /**
+     * Called when a view has been clicked
+     * @param v the button view
+     */
     @Override
     public void onClick(View v) {
         if(v == logout) {

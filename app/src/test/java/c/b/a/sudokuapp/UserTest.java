@@ -21,6 +21,11 @@ public class UserTest {
     }
 
     @Test
+    public void EmptyConstructer(){
+        User testuser = new User();
+    }
+
+    @Test
     public void getCurrentGame() {
         assertEquals(user.getCurrentGame(), "");
     }
