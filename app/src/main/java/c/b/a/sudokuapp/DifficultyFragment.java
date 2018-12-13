@@ -17,10 +17,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import static c.b.a.sudokuapp.MenuFragment.currUser;
+import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
 
 
 /**
@@ -41,12 +39,6 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
     // Variables for Google sign-in / sign-out
     private GoogleSignInOptions gso;
     private GoogleSignInClient mGoogleSignInClient;
-
-    // Variables for database
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference ref;
-    private DatabaseReference userRef;
-
 
     public DifficultyFragment() {
         // Required empty public constructor
@@ -85,8 +77,8 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         super.onStart();
 
         // If some user is logged in, welcome the user with his/her email
-        if(currUser != null) {
-            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+        if(fireBaseHandler.currUser != null) {
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(fireBaseHandler.currUser.getEmail()));
         }
     }
 
@@ -135,10 +127,6 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(a, gso);
-
-        mDatabase = FirebaseDatabase.getInstance();
-        ref = mDatabase.getReference("users");
-        userRef = ref.child(firebaseAuth.getUid());
     }
 
     /**
@@ -147,14 +135,9 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
      * @param diff
      */
     private void startGame(String diff){
-        // Reset the value for Current game in the database
-        userRef.child("currentGame").setValue("");
-        // Resets the value for Solution game in the database
-        userRef.child("solution").setValue("");
-        // Saves the difficulty the user chose in the database
-        userRef.child("diff").setValue(diff);
-        // Resets the user's solution in the database
-        userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));
+
+        fireBaseHandler.resetUserGame(getString(R.string.initalizeUserSolution), diff);
+
         a.finish();
         Intent intent = new Intent(a, GameActivity.class);
         intent.putExtra("DIFF", diff);
