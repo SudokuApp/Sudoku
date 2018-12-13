@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.fragments;
 
 
 import android.annotation.SuppressLint;
@@ -27,7 +27,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
-import static c.b.a.sudokuapp.Logic.splitUserEmail;
+import c.b.a.sudokuapp.services.FireBaseHandler;
+import c.b.a.sudokuapp.GameActivity;
+import c.b.a.sudokuapp.LoginActivity;
+import c.b.a.sudokuapp.R;
+import c.b.a.sudokuapp.entities.User;
+
+import static c.b.a.sudokuapp.services.Logic.splitUserEmail;
 
 
 /**
@@ -115,6 +121,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                             .getProviderData().get(1).getEmail());
                 }
 
+                //get the data for this user and save it locally
                 fireBaseHandler.currUser = dataSnapshot.getValue(User.class);
 
                 if(fireBaseHandler.currUser != null) {
@@ -132,6 +139,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    //print the users highest score for each difficulty
     @SuppressLint("SetTextI18n")
     private void printHighScore() {
 
@@ -194,11 +202,11 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         resume = a.findViewById(R.id.resume_btn);
         instructions = a.findViewById(R.id.instructions);
         leaderBoards = a.findViewById(R.id.leaderboards_btn);
+
+        // Views for user's high score
         userEasyView = a.findViewById(R.id.user_highscore_easy);
         userMediumView = a.findViewById(R.id.user_highscore_medium);
         userHardView = a.findViewById(R.id.user_highscore_hard);
-        // Views for user's high score
-
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -209,6 +217,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(a, gso);
 
+        //the almighty FireBaseHandler, hallowed be thy name.
         fireBaseHandler = new FireBaseHandler(firebaseAuth.getUid());
     }
 

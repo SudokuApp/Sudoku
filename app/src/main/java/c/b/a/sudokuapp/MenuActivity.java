@@ -4,6 +4,8 @@ import android.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import c.b.a.sudokuapp.fragments.MenuFragment;
+
 /**
  * Activity with two fragments. First fragment letting user choose between
  * "resume game" and "new game". Second fragment letting user choose between

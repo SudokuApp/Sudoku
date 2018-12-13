@@ -1,30 +1,35 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.services;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
+import c.b.a.sudokuapp.entities.ScorePair;
+
+import static c.b.a.sudokuapp.fragments.MenuFragment.fireBaseHandler;
 
 // A class that handles the scores (time)
-class ScoreHandler {
+public class ScoreHandler {
 
     private String diff;
 
     //class needs the difficulty and a reference to the database
-    ScoreHandler(String diff) {
+    public ScoreHandler(String diff) {
 
         this.diff = diff;
 
     }
 
-    //add this score to the leaderboards and the remove the highest score if there are more than 5.
+    //Add the score to a list and remove the highest time
     public List<ScorePair> compareToGlobal(int newScore, List<ScorePair> globalScores){
 
         if(globalScores == null){
             globalScores = new ArrayList<>();
         }
+
+        //add score t list
         globalScores.add(new ScorePair(Logic.splitUserEmail(fireBaseHandler.getUserEmail()), newScore));
 
+        //if list is longer than 5, delete the highest time
         if(globalScores.size() > 5){
 
             ScorePair highestGlobal = new ScorePair();
@@ -41,7 +46,8 @@ class ScoreHandler {
     }
 
     //check if this new score is better than the users old one for this difficulty
-    void compareToPrivate(int newScore){
+    // and save it to the database
+    public void compareToPrivate(int newScore){
 
         List<ScorePair> temp;
 

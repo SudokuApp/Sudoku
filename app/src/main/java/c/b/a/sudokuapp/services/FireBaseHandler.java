@@ -1,11 +1,6 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.services;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.text.format.DateUtils;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,7 +11,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
+import c.b.a.sudokuapp.entities.ScorePair;
+import c.b.a.sudokuapp.entities.User;
 
 public class FireBaseHandler {
 
@@ -27,11 +23,19 @@ public class FireBaseHandler {
     public List<ScorePair> hardScores;
     public User currUser;
 
+
+    //Initialize the almighty FireBaseHandler
     public FireBaseHandler(String userId){
+
         FBdatabase = FirebaseDatabase.getInstance();
+
+        //A reference to the root of all users
         DatabaseReference allUsersRef = FBdatabase.getReference("users");
+
+        //A reference to this specific user
         userRef = allUsersRef.child(userId);
 
+        //references to the leaderboards
         leaderBoardsRef = FBdatabase.getReference("leaderBoards");
         easyLeaderBoards = leaderBoardsRef.child("easy");
         mediumLeaderBoards = leaderBoardsRef.child("medium");
@@ -40,6 +44,7 @@ public class FireBaseHandler {
         getLeaderboards();
     }
 
+    //read from the leaderboards into lists
     private void getLeaderboards(){
 
         easyLeaderBoards.addValueEventListener(new ValueEventListener() {
@@ -92,15 +97,15 @@ public class FireBaseHandler {
         });
     }
 
+
+    //write a new user to the database
     public void writeNewUser(String email) {
 
         User user = new User(email);
         userRef.setValue(user);
     }
 
-
-
-
+    //save various things to the users database
     public void setUserCurrentGame(String val){
         userRef.child("currentGame").setValue(val);
     }
@@ -161,7 +166,6 @@ public class FireBaseHandler {
         userRef.child("currentTime").setValue(currUser.getCurrentTime());
     }
 
-
     public void saveAllTimes(){
         saveUserEasyHighScore();
         saveUserMediumHighScore();
@@ -169,6 +173,8 @@ public class FireBaseHandler {
         saveUserCurrentTime();
     }
 
+
+    //save various leaderboards
     public void setEasyLeaderBoards(List<ScorePair> list){
         easyScores = list;
         easyLeaderBoards.setValue(list);
@@ -182,25 +188,9 @@ public class FireBaseHandler {
         hardLeaderBoards.setValue(list);
     }
 
+    // git some
     public String getUserEmail(){
         return currUser.getEmail();
-    }
-
-    public String getUserSolution(){
-        return currUser.getSolution();
-    }
-
-    public String getUserUserSolution(){
-        return currUser.getUserSolution();
-    }
-    public String getUserCurrentGame(){
-        return currUser.getCurrentGame();
-    }
-    public String getUserDiff(){
-        return currUser.getDiff();
-    }
-    public int getUserCurrentTime(){
-        return currUser.getCurrentTime();
     }
     public int getUserEasyHighScore(){
         return currUser.getEasyHighScores();

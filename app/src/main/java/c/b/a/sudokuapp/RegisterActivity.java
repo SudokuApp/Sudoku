@@ -21,6 +21,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
 
+import c.b.a.sudokuapp.entities.User;
+
 
 /**
  * This Activity is to register new user into the app.

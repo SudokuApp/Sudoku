@@ -1,9 +1,8 @@
 package c.b.a.sudokuapp;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import org.junit.Test;
+
+import c.b.a.sudokuapp.services.Logic;
 
 import static org.junit.Assert.*;
 

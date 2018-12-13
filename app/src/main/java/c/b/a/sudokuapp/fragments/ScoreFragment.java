@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.fragments;
 
 
 import android.annotation.SuppressLint;
@@ -15,7 +15,11 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
+import c.b.a.sudokuapp.services.Logic;
+import c.b.a.sudokuapp.R;
+import c.b.a.sudokuapp.entities.ScorePair;
+
+import static c.b.a.sudokuapp.fragments.MenuFragment.fireBaseHandler;
 
 
 /**
@@ -84,8 +88,10 @@ public class ScoreFragment extends Fragment {
      */
     private void inflateIntoLists(LinearLayout list, List<ScorePair> scores){
 
+        //sort the lists by score ascending.
         Collections.sort(scores, ScorePair.ScoreComparator);
 
+        //inflate each scorepair into the list
         for(ScorePair s : scores){
             View view = View.inflate(a, R.layout.layout_scorepair, null);
             TextView name = view.findViewById(R.id.scorepair_name);

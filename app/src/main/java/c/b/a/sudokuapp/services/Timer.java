@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.services;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
@@ -18,6 +18,7 @@ public class Timer {
     private int punishment;
     private TextView timeTaken;
     private int start;
+
 
     // A handler for the Timer class to interact with the UI thread based on code from
     // https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
@@ -44,7 +45,7 @@ public class Timer {
     }
 
     //Timer needs to know where to print the time
-    Timer(TextView timeTaken){
+    public Timer(TextView timeTaken){
         this.timeTaken = timeTaken;
         isPaused = false;
         handler = new TimeHandler(this);
@@ -58,25 +59,21 @@ public class Timer {
     }
 
     //pause the timer
-    void pauseTimer(){
+    public void pauseTimer(){
         this.isPaused = true;
     }
 
     //resume the timer
-    void resumeTimer(){
+    public void resumeTimer(){
         this.isPaused = false;
     }
 
-    boolean isPaused(){
+    public boolean isPaused(){
         return isPaused;
     }
 
-    int getPunishment(){
-        return punishment;
-    }
-
     //get time in mm:ss or hh:mm:ss if you suck
-    String getTimeReadable(){
+    public String getTimeReadable(){
         return DateUtils.formatElapsedTime((getTime()));
     }
 
@@ -86,7 +83,7 @@ public class Timer {
     }
 
     // starts a thread that counts the seconds, starting from 'start'
-    void startTimeThread(final int start){
+    public void startTimeThread(final int start){
 
         this.start = start;
 
@@ -112,13 +109,14 @@ public class Timer {
         t.start();
     }
 
-    void addMinute(){
+    //punish the player for his stupidity... (add 1 minute to the timer for using a hint)
+    public void addMinute(){
         punishment += 60;
     }
 
     //apparently, you can no longer just stop a thread. So this function interrupts the thread and
     // sets it's priority to the lowest possible
-    void stopThread(){
+    public void stopThread(){
         punishment = 0;
         if(isAlive()){
             while(!t.isInterrupted()){
@@ -129,12 +127,18 @@ public class Timer {
         }
     }
 
-    boolean isAlive(){
+    //check if the thread is alive
+    public boolean isAlive(){
         if(t == null){
             return false;
         }
         else{
             return true;
         }
+    }
+
+    //used in testing
+    public int getPunishment() {
+        return  punishment;
     }
 }

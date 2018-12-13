@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".MenuFragment">
+    tools:context=".fragments.MenuFragment">
 
     <LinearLayout
         android:id="@+id/header_layout"

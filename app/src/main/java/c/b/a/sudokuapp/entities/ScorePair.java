@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.entities;
 
 import java.util.Comparator;
 
@@ -10,12 +10,12 @@ public class ScorePair implements Comparable<ScorePair>{
     private int score;
 
     // init the score as the highest value possible (the worst possible)
-    ScorePair(){
+    public ScorePair(){
         this.name = "";
         this.score = Integer.MAX_VALUE;
     }
 
-    ScorePair(String name, int score){
+    public ScorePair(String name, int score){
         this.name = name;
         this.score = score;
     }
@@ -28,11 +28,11 @@ public class ScorePair implements Comparable<ScorePair>{
         this.name = name;
     }
 
-    int getScore() {
+    public int getScore() {
         return score;
     }
 
-    void setScore(int score){
+    public void setScore(int score){
         this.score = score;
     }
 
@@ -45,7 +45,7 @@ public class ScorePair implements Comparable<ScorePair>{
         return this.getScore() - o.getScore();
     }
 
-    static Comparator<ScorePair> ScoreComparator
+    public static Comparator<ScorePair> ScoreComparator
             = new Comparator<ScorePair>() {
 
         public int compare(ScorePair pair1, ScorePair pair2) {

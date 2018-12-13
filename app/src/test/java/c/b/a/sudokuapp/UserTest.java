@@ -4,6 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import c.b.a.sudokuapp.entities.User;
+
 import static org.junit.Assert.*;
 
 public class UserTest {

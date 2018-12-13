@@ -1,4 +1,4 @@
-package c.b.a.sudokuapp;
+package c.b.a.sudokuapp.entities;
 
 public class User {
     private String currentGame;
@@ -11,10 +11,8 @@ public class User {
     private String email;
     private String diff;
 
-    //total games? number of cancelled games?
-
     public User() {
-
+        //empty constructor
     }
 
     public User(String email) {

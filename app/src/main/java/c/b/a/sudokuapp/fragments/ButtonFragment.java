@@ -23,18 +23,18 @@ import c.b.a.sudokuapp.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ButtonGroup extends Fragment {
+public class ButtonFragment extends Fragment {
 
 
     private Activity a;
-    private Button[] buttons;
     private Button lastBtn;
     private String input = "";
-    private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
 
 
-    public ButtonGroup() { }
+    public ButtonFragment() {
+        //empty constructor
+    }
 
 
     @Override
@@ -44,20 +44,28 @@ public class ButtonGroup extends Fragment {
         return inflater.inflate(R.layout.fragment_button_group, container, false);
     }
 
+    @SuppressLint("CommitPrefEdits")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         a = getActivity();
-        sharedPref = a.getPreferences(Context.MODE_PRIVATE);
+        assert a != null;
+
+        //a shared preference to communicate with BoardFragment
+        SharedPreferences sharedPref = a.getPreferences(Context.MODE_PRIVATE);
         editor = sharedPref.edit();
+
         linkButtons();
     }
 
     private void linkButtons(){
-        buttons = new Button[]{a.findViewById(R.id.btn1), a.findViewById(R.id.btn2),a.findViewById(R.id.btn3),
-                a.findViewById(R.id.btn4),a.findViewById(R.id.btn5),a.findViewById(R.id.btn6),a.findViewById(R.id.btn7),
-                a.findViewById(R.id.btn8),a.findViewById(R.id.btn9),a.findViewById(R.id.btnMark), a.findViewById(R.id.clearBtn)};
+        Button[] buttons = new Button[]{a.findViewById(R.id.btn1), a.findViewById(R.id.btn2), a.findViewById(R.id.btn3),
+                a.findViewById(R.id.btn4), a.findViewById(R.id.btn5), a.findViewById(R.id.btn6), a.findViewById(R.id.btn7),
+                a.findViewById(R.id.btn8), a.findViewById(R.id.btn9), a.findViewById(R.id.btnMark), a.findViewById(R.id.clearBtn)};
 
+
+        // change the colour of the selected button
         for(Button b : buttons){
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -83,7 +91,8 @@ public class ButtonGroup extends Fragment {
     public String getInput(){
         return input;
     }
-    //editor.putString(getString(R.string.input), input).commit();
+
+    //Save the selected value to the shared preference
     @SuppressLint("SetTextI18n")
     public void setOperator(){
         editor.putString(getString(R.string.input), getInput()).commit();
