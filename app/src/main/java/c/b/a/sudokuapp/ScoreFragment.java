@@ -15,7 +15,6 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import static c.b.a.sudokuapp.FireBaseHandler.*;
 import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
 
 
@@ -62,6 +61,7 @@ public class ScoreFragment extends Fragment {
 
         if(fireBaseHandler.currUser != null) {
             userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(fireBaseHandler.currUser.getEmail()));
+
         }
     }
 

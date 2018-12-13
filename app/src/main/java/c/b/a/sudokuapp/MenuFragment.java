@@ -27,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
+import static c.b.a.sudokuapp.Logic.splitUserEmail;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -99,6 +101,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         welcomeUser();
     }
 
+
     public void retrieveData(){
         fireBaseHandler.userRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -162,15 +165,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    /**
-     * A method to cut of the part in front of the @ symbol
-     * @param email
-     * @return
-     */
-    private String splitUserEmail(String email) {
-        String[] emailArr = email.split("@");
-        return emailArr[0];
-    }
 
     /**
      * Set click listeners on buttons
@@ -242,8 +236,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         fragmentManager.executePendingTransactions();
     }
 
-    // TODO commenta!
-
 
     /**
      * Called when the How to play button is clicked
@@ -269,10 +261,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         a.startActivity(new Intent(a, LoginActivity.class));
     }
 
-
     /**
      * Called when a view has been clicked
-     * @param v
+     * @param v the button view
      */
     @Override
     public void onClick(View v) {
@@ -301,9 +292,4 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         }
 
     }
-
-    /**
-     * Creates new user in the database
-     */
-
 }
