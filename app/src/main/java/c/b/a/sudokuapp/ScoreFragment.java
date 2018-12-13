@@ -15,7 +15,6 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import static c.b.a.sudokuapp.Logic.splitUserEmail;
 import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
 
 
@@ -47,9 +46,9 @@ public class ScoreFragment extends Fragment {
         setVariables();
 
         // Inflate into lists
-        inflateIntoLists(easyListView, FireBaseHandler.easyScores);
-        inflateIntoLists(mediumListView, FireBaseHandler.mediumScores);
-        inflateIntoLists(hardListView, FireBaseHandler.hardScores);
+        inflateIntoLists(easyListView, fireBaseHandler.easyScores);
+        inflateIntoLists(mediumListView, fireBaseHandler.mediumScores);
+        inflateIntoLists(hardListView, fireBaseHandler.hardScores);
 
     }
 
@@ -59,8 +58,10 @@ public class ScoreFragment extends Fragment {
         super.onStart();
 
         // If some user is logged in, welcome the user with his/her email
+
         if(fireBaseHandler.currUser != null) {
-            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(fireBaseHandler.currUser.getEmail()));
+            userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(fireBaseHandler.currUser.getEmail()));
+
         }
     }
 
