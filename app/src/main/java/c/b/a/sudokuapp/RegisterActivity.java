@@ -53,7 +53,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         // Set variables
         setVariables();
 
-        // TODO taka út? ferð aldrei her inn
         // If you are logged in, you should go straight to the menu activity
         if(firebaseAuth.getCurrentUser() != null) {
             finish();

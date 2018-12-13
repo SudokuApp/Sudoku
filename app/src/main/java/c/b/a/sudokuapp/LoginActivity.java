@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -86,7 +85,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onStart();
 
         // If user is logged in, he/she is taken to the Main Menu
-        if (firebaseAuth.getCurrentUser() != null || isLoggedInWithFB || accountGoogle != null) {
+        if (firebaseAuth.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), MenuActivity.class));
             finish();
         }
@@ -108,12 +107,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Facebook login button
         facebookButton = findViewById(R.id.login_button);
 
-        // Check if user is logged in via Facebook
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        isLoggedInWithFB = accessToken != null && !accessToken.isExpired();
-
-        // Current Google account / last signed in Google account
-        accountGoogle = GoogleSignIn.getLastSignedInAccount(this);
         googleButton = findViewById(R.id.sign_in_button);
 
         // Configure sign-in to request the user's ID, email address, and basic profile
