@@ -527,7 +527,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                             JsonArray arr = result.getAsJsonArray("solution");
                             solution = logic.intToString(logic.parseJsonArrayToInt(arr));
                             fireBaseHandler.setUserSolution(solution);
-                            //userRef.child("solution").setValue(solution);
+                            //userRef.child("solution").setValue(solution); //TODO eyða?
                         }
                         else{
                             Toast.makeText(a, e.getMessage(), Toast.LENGTH_LONG).show();

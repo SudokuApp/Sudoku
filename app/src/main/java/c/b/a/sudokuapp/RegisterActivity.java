@@ -72,9 +72,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      */
     private void setVariables() {
         email = findViewById(R.id.emailreg);
-        password = findViewById(R.id.passwordred);
+        password = findViewById(R.id.passwordreg);
         register = findViewById(R.id.buttonregister);
-        login_txt = findViewById(R.id.textgotolgoin);
+        login_txt = findViewById(R.id.textgotologin);
 
         firebaseAuth = FirebaseAuth.getInstance();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference();
