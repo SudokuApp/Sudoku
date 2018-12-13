@@ -5,8 +5,6 @@ import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.facebook.login.Login;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,7 +19,6 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static android.support.test.espresso.matcher.ViewMatchers.hasFocus;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4.class)
 public class RegisterActivityTest {
@@ -46,9 +43,9 @@ public class RegisterActivityTest {
         activity = registerActivityActivityTestRule.getActivity();
 
         email = onView(withId(R.id.emailreg));
-        password = onView(withId(R.id.passwordred));
+        password = onView(withId(R.id.passwordreg));
         btn = onView(withId(R.id.buttonregister));
-        login = onView(withId(R.id.textgotolgoin));
+        login = onView(withId(R.id.textgotologin));
     }
 
     @After
@@ -85,5 +82,4 @@ public class RegisterActivityTest {
         btn.perform(click());
         password.check(matches(hasErrorText(activity.getString(R.string.invalidPassword))));
     }
-
 }

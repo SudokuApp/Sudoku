@@ -46,7 +46,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private TextView[][] cellViews; // every cell in the board
     private Button goBack; //the back button
     private int currentTime; //the current time
-    private String gameUrl = "https://sugoku2.herokuapp.com/board?difficulty=";
+    private static String gameUrl = "https://sugoku2.herokuapp.com/board?difficulty=";
     private String solutionUrl = "https://sugoku2.herokuapp.com/solve";
     private Button getHint;
 
@@ -63,6 +63,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     public BoardFragment() {
         // Required empty public constructor
+    }
+
+    public static void setPath(String tempPath) {
+        gameUrl = tempPath;
     }
 
 
@@ -205,7 +209,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         fireBaseHandler.setUserUserSolution(userS.toString());
         //fireBaseHandler.currUser.setUserSolution(userSolution);
-        //userRef.child("userSolution").setValue(userS.toString());
+        //userRef.child("userSolution").setValue(userS.toString()); //TODO ??
     }
 
 
@@ -260,7 +264,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             fireBaseHandler.setUserCurrentGame("");
             fireBaseHandler.setUserSolution("");
             //userRef.child("currentGame").setValue("");
-            //userRef.child("solution").setValue("");
+            //userRef.child("solution").setValue(""); //TODO eyða?
         }
 
         //if the player hasn't
@@ -380,7 +384,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         fireBaseHandler.resetUserGame(getString(R.string.initalizeUserSolution), diff);
 
-        /*userRef.child("currentGame").setValue("");
+        /*userRef.child("currentGame").setValue(""); //TODO eyða?
         userRef.child("solution").setValue("");
         userRef.child("diff").setValue(diff);
         userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));*/
@@ -496,7 +500,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
                             //save the currentBoard to the database
                             fireBaseHandler.setUserCurrentGame(logic.intToString(currentBoard));
-                            //userRef.child("currentGame").setValue(logic.intToString(currentBoard));
+                            //userRef.child("currentGame").setValue(logic.intToString(currentBoard)); //TODO eyða?
 
                         }
                         else{
@@ -523,7 +527,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                             JsonArray arr = result.getAsJsonArray("solution");
                             solution = logic.intToString(logic.parseJsonArrayToInt(arr));
                             fireBaseHandler.setUserSolution(solution);
-                            //userRef.child("solution").setValue(solution);
+                            //userRef.child("solution").setValue(solution); //TODO eyða?
                         }
                         else{
                             Toast.makeText(a, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -539,7 +543,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
        /* userRef.child("easyHighScore").setValue(fireBaseHandler.currUser.getEasyHighScores());
         userRef.child("mediumHighScore").setValue(fireBaseHandler.currUser.getMediumHighScores());
         userRef.child("hardHighScore").setValue(fireBaseHandler.currUser.getHardHighScores());
-        userRef.child("currentTime").setValue(timer.getTime());*/
+        userRef.child("currentTime").setValue(timer.getTime());*/ //TODO eyða??
     }
 
     //prints the user solution to the board

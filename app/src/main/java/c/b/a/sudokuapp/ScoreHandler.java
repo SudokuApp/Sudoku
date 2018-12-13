@@ -18,12 +18,12 @@ class ScoreHandler {
     }
 
     //add this score to the leaderboards and the remove the highest score if there are more than 5.
-    private void compareToGlobal(int newScore, List<ScorePair> globalScores){
+    public List<ScorePair> compareToGlobal(int newScore, List<ScorePair> globalScores){
 
         if(globalScores == null){
             globalScores = new ArrayList<>();
         }
-        globalScores.add(new ScorePair(Logic.splitUserEmail(fireBaseHandler.currUser.getEmail()), newScore));
+        globalScores.add(new ScorePair(Logic.splitUserEmail(fireBaseHandler.getUserEmail()), newScore));
 
         if(globalScores.size() > 5){
 
@@ -37,7 +37,7 @@ class ScoreHandler {
             }
             globalScores.remove(highestGlobal);
         }
-        //ref.setValue(globalScores);
+        return globalScores;
     }
 
     //check if this new score is better than the users old one for this difficulty
@@ -46,21 +46,27 @@ class ScoreHandler {
 
         switch (diff) {
             case "easy":
-                if (newScore < fireBaseHandler.currUser.getEasyHighScores()) {
+                if (newScore < fireBaseHandler.getUserEasyHighScore()) {
 
                     fireBaseHandler.setUserEasyHighScore(newScore);
+                    List<ScorePair> temp = compareToGlobal(newScore, fireBaseHandler.easyScores);
+                    fireBaseHandler.setEasyLeaderBoards(temp);
                 }
                 break;
             case "medium":
-                if (newScore < fireBaseHandler.currUser.getMediumHighScores()) {
+                if (newScore < fireBaseHandler.getUserMediumHighScore()) {
 
                     fireBaseHandler.setUserMediumHighScore(newScore);
+                    List<ScorePair> temp = compareToGlobal(newScore, fireBaseHandler.mediumScores);
+                    fireBaseHandler.setMediumLeaderBoards(temp);
                 }
                 break;
             case "hard":
-                if (newScore < fireBaseHandler.currUser.getHardHighScores()) {
+                if (newScore < fireBaseHandler.getUserHardHighScore()) {
 
                     fireBaseHandler.setUserHardHighScore(newScore);
+                    List<ScorePair> temp = compareToGlobal(newScore, fireBaseHandler.hardScores);
+                    fireBaseHandler.setHardLeaderBoards(temp);
                 }
                 break;
         }
