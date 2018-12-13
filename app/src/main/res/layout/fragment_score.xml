@@ -37,7 +37,7 @@
                 android:textAlignment="textEnd"/>
 
             <TextView
-                android:id="@+id/logout"
+                android:id="@+id/logout_score"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
