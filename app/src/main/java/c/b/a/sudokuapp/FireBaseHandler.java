@@ -22,13 +22,12 @@ public class FireBaseHandler {
 
     public FirebaseDatabase FBdatabase;
     public DatabaseReference leaderBoardsRef, easyLeaderBoards, mediumLeaderBoards, hardLeaderBoards, userRef;
-    private TextView  userEasyView, userMediumView, userHardView;
-    public static List<ScorePair> easyScores;
-    public static List<ScorePair> mediumScores;
-    public static List<ScorePair> hardScores;
+    public List<ScorePair> easyScores;
+    public List<ScorePair> mediumScores;
+    public List<ScorePair> hardScores;
     public User currUser;
 
-    public FireBaseHandler(Activity a, String userId){
+    public FireBaseHandler(String userId){
         FBdatabase = FirebaseDatabase.getInstance();
         DatabaseReference allUsersRef = FBdatabase.getReference("users");
         userRef = allUsersRef.child(userId);
@@ -37,13 +36,6 @@ public class FireBaseHandler {
         easyLeaderBoards = leaderBoardsRef.child("easy");
         mediumLeaderBoards = leaderBoardsRef.child("medium");
         hardLeaderBoards = leaderBoardsRef.child("hard");
-
-
-        userEasyView = a.findViewById(R.id.user_highscore_easy);
-        userMediumView = a.findViewById(R.id.user_highscore_medium);
-        userHardView = a.findViewById(R.id.user_highscore_hard);
-
-
 
         getLeaderboards();
     }
@@ -106,47 +98,8 @@ public class FireBaseHandler {
         userRef.setValue(user);
     }
 
-    public void retrieveData(final String email, final Button resume){
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            // Called with a snapshot of the data at this location. Called each time that data changes
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                // If user does not exist in the database, one is created with user's email
-                if(!dataSnapshot.exists()) {
-                    // Get users email through the Firebase authentication
-                    writeNewUser(email);
-                }
 
-                fireBaseHandler.currUser = dataSnapshot.getValue(User.class);
-
-                if(fireBaseHandler.currUser != null) {
-                    if(fireBaseHandler.currUser.getCurrentGame().equals("")) {
-                        resume.setEnabled(false);     // User is not able to press the resume button unless there is a game to resume
-                    }
-                    // Get the user's high score
-                    printHighScore();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
-        });
-    }
-
-    @SuppressLint("SetTextI18n")
-    private void printHighScore() {
-
-        if(fireBaseHandler.currUser.getEasyHighScores() != Integer.MAX_VALUE) {
-            userEasyView.setText("Your high score for easy puzzles:\n" + DateUtils.formatElapsedTime(fireBaseHandler.currUser.getEasyHighScores()));
-        }
-        if(fireBaseHandler.currUser.getMediumHighScores() != Integer.MAX_VALUE) {
-            userMediumView.setText("Your high score for medium puzzles:\n" + DateUtils.formatElapsedTime(fireBaseHandler.currUser.getMediumHighScores()));
-        }
-        if(fireBaseHandler.currUser.getHardHighScores() != Integer.MAX_VALUE) {
-            userHardView.setText("Your high score for hard puzzles:\n" + DateUtils.formatElapsedTime(fireBaseHandler.currUser.getHardHighScores()));
-        }
-    }
 
     public void setUserCurrentGame(String val){
         userRef.child("currentGame").setValue(val);
@@ -216,4 +169,46 @@ public class FireBaseHandler {
         saveUserCurrentTime();
     }
 
+    public void setEasyLeaderBoards(List<ScorePair> list){
+        easyScores = list;
+        easyLeaderBoards.setValue(list);
+    }
+    public void setMediumLeaderBoards(List<ScorePair> list){
+        mediumScores = list;
+        mediumLeaderBoards.setValue(list);
+    }
+    public void setHardLeaderBoards(List<ScorePair> list){
+        hardScores = list;
+        hardLeaderBoards.setValue(list);
+    }
+
+    public String getUserEmail(){
+        return currUser.getEmail();
+    }
+
+    public String getUserSolution(){
+        return currUser.getSolution();
+    }
+
+    public String getUserUserSolution(){
+        return currUser.getUserSolution();
+    }
+    public String getUserCurrentGame(){
+        return currUser.getCurrentGame();
+    }
+    public String getUserDiff(){
+        return currUser.getDiff();
+    }
+    public int getUserCurrentTime(){
+        return currUser.getCurrentTime();
+    }
+    public int getUserEasyHighScore(){
+        return currUser.getEasyHighScores();
+    }
+    public int getUserMediumHighScore(){
+        return currUser.getMediumHighScores();
+    }
+    public int getUserHardHighScore(){
+        return currUser.getHardHighScores();
+    }
 }

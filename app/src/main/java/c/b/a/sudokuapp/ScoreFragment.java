@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
+
+import static c.b.a.sudokuapp.FireBaseHandler.*;
 import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
 
 
@@ -45,9 +47,9 @@ public class ScoreFragment extends Fragment {
         setVariables();
 
         // Inflate into lists
-        inflateIntoLists(easyListView, FireBaseHandler.easyScores);
-        inflateIntoLists(mediumListView, FireBaseHandler.mediumScores);
-        inflateIntoLists(hardListView, FireBaseHandler.hardScores);
+        inflateIntoLists(easyListView, fireBaseHandler.easyScores);
+        inflateIntoLists(mediumListView, fireBaseHandler.mediumScores);
+        inflateIntoLists(hardListView, fireBaseHandler.hardScores);
 
     }
 

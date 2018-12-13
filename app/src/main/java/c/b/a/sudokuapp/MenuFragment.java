@@ -6,8 +6,10 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.Objects;
@@ -29,7 +34,7 @@ import java.util.Objects;
 public class MenuFragment extends Fragment implements View.OnClickListener {
 
     // Views
-    private TextView userTxt, logout;
+    private TextView userTxt, logout, userEasyView, userMediumView, userHardView;;
     private Button newGame, resume, leaderBoards, instructions;
 
     // Authentication variables
@@ -74,9 +79,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         setVariables();
 
         // Retrieve data from the database
-        fireBaseHandler.retrieveData(Objects.requireNonNull(firebaseAuth.getCurrentUser())
-                .getProviderData().get(1).getEmail(),
-                resume);
+        retrieveData();
 
         // Set click listeners
         setClickListeners();
@@ -96,12 +99,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         welcomeUser();
     }
 
-    /**
-     * A method to retrieve data from the database
-     */
-    /*private void retrieveData() {
-
-        // Attach a listener to read the data at posts reference
+    public void retrieveData(){
         fireBaseHandler.userRef.addValueEventListener(new ValueEventListener() {
             @Override
             // Called with a snapshot of the data at this location. Called each time that data changes
@@ -110,8 +108,8 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                 // If user does not exist in the database, one is created with user's email
                 if(!dataSnapshot.exists()) {
                     // Get users email through the Firebase authentication
-                    String email = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getProviderData().get(1).getEmail();
-                    fireBaseHandler.writeNewUser(email);
+                    fireBaseHandler.writeNewUser(Objects.requireNonNull(firebaseAuth.getCurrentUser())
+                            .getProviderData().get(1).getEmail());
                 }
 
                 fireBaseHandler.currUser = dataSnapshot.getValue(User.class);
@@ -121,14 +119,29 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                         resume.setEnabled(false);     // User is not able to press the resume button unless there is a game to resume
                     }
                     // Get the user's high score
-                    getHighScore();
+                    printHighScore();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
-    }*/
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    private void printHighScore() {
+
+        if(fireBaseHandler.currUser.getEasyHighScores() != Integer.MAX_VALUE) {
+            userEasyView.setText("Your high score for easy puzzles:\n" + DateUtils.formatElapsedTime(fireBaseHandler.currUser.getEasyHighScores()));
+        }
+        if(fireBaseHandler.currUser.getMediumHighScores() != Integer.MAX_VALUE) {
+            userMediumView.setText("Your high score for medium puzzles:\n" + DateUtils.formatElapsedTime(fireBaseHandler.currUser.getMediumHighScores()));
+        }
+        if(fireBaseHandler.currUser.getHardHighScores() != Integer.MAX_VALUE) {
+            userHardView.setText("Your high score for hard puzzles:\n" + DateUtils.formatElapsedTime(fireBaseHandler.currUser.getHardHighScores()));
+        }
+    }
 
     /**
      * Gets the user's email
@@ -187,6 +200,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         resume = a.findViewById(R.id.resume_btn);
         instructions = a.findViewById(R.id.instructions);
         leaderBoards = a.findViewById(R.id.leaderboards_btn);
+        userEasyView = a.findViewById(R.id.user_highscore_easy);
+        userMediumView = a.findViewById(R.id.user_highscore_medium);
+        userHardView = a.findViewById(R.id.user_highscore_hard);
         // Views for user's high score
 
 
@@ -199,7 +215,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(a, gso);
 
-        fireBaseHandler = new FireBaseHandler(a, firebaseAuth.getUid());
+        fireBaseHandler = new FireBaseHandler(firebaseAuth.getUid());
     }
 
     /**
