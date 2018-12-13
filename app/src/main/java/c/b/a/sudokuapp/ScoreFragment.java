@@ -57,13 +57,9 @@ public class ScoreFragment extends Fragment {
         super.onStart();
 
         // If some user is logged in, welcome the user with his/her email
-<<<<<<< HEAD
-        if(currUser != null) {
-            userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(currUser.getEmail()));
-=======
+
         if(fireBaseHandler.currUser != null) {
-            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(fireBaseHandler.currUser.getEmail()));
->>>>>>> d3eaaf2dc70f501eb52412df0cf4c705f597fdb6
+            userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(fireBaseHandler.currUser.getEmail()));
         }
     }
 
