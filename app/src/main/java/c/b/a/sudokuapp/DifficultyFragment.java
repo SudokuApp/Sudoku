@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
+import static c.b.a.sudokuapp.Logic.splitUserEmail;
 import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
 
 
@@ -80,16 +81,6 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
         if(fireBaseHandler.currUser != null) {
             userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(fireBaseHandler.currUser.getEmail()));
         }
-    }
-
-    /**
-     * A method to cut of the part in front of the @ symbol
-     * @param email
-     * @return
-     */
-    private String splitUserEmail(String email) {
-        String[] emailArr = email.split("@");
-        return emailArr[0];
     }
 
     /**
@@ -159,7 +150,7 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
 
     /**
      * Called when a view has been clicked
-     * @param v
+     * @param v the button view
      */
     @Override
     public void onClick(View v) {

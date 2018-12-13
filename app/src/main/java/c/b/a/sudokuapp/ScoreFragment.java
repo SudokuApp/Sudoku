@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
+
+import static c.b.a.sudokuapp.Logic.splitUserEmail;
 import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
 
 
@@ -60,16 +62,6 @@ public class ScoreFragment extends Fragment {
         if(fireBaseHandler.currUser != null) {
             userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(fireBaseHandler.currUser.getEmail()));
         }
-    }
-
-    /**
-     * A method to cut of the part in front of the @ symbol
-     * @param email
-     * @return
-     */
-    private String splitUserEmail(String email) {
-        String[] emailArr = email.split("@");
-        return emailArr[0];
     }
 
     /**

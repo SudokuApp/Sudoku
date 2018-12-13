@@ -22,6 +22,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
 
+import static c.b.a.sudokuapp.Logic.splitUserEmail;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -97,40 +99,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     }
 
     /**
-     * A method to retrieve data from the database
-     */
-    /*private void retrieveData() {
-
-        // Attach a listener to read the data at posts reference
-        fireBaseHandler.userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            // Called with a snapshot of the data at this location. Called each time that data changes
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                // If user does not exist in the database, one is created with user's email
-                if(!dataSnapshot.exists()) {
-                    // Get users email through the Firebase authentication
-                    String email = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getProviderData().get(1).getEmail();
-                    fireBaseHandler.writeNewUser(email);
-                }
-
-                fireBaseHandler.currUser = dataSnapshot.getValue(User.class);
-
-                if(fireBaseHandler.currUser != null) {
-                    if(fireBaseHandler.currUser.getCurrentGame().equals("")) {
-                        resume.setEnabled(false);     // User is not able to press the resume button unless there is a game to resume
-                    }
-                    // Get the user's high score
-                    getHighScore();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
-        });
-    }*/
-
-    /**
      * Gets the user's email
      * Calls a method to split the email
      * Welcomes the user with his/her splitted email
@@ -149,15 +117,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    /**
-     * A method to cut of the part in front of the @ symbol
-     * @param email
-     * @return
-     */
-    private String splitUserEmail(String email) {
-        String[] emailArr = email.split("@");
-        return emailArr[0];
-    }
 
     /**
      * Set click listeners on buttons
@@ -226,8 +185,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         fragmentManager.executePendingTransactions();
     }
 
-    // TODO commenta!
-
 
     /**
      * Called when the How to play button is clicked
@@ -253,10 +210,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         a.startActivity(new Intent(a, LoginActivity.class));
     }
 
-
     /**
      * Called when a view has been clicked
-     * @param v
+     * @param v the button view
      */
     @Override
     public void onClick(View v) {
@@ -285,9 +241,4 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         }
 
     }
-
-    /**
-     * Creates new user in the database
-     */
-
 }
