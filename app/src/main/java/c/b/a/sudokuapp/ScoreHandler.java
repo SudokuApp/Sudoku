@@ -1,5 +1,7 @@
 package c.b.a.sudokuapp;
 
+import android.provider.ContactsContract;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import static c.b.a.sudokuapp.MenuFragment.easyScores;
@@ -52,27 +54,45 @@ class ScoreHandler {
     void compareToPrivate(int newScore, DatabaseReference userRef){
 
         DatabaseReference scoreref = mDatabase.getReference("leaderBoards");
+        boolean highscore = false;
 
-        if (diff.equals("easy")){
-            if (newScore < currUser.getEasyHighScores()){
-                currUser.setEasyHighScores(newScore);
-                userRef.child("easyHighScores").setValue(newScore);
-            }
-            compareToGlobal(newScore, easyScores, scoreref.child("easy"));
+        switch (diff) {
+            case "easy":
+                if (newScore < currUser.getEasyHighScores()) {
+                    highscore = true;
+
+                    currUser.setEasyHighScores(newScore);
+                }
+                sendToCompareToGlobal(newScore, easyScores, scoreref);
+                break;
+            case "medium":
+                if (newScore < currUser.getMediumHighScores()) {
+                    highscore = true;
+
+                    currUser.setMediumHighScores(newScore);
+                }
+                sendToCompareToGlobal(newScore, mediumScores, scoreref);
+                break;
+            case "hard":
+                if (newScore < currUser.getHardHighScores()) {
+                    highscore = true;
+
+                    currUser.setHardHighScores(newScore);
+                }
+                sendToCompareToGlobal(newScore, hardScores, scoreref);
+                break;
         }
-        else if (diff.equals("medium")){
-            if (newScore < currUser.getMediumHighScores()){
-                currUser.setMediumHighScores(newScore);
-                userRef.child("mediumHighScores").setValue(newScore);
-            }
-            compareToGlobal(newScore, mediumScores, scoreref.child("medium"));
+        if(highscore){
+            saveUserScore(newScore, userRef);
         }
-        else if (diff.equals("hard")) {
-            if (newScore < currUser.getHardHighScores()){
-                currUser.setHardHighScores(newScore);
-                userRef.child("hardHighScores").setValue(newScore);
-            }
-            compareToGlobal(newScore, hardScores, scoreref.child("hard"));
-        }
+    }
+
+    private void saveUserScore(int newScore, DatabaseReference ref){
+        ref.child(diff + "HighScores").setValue(newScore);
+    }
+
+    private void sendToCompareToGlobal(int newScore, List<ScorePair> list, DatabaseReference ref){
+        DatabaseReference scoreref = ref.child(diff);
+        compareToGlobal(newScore, list, scoreref);
     }
 }
