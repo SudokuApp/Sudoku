@@ -370,6 +370,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             }
             //The incorrect digits are set to red
             else if(solution.charAt(i) != userSolution.charAt(i) && currBoard.charAt(i) == userSolution.charAt(i)) {
+
                 cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_w));
             }
             //others set to white

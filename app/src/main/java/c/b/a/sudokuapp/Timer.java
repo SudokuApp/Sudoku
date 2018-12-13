@@ -17,6 +17,7 @@ public class Timer {
     private int timeTotal;
     private int punishment;
     private TextView timeTaken;
+    private int start;
 
     // A handler for the Timer class to interact with the UI thread based on code from
     // https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
@@ -48,6 +49,7 @@ public class Timer {
         isPaused = false;
         handler = new TimeHandler(this);
         this.punishment = 0;
+        this.start = 0;
     }
 
     //print the time to the UI
@@ -65,20 +67,31 @@ public class Timer {
         this.isPaused = false;
     }
 
+    boolean isPaused(){
+        return isPaused;
+    }
+
+    int getPunishment(){
+        return punishment;
+    }
+
     //get time in mm:ss or hh:mm:ss if you suck
     String getTimeReadable(){
-        return DateUtils.formatElapsedTime((timeTotal));
+        return DateUtils.formatElapsedTime((getTime()));
     }
 
     //get time in seconds
     public int getTime(){
-        return timeTotal;
+        return timeTotal + start + punishment;
     }
 
     // starts a thread that counts the seconds, starting from 'start'
     void startTimeThread(final int start){
+
+        this.start = start;
+
         //if, for some reason, this thread already exists, stop it.
-        if(t != null){
+        if(isAlive()){
             stopThread();
         }
         t = new Thread() {
@@ -86,18 +99,11 @@ public class Timer {
             @Override
             public void run() {
                 while (!isInterrupted()) {
-                    //if the timer is paused, check every 0.1 second if it's still paused
-                    if(isPaused){
-                        try {
-                            sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+
                     // get the time elapsed + the starting value + your punishment and have the
                     // handler post it the UI thread
-                    else{
-                        timeTotal = (int) SystemClock.currentThreadTimeMillis() / 1000 + start + punishment;
+                    if(!isPaused()){
+                        timeTotal = (int) SystemClock.currentThreadTimeMillis() / 1000;
                         handler.handleMessage(new Message());
                     }
                 }
@@ -114,12 +120,21 @@ public class Timer {
     // sets it's priority to the lowest possible
     void stopThread(){
         punishment = 0;
-        if(t != null){
+        if(isAlive()){
             while(!t.isInterrupted()){
                 t.interrupt();
             }
             t.setPriority(Thread.MIN_PRIORITY);
             t = null;
+        }
+    }
+
+    boolean isAlive(){
+        if(t == null){
+            return false;
+        }
+        else{
+            return true;
         }
     }
 }
