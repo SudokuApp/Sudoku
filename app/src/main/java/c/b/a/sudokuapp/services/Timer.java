@@ -19,6 +19,7 @@ public class Timer {
     private TextView timeTaken;
     private int start;
 
+
     // A handler for the Timer class to interact with the UI thread based on code from
     // https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
     static class TimeHandler extends Handler{
@@ -67,12 +68,8 @@ public class Timer {
         this.isPaused = false;
     }
 
-    boolean isPaused(){
+    public boolean isPaused(){
         return isPaused;
-    }
-
-    int getPunishment(){
-        return punishment;
     }
 
     //get time in mm:ss or hh:mm:ss if you suck
@@ -112,6 +109,7 @@ public class Timer {
         t.start();
     }
 
+    //punish the player for his stupidity... (add 1 minute to the timer for using a hint)
     public void addMinute(){
         punishment += 60;
     }
@@ -129,12 +127,18 @@ public class Timer {
         }
     }
 
-    boolean isAlive(){
+    //check if the thread is alive
+    public boolean isAlive(){
         if(t == null){
             return false;
         }
         else{
             return true;
         }
+    }
+
+    //used in testing
+    public int getPunishment() {
+        return  punishment;
     }
 }

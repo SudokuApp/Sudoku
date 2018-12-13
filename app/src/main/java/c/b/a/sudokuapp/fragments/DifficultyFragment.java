@@ -131,6 +131,7 @@ public class DifficultyFragment extends Fragment implements View.OnClickListener
      */
     private void startGame(String diff){
 
+        //initialize some fields for the user
         fireBaseHandler.resetUserGame(getString(R.string.initalizeUserSolution), diff);
 
         a.finish();

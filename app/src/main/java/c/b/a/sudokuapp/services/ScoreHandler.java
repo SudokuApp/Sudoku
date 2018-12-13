@@ -19,14 +19,17 @@ public class ScoreHandler {
 
     }
 
-    //add this score to the leaderboards and the remove the highest score if there are more than 5.
+    //Add the score to a list and remove the highest time
     public List<ScorePair> compareToGlobal(int newScore, List<ScorePair> globalScores){
 
         if(globalScores == null){
             globalScores = new ArrayList<>();
         }
+
+        //add score t list
         globalScores.add(new ScorePair(Logic.splitUserEmail(fireBaseHandler.getUserEmail()), newScore));
 
+        //if list is longer than 5, delete the highest time
         if(globalScores.size() > 5){
 
             ScorePair highestGlobal = new ScorePair();
@@ -43,6 +46,7 @@ public class ScoreHandler {
     }
 
     //check if this new score is better than the users old one for this difficulty
+    // and save it to the database
     public void compareToPrivate(int newScore){
 
         List<ScorePair> temp;

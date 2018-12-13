@@ -10,6 +10,8 @@ public class BoardLinker {
     public TextView[][] cellViews;
 
     public BoardLinker(Activity a) {
+
+        //Every single cell on the board... it's ugly, but it works.
         int[][] cellIDs = new int[][]{{R.id.cell00, R.id.cell01, R.id.cell02, R.id.cell03, R.id.cell04, R.id.cell05, R.id.cell06, R.id.cell07, R.id.cell08},
                 {R.id.cell10, R.id.cell11, R.id.cell12, R.id.cell13, R.id.cell14, R.id.cell15, R.id.cell16, R.id.cell17, R.id.cell18},
                 {R.id.cell20, R.id.cell21, R.id.cell22, R.id.cell23, R.id.cell24, R.id.cell25, R.id.cell26, R.id.cell27, R.id.cell28},

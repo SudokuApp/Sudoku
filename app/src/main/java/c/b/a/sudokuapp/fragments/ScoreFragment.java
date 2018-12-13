@@ -88,8 +88,10 @@ public class ScoreFragment extends Fragment {
      */
     private void inflateIntoLists(LinearLayout list, List<ScorePair> scores){
 
+        //sort the lists by score ascending.
         Collections.sort(scores, ScorePair.ScoreComparator);
 
+        //inflate each scorepair into the list
         for(ScorePair s : scores){
             View view = View.inflate(a, R.layout.layout_scorepair, null);
             TextView name = view.findViewById(R.id.scorepair_name);

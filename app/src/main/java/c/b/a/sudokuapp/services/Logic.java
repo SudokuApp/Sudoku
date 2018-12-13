@@ -124,6 +124,8 @@ public class Logic {
         return board;
     }
 
+
+    // buids a bitmap from a drawable in order to compare it
     public static Bitmap buildBitmap(Drawable img){
         Bitmap out; //Assuming no incoming drawable is a bitmap
 

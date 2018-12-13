@@ -53,10 +53,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private TextView[][] cellViews; // every cell in the board
     private Button goBack; //the back button
     private int currentTime; //the current time
-    private static String gameUrl = "https://sugoku2.herokuapp.com/board?difficulty=";
-    private String solutionUrl = "https://sugoku2.herokuapp.com/solve";
     private Button getHint;
-
 
     private Logic logic; // Instance of the Logic class
     private Timer timer; // Instance of the Timer class
@@ -204,16 +201,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
     //update the user solution
     private void updateUserSolution(int row, int cell) {
-        //
+
         char temp = Character.forDigit(currentBoard[row][cell], 10);
         int index = (9 * row + cell);
         userS.setCharAt(index, temp);
 
         //saving to database
-
         fireBaseHandler.setUserUserSolution(userS.toString());
-        //fireBaseHandler.currUser.setUserSolution(userSolution);
-        //userRef.child("userSolution").setValue(userS.toString()); //TODO ??
     }
 
 
@@ -477,17 +471,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void setGameUrl(String url){
-        this.gameUrl = url;
-    }
-
-    public void setSolutionUrl(String url){
-        this.solutionUrl = url;
-    }
-
     // Take in a difficulty parameter (easy, medium or hard) and fetch a json sudoku puzzle from an API
     public void generateNewGame(String difficulty){
 
+        String gameUrl = "https://sugoku2.herokuapp.com/board?difficulty=";
         Ion.with(this)
                 .load(gameUrl + difficulty)
                 .asJsonObject()
@@ -507,9 +494,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
+
+    //save a game from the API
     public void saveNewGame(JsonArray arr){
 
-        //parse it into the currentBoard, count the empty cells and show print
+        //parse the array into the currentBoard, count the empty cells and show print
         // the board onto the screen
         currentBoard = logic.parseJsonArrayToInt(arr);
         emptyCells = logic.countEmptyCells(currentBoard);
@@ -520,8 +509,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         //save the currentBoard to the database
         fireBaseHandler.setUserCurrentGame(logic.intToString(currentBoard));
-        //userRef.child("currentGame").setValue(logic.intToString(currentBoard));
-
     }
 
 
@@ -530,6 +517,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     // Should be called by generateNewGame()
     public void getSolution(int[][] game){
         String stringBoard = logic.convertBoardToString(game);
+        String solutionUrl = "https://sugoku2.herokuapp.com/solve";
         Ion.with(this)
                 .load(solutionUrl)
                 .setMultipartParameter("board", stringBoard)
@@ -551,10 +539,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
+    //Save a solution from the API to the database
     public void saveSolution(JsonArray arr){
         solution = logic.intToString(logic.parseJsonArrayToInt(arr));
         fireBaseHandler.setUserSolution(solution);
-        //userRef.child("solution").setValue(solution);
     }
 
     //save the times to the database
@@ -595,13 +583,17 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    //Choose a random number, if that cell is empty, fill it in for the player
     @SuppressLint("SetTextI18n")
     private void getHint() {
         int random;
 
         while(emptyCells > 0) {
+
+            //a random number from 0-80
             random = (int) (Math.random() * 81);
 
+            //if that field is empty, fill it in
             if(logic.intToString(currentBoard).charAt(random) == '0') {
 
                 int number = Character.getNumericValue(solution.charAt(random));
@@ -612,11 +604,15 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 currentBoard[row][cell] = number;
                 updateUserSolution(row, cell);
                 cellViews[row][cell].setText(Integer.toString(number));
+
+                //punish the player for his arrogance
                 timer.addMinute();
 
-                break;
+                break; // his will to live!
             }
         }
+
+        //if all fields are filled, check if the solution is correct
         if(emptyCells == 0) {
             checkBoard();
         }
@@ -633,6 +629,5 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         else if(v == getHint) {
             getHint();
         }
-
     }
 }

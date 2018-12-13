@@ -18,14 +18,12 @@ import static org.junit.Assert.*;
 
 public class ScoreHandlerTest {
 
-    private MenuFragment mf;
     private ScoreHandler easySH;
     private List<ScorePair> list;
 
     @Before
     public void setUP(){
 
-        mf = Mockito.mock(MenuFragment.class);
         fireBaseHandler = Mockito.mock(FireBaseHandler.class);
         easySH = Mockito.spy(new ScoreHandler("easy"));
 
@@ -49,8 +47,7 @@ public class ScoreHandlerTest {
     @Test
     public void compareToGlobal() {
 
-        List temp = null;
-        temp = easySH.compareToGlobal(7, temp);
+        List temp = easySH.compareToGlobal(7, null);
         assertNotNull(temp);
 
         ScorePair sp = new ScorePair("test", 3);
