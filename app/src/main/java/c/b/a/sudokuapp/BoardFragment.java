@@ -56,6 +56,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private Drawable.ConstantState white_Draw;
     private Bitmap white_BMP;
     private SharedPreferences sharedPref;
+    private ScoreHandler scorehandler;
 
     //Variables for database
     private StringBuilder userS;
@@ -244,6 +245,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         goBack.setOnClickListener(this);
         getHint = a.findViewById(R.id.btnHint);
         getHint.setOnClickListener(this);
+        scorehandler = new ScoreHandler(diff);
     }
 
 
@@ -259,8 +261,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             //reset the users currentGame and solution
             fireBaseHandler.setUserCurrentGame("");
             fireBaseHandler.setUserSolution("");
-            //userRef.child("currentGame").setValue("");
-            //userRef.child("solution").setValue("");
+
         }
 
         //if the player hasn't
@@ -274,17 +275,19 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     // show a popup when the player has solved the puzzle
     private void winPopup() {
 
+        int time = timer.getTime();
+        String timeRead = timer.getTimeReadable();
+
         //stop the timer
         timer.stopThread();
 
         //have the ScoreHandler handle the score
-        ScoreHandler scorehandler = new ScoreHandler(diff);
-        scorehandler.compareToPrivate(timer.getTime());
+        scorehandler.compareToPrivate(time);
 
         //build the actual popup
         AlertDialog.Builder msg = new AlertDialog.Builder(a);
         msg.setTitle("Congratulations!");
-        msg.setMessage("Your time was " + timer.getTimeReadable());
+        msg.setMessage("Your time was " + timeRead);
         msg.setCancelable(true);
         msg.setNeutralButton("New puzzle",
                 new DialogInterface.OnClickListener() {
@@ -306,6 +309,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 });
         AlertDialog alertMsg = msg.create();
         alertMsg.show();
+
     }
 
     //shows a popup when the player has an incorrect solution
@@ -379,11 +383,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //reset the board values in the database
 
         fireBaseHandler.resetUserGame(getString(R.string.initalizeUserSolution), diff);
-
-        /*userRef.child("currentGame").setValue("");
-        userRef.child("solution").setValue("");
-        userRef.child("diff").setValue(diff);
-        userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));*/
 
         //for every cell in the board
         for(int i = 0 ; i < 9 ; i++){
@@ -472,8 +471,17 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    public void setGameUrl(String url){
+        this.gameUrl = url;
+    }
+
+    public void setSolutionUrl(String url){
+        this.solutionUrl = url;
+    }
+
     // Take in a difficulty parameter (easy, medium or hard) and fetch a json sudoku puzzle from an API
-    private void generateNewGame(String difficulty){
+    public void generateNewGame(String difficulty){
+
         Ion.with(this)
                 .load(gameUrl + difficulty)
                 .asJsonObject()
@@ -484,19 +492,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
                             //get the JsonArray for the board
                             JsonArray arr = result.getAsJsonArray("board");
-
-                            //parse it into the currentBoard, count the empty cells and show print
-                            // the board onto the screen
-                            currentBoard = logic.parseJsonArrayToInt(arr);
-                            emptyCells = logic.countEmptyCells(currentBoard);
-                            showCurrentGame(currentBoard);
-
-                            //get the solution for this board
-                            getSolution(currentBoard);
-
-                            //save the currentBoard to the database
-                            fireBaseHandler.setUserCurrentGame(logic.intToString(currentBoard));
-                            //userRef.child("currentGame").setValue(logic.intToString(currentBoard));
+                            saveNewGame(arr);
 
                         }
                         else{
@@ -506,9 +502,28 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
+    public void saveNewGame(JsonArray arr){
+
+        //parse it into the currentBoard, count the empty cells and show print
+        // the board onto the screen
+        currentBoard = logic.parseJsonArrayToInt(arr);
+        emptyCells = logic.countEmptyCells(currentBoard);
+        showCurrentGame(currentBoard);
+
+        //get the solution for this board
+        getSolution(currentBoard);
+
+        //save the currentBoard to the database
+        fireBaseHandler.setUserCurrentGame(logic.intToString(currentBoard));
+        //userRef.child("currentGame").setValue(logic.intToString(currentBoard));
+
+    }
+
+
+
     //Gets the solution to the game and saves it in the 'solution' private variable.
     // Should be called by generateNewGame()
-    private void getSolution(int[][] game){
+    public void getSolution(int[][] game){
         String stringBoard = logic.convertBoardToString(game);
         Ion.with(this)
                 .load(solutionUrl)
@@ -521,9 +536,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
                             //get the JsonArray for the solution and save it.
                             JsonArray arr = result.getAsJsonArray("solution");
-                            solution = logic.intToString(logic.parseJsonArrayToInt(arr));
-                            fireBaseHandler.setUserSolution(solution);
-                            //userRef.child("solution").setValue(solution);
+                            saveSolution(arr);
                         }
                         else{
                             Toast.makeText(a, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -532,14 +545,15 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
+    public void saveSolution(JsonArray arr){
+        solution = logic.intToString(logic.parseJsonArrayToInt(arr));
+        fireBaseHandler.setUserSolution(solution);
+        //userRef.child("solution").setValue(solution);
+    }
+
     //save the times to the database
     private void saveTimesToDatabase() {
         fireBaseHandler.saveAllTimes();
-
-       /* userRef.child("easyHighScore").setValue(fireBaseHandler.currUser.getEasyHighScores());
-        userRef.child("mediumHighScore").setValue(fireBaseHandler.currUser.getMediumHighScores());
-        userRef.child("hardHighScore").setValue(fireBaseHandler.currUser.getHardHighScores());
-        userRef.child("currentTime").setValue(timer.getTime());*/
     }
 
     //prints the user solution to the board
@@ -580,7 +594,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         int random;
 
         while(emptyCells > 0) {
-            random = (int) (Math.random() * 80);
+            random = (int) (Math.random() * 81);
 
             if(logic.intToString(currentBoard).charAt(random) == '0') {
 
