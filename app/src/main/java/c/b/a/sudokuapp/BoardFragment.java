@@ -46,7 +46,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private TextView[][] cellViews; // every cell in the board
     private Button goBack; //the back button
     private int currentTime; //the current time
-    private String gameUrl = "https://sugoku2.herokuapp.com/board?difficulty=";
+    private static String gameUrl = "https://sugoku2.herokuapp.com/board?difficulty=";
     private String solutionUrl = "https://sugoku2.herokuapp.com/solve";
     private Button getHint;
 
@@ -206,7 +206,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         fireBaseHandler.setUserUserSolution(userS.toString());
         //fireBaseHandler.currUser.setUserSolution(userSolution);
-        //userRef.child("userSolution").setValue(userS.toString());
+        //userRef.child("userSolution").setValue(userS.toString()); //TODO ??
     }
 
 
@@ -261,7 +261,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             //reset the users currentGame and solution
             fireBaseHandler.setUserCurrentGame("");
             fireBaseHandler.setUserSolution("");
-
         }
 
         //if the player hasn't
@@ -493,7 +492,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                             //get the JsonArray for the board
                             JsonArray arr = result.getAsJsonArray("board");
                             saveNewGame(arr);
-
                         }
                         else{
                             Toast.makeText(a, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -537,6 +535,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                             //get the JsonArray for the solution and save it.
                             JsonArray arr = result.getAsJsonArray("solution");
                             saveSolution(arr);
+
                         }
                         else{
                             Toast.makeText(a, e.getMessage(), Toast.LENGTH_LONG).show();
