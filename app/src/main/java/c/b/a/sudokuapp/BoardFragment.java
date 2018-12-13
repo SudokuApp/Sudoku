@@ -242,7 +242,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //link some more stuff
         timeTaken = a.findViewById(R.id.timeField);
         white_Draw = Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)).getConstantState();
-        white_BMP = Logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
+        white_BMP = logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
         goBack = a.findViewById(R.id.returnBtn);
         goBack.setOnClickListener(this);
         getHint = a.findViewById(R.id.btnHint);
@@ -439,8 +439,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private void initializeNewGame(){
 
         //reset the board, get a new game from the API and start the timer.
-        currentBoard = Logic.createEmptyBoard();
-        solution = logic.intToString(Logic.createEmptyBoard());
+        currentBoard = logic.createEmptyBoard();
+        solution = logic.intToString(logic.createEmptyBoard());
         currentTime = 0;
         resetBoard();
         generateNewGame(diff);
@@ -465,7 +465,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
 
         //if the background is grey, make it white
-        if(!Objects.equals(img.getConstantState(), white_Draw) || !Logic.buildBitmap(img).sameAs(white_BMP)){
+        if(!Objects.equals(img.getConstantState(), white_Draw) || !logic.buildBitmap(img).sameAs(white_BMP)){
             field.setBackgroundResource(R.drawable.grid_b);
         }
 
@@ -491,7 +491,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                             //parse it into the currentBoard, count the empty cells and show print
                             // the board onto the screen
                             currentBoard = logic.parseJsonArrayToInt(arr);
-                            emptyCells = Logic.countEmptyCells(currentBoard);
+                            emptyCells = logic.countEmptyCells(currentBoard);
                             showCurrentGame(currentBoard);
 
                             //get the solution for this board
@@ -512,7 +512,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     //Gets the solution to the game and saves it in the 'solution' private variable.
     // Should be called by generateNewGame()
     private void getSolution(int[][] game){
-        String stringBoard = Logic.convertBoardToString(game);
+        String stringBoard = logic.convertBoardToString(game);
         Ion.with(this)
                 .load(solutionUrl)
                 .setMultipartParameter("board", stringBoard)
@@ -571,7 +571,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     //resume a game from the database
     private void resumeGame() {
         combineBoards();
-        emptyCells = Logic.countEmptyCells(currentBoard);
+        emptyCells = logic.countEmptyCells(currentBoard);
         showCurrentGame(logic.stringToInt(initialBoard));
         showCurrentSolution();
         timer.startTimeThread(currentTime);

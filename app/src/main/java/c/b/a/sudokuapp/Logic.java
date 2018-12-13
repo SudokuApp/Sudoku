@@ -11,7 +11,11 @@ class Logic {
 
     Logic(){ }
 
-    static int countEmptyCells(int[][] board){
+    /**
+     * @param board
+     * @return the number of empty cells on the board
+     */
+    int countEmptyCells(int[][] board){
         int emptyCells = 0;
         for(int i = 0 ; i < 9 ; i++){
             for(int j = 0 ; j < 9 ; j++){
@@ -23,7 +27,11 @@ class Logic {
         return emptyCells;
     }
 
-    public int[][] stringToInt(String string) {
+    /**
+     * @param string
+     * @return the string of numbers in the form of a two dimensional integer array
+     */
+    int[][] stringToInt(String string) {
         int[][] board = new int[9][9];
         int temp = 0;
 
@@ -36,7 +44,11 @@ class Logic {
         return board;
     }
 
-    public String intToString(int[][] array) {
+    /**
+     * @param array
+     * @return the two dimensional integer array in the form of a string
+     */
+    String intToString(int[][] array) {
         StringBuilder string = new StringBuilder();
         char temp;
         for(int i = 0 ; i < 9 ; i++) {
@@ -48,16 +60,21 @@ class Logic {
         return string.toString();
     }
 
-
-    //removes the @ symbol and everything after that.
+    /**
+     * @param email from user
+     * @return the email without the @ symbol and everything after that
+     */
     static String splitUserEmail(String email) {
         String[] emailArr = email.split("@");
         return emailArr[0];
     }
 
-
-    //converts the 2 dimensional array into a string. Used by getSolution()
-    static String convertBoardToString(int[][] game){
+    /**
+     * converts the 2 dimensional array into a string. Used by getSolution()
+     * @param game the sudoku board
+     * @return the board in the form of a string
+     */
+    String convertBoardToString(int[][] game){
         StringBuilder result = new StringBuilder("[[");
         for(int i = 0 ; i < 9 ; i++){
             for(int j = 0 ; j < 9 ; j++){
@@ -74,8 +91,11 @@ class Logic {
         return result.toString();
     }
 
-
-    //should parse the JsonArrays containing the boards to a two dimensional int array
+    /**
+     * should parse the JsonArrays containing the boards to a two dimensional int array
+     * @param arr from the API
+     * @return the JsonArray in the form of two dimensional integer array
+     */
     int[][] parseJsonArrayToInt(JsonArray arr){
         int[][] board = createEmptyBoard();
         int inner = 0;
@@ -92,8 +112,9 @@ class Logic {
         return board;
     }
 
-
-    //creates an empty 9x9 integer array
+    /**
+     * @return an empty 9x9 integer array
+     */
     static int[][] createEmptyBoard(){
         int[][] board = new int[9][];
 
@@ -103,7 +124,7 @@ class Logic {
         return board;
     }
 
-    static Bitmap buildBitmap(Drawable img){
+    Bitmap buildBitmap(Drawable img){
         Bitmap out; //Assuming no incoming drawable is a bitmap
 
         int width = img.getIntrinsicWidth();
