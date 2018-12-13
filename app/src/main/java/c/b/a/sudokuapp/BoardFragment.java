@@ -90,9 +90,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         timer = new Timer(timeTaken);
         logic = new Logic();
 
-        //link firebase related stuff
-        //FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
         //get the current users previous input
         userSolution = fireBaseHandler.currUser.getUserSolution();
         userS = new StringBuilder(userSolution);
@@ -242,7 +239,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //link some more stuff
         timeTaken = a.findViewById(R.id.timeField);
         white_Draw = Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)).getConstantState();
-        white_BMP = logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
+        white_BMP = Logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
         goBack = a.findViewById(R.id.returnBtn);
         goBack.setOnClickListener(this);
         getHint = a.findViewById(R.id.btnHint);
@@ -439,8 +436,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private void initializeNewGame(){
 
         //reset the board, get a new game from the API and start the timer.
-        currentBoard = logic.createEmptyBoard();
-        solution = logic.intToString(logic.createEmptyBoard());
+        currentBoard = Logic.createEmptyBoard();
+        solution = logic.intToString(Logic.createEmptyBoard());
         currentTime = 0;
         resetBoard();
         generateNewGame(diff);

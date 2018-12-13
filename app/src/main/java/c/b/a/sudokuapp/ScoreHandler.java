@@ -1,7 +1,5 @@
 package c.b.a.sudokuapp;
 
-import android.provider.ContactsContract;
-
 import java.util.ArrayList;
 import java.util.List;
 
