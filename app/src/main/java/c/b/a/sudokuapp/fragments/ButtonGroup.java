@@ -71,7 +71,8 @@ public class ButtonGroup extends Fragment {
                         lastBtn.setBackgroundResource(R.drawable.button_default);
                         lastBtn.setTextColor(Color.parseColor("#000000"));
                     }
-                    input = v.getTag().toString();
+                    setInput(v.getTag().toString());
+
                     v.setBackgroundResource(R.drawable.button_focused);
                     setOperator();
                     lastBtn = v.findViewById(v.getId());
@@ -81,11 +82,16 @@ public class ButtonGroup extends Fragment {
             });
         }
     }
-
-
+    protected void setInput (String in){
+        input = in;
+    }
+    public String getInput(){
+        return input;
+    }
+    //editor.putString(getString(R.string.input), input).commit();
     @SuppressLint("SetTextI18n")
     public void setOperator(){
-        editor.putString(getString(R.string.input), input).commit();
+        editor.putString(getString(R.string.input), getInput()).commit();
     }
 
 }

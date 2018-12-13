@@ -249,7 +249,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //link some more stuff
         timeTaken = a.findViewById(R.id.timeField);
         white_Draw = Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)).getConstantState();
-        white_BMP = logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
+        white_BMP = Logic.buildBitmap(Objects.requireNonNull(a.getDrawable(R.drawable.grid_b)));
         goBack = a.findViewById(R.id.returnBtn);
         goBack.setOnClickListener(this);
         getHint = a.findViewById(R.id.btnHint);
@@ -467,7 +467,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
 
         //if the background is grey, make it white
-        if(!Objects.equals(img.getConstantState(), white_Draw) || !logic.buildBitmap(img).sameAs(white_BMP)){
+        if(!Objects.equals(img.getConstantState(), white_Draw) || !Logic.buildBitmap(img).sameAs(white_BMP)){
             field.setBackgroundResource(R.drawable.grid_b);
         }
 

@@ -124,7 +124,7 @@ class Logic {
         return board;
     }
 
-    Bitmap buildBitmap(Drawable img){
+    static Bitmap buildBitmap(Drawable img){
         Bitmap out; //Assuming no incoming drawable is a bitmap
 
         int width = img.getIntrinsicWidth();

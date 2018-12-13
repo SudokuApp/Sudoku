@@ -61,18 +61,8 @@ public class ScoreFragment extends Fragment {
 
         // If some user is logged in, welcome the user with his/her email
         if(currUser != null) {
-            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+            userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(currUser.getEmail()));
         }
-    }
-
-    /**
-     * A method to cut of the part in front of the @ symbol
-     * @param email
-     * @return
-     */
-    private String splitUserEmail(String email) {
-        String[] emailArr = email.split("@");
-        return emailArr[0];
     }
 
     /**

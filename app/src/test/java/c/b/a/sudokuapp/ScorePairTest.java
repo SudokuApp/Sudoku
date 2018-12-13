@@ -6,12 +6,12 @@ import static org.junit.Assert.*;
 
 public class ScorePairTest {
 
+
     @Test
     public void getName() {
-        ScorePair sp = new ScorePair();
-        sp.setName("a name");
+        ScorePair sp = new ScorePair("john", 123);
 
-        assertEquals(sp.getName(), "a name");
+        assertEquals(sp.getName(), "john");
         assertNotEquals(sp.getName(), "another name");
     }
 
@@ -44,15 +44,13 @@ public class ScorePairTest {
 
     @Test
     public void compareTo() {
-        ScorePair sp1 = new ScorePair();
-        ScorePair sp2 = new ScorePair();
-        sp1.setName("name1");
-        sp1.setScore(1);
-        sp2.setName("name2");
-        sp2.setScore(10);
+        ScorePair sp1 = new ScorePair("name1", 1);
+        ScorePair sp2 = new ScorePair("name2", 10);
 
         assertNotEquals(sp1, sp2);
+        assertEquals( -9, sp1.ScoreComparator.compare(sp1,sp2));
         assertEquals(sp1.compareTo(sp2), -9);
         assertEquals(sp2.compareTo(sp1), 9);
     }
+
 }
