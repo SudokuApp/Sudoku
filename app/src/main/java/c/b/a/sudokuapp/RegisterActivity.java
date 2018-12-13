@@ -97,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         final String em = email.getText().toString().trim();
 
         //If everything is valid
-        if(validPassword(pw) && validEmail(em)) {
+        if(validEmail(em) && validPassword(pw)) {
             progressDialog.setMessage(getString(R.string.progressRegister));
             progressDialog.show();
 
