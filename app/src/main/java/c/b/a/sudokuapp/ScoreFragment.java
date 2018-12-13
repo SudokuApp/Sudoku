@@ -14,10 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
-import static c.b.a.sudokuapp.MenuFragment.currUser;
-import static c.b.a.sudokuapp.MenuFragment.easyScores;
-import static c.b.a.sudokuapp.MenuFragment.mediumScores;
-import static c.b.a.sudokuapp.MenuFragment.hardScores;
+import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
 
 
 /**
@@ -48,9 +45,9 @@ public class ScoreFragment extends Fragment {
         setVariables();
 
         // Inflate into lists
-        inflateIntoLists(easyListView, easyScores);
-        inflateIntoLists(mediumListView, mediumScores);
-        inflateIntoLists(hardListView, hardScores);
+        inflateIntoLists(easyListView, FireBaseHandler.easyScores);
+        inflateIntoLists(mediumListView, FireBaseHandler.mediumScores);
+        inflateIntoLists(hardListView, FireBaseHandler.hardScores);
 
     }
 
@@ -60,8 +57,13 @@ public class ScoreFragment extends Fragment {
         super.onStart();
 
         // If some user is logged in, welcome the user with his/her email
+<<<<<<< HEAD
         if(currUser != null) {
             userTxt.setText(getString(R.string.welcome_user) + Logic.splitUserEmail(currUser.getEmail()));
+=======
+        if(fireBaseHandler.currUser != null) {
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(fireBaseHandler.currUser.getEmail()));
+>>>>>>> d3eaaf2dc70f501eb52412df0cf4c705f597fdb6
         }
     }
 

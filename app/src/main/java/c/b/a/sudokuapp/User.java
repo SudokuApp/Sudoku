@@ -1,7 +1,5 @@
 package c.b.a.sudokuapp;
 
-import com.google.gson.JsonArray;
-
 public class User {
     private String currentGame;
     private String userSolution;

@@ -18,7 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
-import static c.b.a.sudokuapp.MenuFragment.currUser;
+import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
 
 
 /**
@@ -76,8 +76,8 @@ public class InstructionFragment extends Fragment implements View.OnClickListene
         TextView userTxt = a.findViewById(R.id.diff_user);
 
         // If some user is logged in, welcome the user with his/her email
-        if(currUser != null) {
-            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(currUser.getEmail()));
+        if(fireBaseHandler.currUser != null) {
+            userTxt.setText(getString(R.string.welcome_user) + splitUserEmail(fireBaseHandler.currUser.getEmail()));
         }
     }
 
