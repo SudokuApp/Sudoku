@@ -21,9 +21,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -31,7 +28,7 @@ import com.koushikdutta.ion.Ion;
 
 import java.util.Objects;
 
-import static c.b.a.sudokuapp.MenuFragment.currUser;
+import static c.b.a.sudokuapp.MenuFragment.fireBaseHandler;
 
 
 /**
@@ -61,9 +58,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private SharedPreferences sharedPref;
 
     //Variables for database
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference userRef;
-
     private StringBuilder userS;
 
 
@@ -97,23 +91,20 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         logic = new Logic();
 
         //link firebase related stuff
-        mDatabase = FirebaseDatabase.getInstance();
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        DatabaseReference ref = mDatabase.getReference("users");
-        userRef = ref.child(Objects.requireNonNull(firebaseAuth.getUid()));
+        //FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
         //get the current users previous input
-        userSolution = currUser.getUserSolution();
+        userSolution = fireBaseHandler.currUser.getUserSolution();
         userS = new StringBuilder(userSolution);
 
         //reset the INPUT shared preference to an empty string
         sharedPref.edit().putString("INPUT", "").apply();
 
         // If current game is not null, then we resume that game
-        if(!currUser.getCurrentGame().equals("")){
-            initialBoard = currUser.getCurrentGame();
-            solution = currUser.getSolution();
-            currentTime = currUser.getCurrentTime();
+        if(!fireBaseHandler.currUser.getCurrentGame().equals("")){
+            initialBoard = fireBaseHandler.currUser.getCurrentGame();
+            solution = fireBaseHandler.currUser.getSolution();
+            currentTime = fireBaseHandler.currUser.getCurrentTime();
             resumeGame();
         }
 
@@ -127,8 +118,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        currUser.setCurrentTime(timer.getTime());
-        saveToDatabase();
+        fireBaseHandler.setUserCurrentTime(timer.getTime());
+        saveTimesToDatabase();
         timer.stopThread();
     }
 
@@ -136,8 +127,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        currUser.setCurrentTime(timer.getTime());
-        saveToDatabase();
+        fireBaseHandler.setUserCurrentTime(timer.getTime());
+        saveTimesToDatabase();
         timer.pauseTimer();
     }
 
@@ -214,8 +205,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         userS.setCharAt(index, temp);
 
         //saving to database
-        currUser.setUserSolution(userSolution);
-        userRef.child("userSolution").setValue(userS.toString());
+
+        fireBaseHandler.setUserUserSolution(userS.toString());
+        //fireBaseHandler.currUser.setUserSolution(userSolution);
+        //userRef.child("userSolution").setValue(userS.toString());
     }
 
 
@@ -267,8 +260,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             winPopup();
 
             //reset the users currentGame and solution
-            userRef.child("currentGame").setValue("");
-            userRef.child("solution").setValue("");
+            fireBaseHandler.setUserCurrentGame("");
+            fireBaseHandler.setUserSolution("");
+            //userRef.child("currentGame").setValue("");
+            //userRef.child("solution").setValue("");
         }
 
         //if the player hasn't
@@ -286,8 +281,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         timer.stopThread();
 
         //have the ScoreHandler handle the score
-        ScoreHandler scorehandler = new ScoreHandler(diff, mDatabase);
-        scorehandler.compareToPrivate(timer.getTime(), userRef);
+        ScoreHandler scorehandler = new ScoreHandler(diff);
+        scorehandler.compareToPrivate(timer.getTime());
 
         //build the actual popup
         AlertDialog.Builder msg = new AlertDialog.Builder(a);
@@ -356,7 +351,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
      * This function sets the backround of the incorrect digits to red.
      */
     private void getHelp() {
-        String userSolution = currUser.getUserSolution();
+        String userSolution = fireBaseHandler.currUser.getUserSolution();
         String currBoard = logic.intToString(currentBoard);
 
         for(int i = 0; i < 81 ; i++) {
@@ -365,7 +360,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             int cell = i % 9;
 
             //The initial numbers are set to grey
-            if(currUser.getCurrentGame().charAt(i) != '0') {
+            if(fireBaseHandler.currUser.getCurrentGame().charAt(i) != '0') {
                 cellViews[row][cell].setBackground(a.getDrawable(R.drawable.grid_x));
             }
             //The incorrect digits are set to red
@@ -385,10 +380,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private void resetBoard(){
 
         //reset the board values in the database
-        userRef.child("currentGame").setValue("");
+
+        fireBaseHandler.resetUserGame(getString(R.string.initalizeUserSolution), diff);
+
+        /*userRef.child("currentGame").setValue("");
         userRef.child("solution").setValue("");
         userRef.child("diff").setValue(diff);
-        userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));
+        userRef.child("userSolution").setValue(getString(R.string.initalizeUserSolution));*/
 
         //for every cell in the board
         for(int i = 0 ; i < 9 ; i++){
@@ -500,7 +498,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                             getSolution(currentBoard);
 
                             //save the currentBoard to the database
-                            userRef.child("currentGame").setValue(logic.intToString(currentBoard));
+                            fireBaseHandler.setUserCurrentGame(logic.intToString(currentBoard));
+                            //userRef.child("currentGame").setValue(logic.intToString(currentBoard));
 
                         }
                         else{
@@ -526,7 +525,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                             //get the JsonArray for the solution and save it.
                             JsonArray arr = result.getAsJsonArray("solution");
                             solution = logic.intToString(logic.parseJsonArrayToInt(arr));
-                            userRef.child("solution").setValue(solution);
+                            fireBaseHandler.setUserSolution(solution);
+                            //userRef.child("solution").setValue(solution);
                         }
                         else{
                             Toast.makeText(a, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -536,11 +536,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     }
 
     //save the times to the database
-    private void saveToDatabase() {
-        userRef.child("easyHighScore").setValue(currUser.getEasyHighScores());
-        userRef.child("mediumHighScore").setValue(currUser.getMediumHighScores());
-        userRef.child("hardHighScore").setValue(currUser.getHardHighScores());
-        userRef.child("currentTime").setValue(timer.getTime());
+    private void saveTimesToDatabase() {
+        fireBaseHandler.saveAllTimes();
+
+       /* userRef.child("easyHighScore").setValue(fireBaseHandler.currUser.getEasyHighScores());
+        userRef.child("mediumHighScore").setValue(fireBaseHandler.currUser.getMediumHighScores());
+        userRef.child("hardHighScore").setValue(fireBaseHandler.currUser.getHardHighScores());
+        userRef.child("currentTime").setValue(timer.getTime());*/
     }
 
     //prints the user solution to the board
@@ -608,7 +610,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if(v == goBack) {
-            saveToDatabase();
+            saveTimesToDatabase();
             goToMainMenu();
         }
         else if(v == getHint) {
