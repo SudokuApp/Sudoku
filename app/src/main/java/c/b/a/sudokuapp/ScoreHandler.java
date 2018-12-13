@@ -43,31 +43,34 @@ class ScoreHandler {
     //check if this new score is better than the users old one for this difficulty
     void compareToPrivate(int newScore){
 
+        List<ScorePair> temp;
 
         switch (diff) {
             case "easy":
                 if (newScore < fireBaseHandler.getUserEasyHighScore()) {
 
                     fireBaseHandler.setUserEasyHighScore(newScore);
-                    List<ScorePair> temp = compareToGlobal(newScore, fireBaseHandler.easyScores);
-                    fireBaseHandler.setEasyLeaderBoards(temp);
                 }
+                temp = compareToGlobal(newScore, fireBaseHandler.easyScores);
+                fireBaseHandler.setEasyLeaderBoards(temp);
                 break;
             case "medium":
                 if (newScore < fireBaseHandler.getUserMediumHighScore()) {
 
                     fireBaseHandler.setUserMediumHighScore(newScore);
-                    List<ScorePair> temp = compareToGlobal(newScore, fireBaseHandler.mediumScores);
-                    fireBaseHandler.setMediumLeaderBoards(temp);
+
                 }
+                temp = compareToGlobal(newScore, fireBaseHandler.mediumScores);
+                fireBaseHandler.setMediumLeaderBoards(temp);
                 break;
             case "hard":
                 if (newScore < fireBaseHandler.getUserHardHighScore()) {
 
                     fireBaseHandler.setUserHardHighScore(newScore);
-                    List<ScorePair> temp = compareToGlobal(newScore, fireBaseHandler.hardScores);
-                    fireBaseHandler.setHardLeaderBoards(temp);
+
                 }
+                temp = compareToGlobal(newScore, fireBaseHandler.hardScores);
+                fireBaseHandler.setHardLeaderBoards(temp);
                 break;
         }
     }
